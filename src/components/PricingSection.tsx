@@ -5,55 +5,64 @@ import { Check, Zap, Package, Infinity } from "lucide-react";
 const PricingSection = () => {
   const tiers = [
     {
+      emoji: "🏃",
       name: "Basic",
       price: "50",
-      description: "Perfect for local gyms and fitness centers",
-      features: ["Access to basic facilities", "Standard equipment", "Basic support", "1-2 locations per city"]
+      description: "Local gyms & fitness centers",
+      features: ["🏋️ Basic facilities", "⚙️ Standard equipment", "💬 Basic support", "📍 1-2 locations/city"]
     },
     {
+      emoji: "💪",
       name: "Standard", 
       price: "90",
-      description: "Most popular choice for premium gyms",
-      features: ["All Basic features", "Premium equipment", "Group classes included", "Priority support", "3-5 locations per city"],
+      description: "Premium gyms with extras",
+      features: ["✅ All Basic features", "🔥 Premium equipment", "👥 Group classes", "⭐ Priority support", "📍 3-5 locations/city"],
       popular: true
     },
     {
+      emoji: "🥇",
       name: "Premium",
       price: "150", 
-      description: "High-end gyms with luxury amenities",
-      features: ["All Standard features", "Luxury amenities", "Personal training sessions", "Spa access", "Premium locations"]
+      description: "Luxury gyms & spas",
+      features: ["✅ All Standard features", "✨ Luxury amenities", "👨‍💼 Personal training", "🧖‍♀️ Spa access", "🏆 Premium locations"]
     },
     {
+      emoji: "💎",
       name: "Ultra Luxury",
       price: "320",
-      description: "Exclusive resorts and ultra-premium venues",
-      features: ["All Premium features", "Exclusive venues", "Concierge service", "Unlimited access", "5-star experiences"]
+      description: "Exclusive resorts & venues",
+      features: ["✅ All Premium features", "🏖️ Exclusive venues", "🤵 Concierge service", "♾️ Unlimited access", "⭐⭐⭐⭐⭐ 5-star experiences"]
     }
   ];
 
   const plans = [
     {
-      icon: Zap,
+      emoji: "⚡",
       name: "Blane",
       subtitle: "Single Entry",
       description: "Perfect for trying new places",
-      cta: "Get Single Entry"
+      price: "From 50 MAD",
+      cta: "🎯 Book Now",
+      badge: "Try Once"
     },
     {
-      icon: Package,
+      emoji: "📦",
       name: "Blane Pack", 
       subtitle: "5 or 10 Entries",
       description: "Save up to 20% with entry packs",
-      cta: "Choose Pack",
-      popular: true
+      price: "From 225 MAD",
+      cta: "💰 Save More",
+      popular: true,
+      badge: "Best Value"
     },
     {
-      icon: Infinity,
+      emoji: "🎫",
       name: "Blane Pass",
-      subtitle: "Monthly Access", 
-      description: "Unlimited access to multiple clubs",
+      subtitle: "Monthly Unlimited", 
+      description: "Unlimited access to all venues",
       price: "From 1,200 MAD/month",
-      cta: "Get Monthly Pass"
+      cta: "🚀 Go Unlimited",
+      badge: "Freedom"
     }
   ];
 
@@ -75,27 +84,30 @@ const PricingSection = () => {
 
         <div className="grid md:grid-cols-3 gap-6 mb-20">
           {plans.map((plan, index) => (
-            <Card key={index} className={`relative overflow-hidden hover:shadow-warm transition-all duration-300 hover:-translate-y-2 ${plan.popular ? 'ring-2 ring-primary shadow-glow' : ''}`}>
+            <Card key={index} className={`relative overflow-hidden hover:shadow-warm transition-all duration-300 hover:-translate-y-2 ${plan.popular ? 'ring-2 ring-primary shadow-glow scale-105' : ''}`}>
               {plan.popular && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-hero text-primary-foreground text-xs font-semibold px-3 py-1 rounded-b-md">
-                  Most Popular
+                  🔥 {plan.badge}
+                </div>
+              )}
+              {!plan.popular && plan.badge && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-accent text-accent-foreground text-xs font-semibold px-3 py-1 rounded-b-md">
+                  {plan.badge}
                 </div>
               )}
               <CardHeader className="text-center pb-4">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-hero">
-                  <plan.icon className="h-8 w-8 text-primary-foreground" />
+                <div className="mx-auto mb-4 text-6xl">
+                  {plan.emoji}
                 </div>
                 <CardTitle className="text-xl">{plan.name}</CardTitle>
                 <p className="text-accent font-semibold">{plan.subtitle}</p>
-                {plan.price && (
-                  <p className="text-2xl font-bold text-primary">{plan.price}</p>
-                )}
+                <p className="text-2xl font-bold text-primary">{plan.price}</p>
               </CardHeader>
               <CardContent className="text-center">
                 <p className="text-muted-foreground mb-6">{plan.description}</p>
                 <Button 
                   variant={plan.popular ? "hero" : "default"} 
-                  className="w-full"
+                  className="w-full text-base"
                   size="lg"
                 >
                   {plan.cta}
@@ -116,10 +128,11 @@ const PricingSection = () => {
             <Card key={index} className={`hover:shadow-card transition-all duration-300 hover:-translate-y-1 ${tier.popular ? 'ring-2 ring-primary shadow-warm' : ''}`}>
               {tier.popular && (
                 <div className="bg-gradient-hero text-primary-foreground text-center text-xs font-semibold py-2">
-                  Most Popular
+                  🔥 Most Popular
                 </div>
               )}
               <CardHeader className="text-center">
+                <div className="text-4xl mb-2">{tier.emoji}</div>
                 <CardTitle className="text-lg">{tier.name}</CardTitle>
                 <div className="flex items-center justify-center">
                   <span className="text-3xl font-bold text-primary">{tier.price}</span>
@@ -130,9 +143,9 @@ const PricingSection = () => {
               <CardContent>
                 <ul className="space-y-2">
                   {tier.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-sm">
-                      <Check className="mr-2 h-4 w-4 text-accent flex-shrink-0" />
-                      {feature}
+                    <li key={idx} className="flex items-start text-sm">
+                      <span className="mr-2 flex-shrink-0">{feature.split(' ')[0]}</span>
+                      <span>{feature.split(' ').slice(1).join(' ')}</span>
                     </li>
                   ))}
                 </ul>

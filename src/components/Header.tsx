@@ -16,27 +16,25 @@ const Header = () => {
 
         <nav className="hidden md:flex items-center space-x-6">
           <Button variant="ghost" className="text-foreground">
-            <MapPin className="mr-2 h-4 w-4" />
-            Browse Clubs
+            🏢 Browse Clubs
           </Button>
           <Button variant="ghost" className="text-foreground">
-            Activities
+            🏃 Activities
           </Button>
           <Button variant="ghost" className="text-foreground">
-            How it Works
+            ❓ How it Works
           </Button>
         </nav>
 
         <div className="flex items-center space-x-3">
           <Button variant="ghost" size="sm" className="hidden md:flex">
-            Become a Partner
+            🤝 Partner with Us
           </Button>
           <Button variant="outline" size="sm">
-            <User className="mr-2 h-4 w-4" />
-            Sign In
+            👤 Sign In
           </Button>
           <Button variant="hero" size="sm">
-            Get Started
+            🚀 Get Started
           </Button>
           
           <Button variant="ghost" size="icon" className="md:hidden">
