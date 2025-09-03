@@ -3,6 +3,8 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PricingSection from "@/components/PricingSection";
 import MobileOptimized from "@/components/MobileOptimized";
+import QRCodeGenerator from "@/components/QRCodeGenerator";
+import MobileAppFeatures from "@/components/MobileAppFeatures";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -48,6 +50,8 @@ const Index = () => {
       <main>
         <Hero />
         <MobileOptimized />
+        <QRCodeGenerator />
+        <MobileAppFeatures />
         <PricingSection />
       </main>
       <Footer />
