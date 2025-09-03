@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'dropin-morocco',
   webDir: 'dist',
   server: {
-    url: 'http://localhost:5173',
+    url: 'http://172.30.0.2:5173',
     cleartext: true
   },
   plugins: {
