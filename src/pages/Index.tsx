@@ -23,7 +23,7 @@ const Index = () => {
       "description": "Marketplace for flexible access to gyms, spas, and fitness centers in Morocco",
       "url": "https://drop-in.ma",
       "applicationCategory": "HealthApplication",
-      "operatingSystem": "Web",
+      "operatingSystem": "iOS, Android, Web",
       "offers": {
         "@type": "Offer",
         "price": "50",
