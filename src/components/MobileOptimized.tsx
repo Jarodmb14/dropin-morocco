@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Camera, QrCode, Smartphone } from "lucide-react";
+import { MapPin, Camera, QrCode, Smartphone, CheckCircle } from "lucide-react";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import { Capacitor } from '@capacitor/core';
 
 const MobileOptimized = () => {
   const { latitude, longitude, loading, error, getCurrentLocation } = useGeolocation();
   const [showQRCode, setShowQRCode] = useState(false);
+  
+  // Detect if we're running in a native mobile app
+  const isNativeApp = Capacitor.isNativePlatform();
+  const platform = Capacitor.getPlatform();
 
   const handleFindNearbyGyms = () => {
     getCurrentLocation();
@@ -22,10 +27,13 @@ const MobileOptimized = () => {
       <div className="container mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            📱 Mobile Features
+            {isNativeApp ? '🚀 App Features' : '📱 Mobile Features'}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Enhanced mobile experience for seamless gym access on-the-go
+            {isNativeApp 
+              ? 'Native app experience for seamless gym access on-the-go'
+              : 'Enhanced mobile experience for seamless gym access on-the-go'
+            }
           </p>
         </div>
 
@@ -88,38 +96,66 @@ const MobileOptimized = () => {
                 className="w-full"
                 variant="outline"
               >
-                📷 Scan QR Code
+                {isNativeApp ? '📷 Open Camera Scanner' : '📷 Scan QR Code'}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Mobile app download */}
-          <Card className="p-6 md:col-span-2">
-            <CardHeader className="text-center pb-4">
-              <Smartphone className="h-12 w-12 mx-auto text-purple-600 mb-2" />
-              <CardTitle>Get the Mobile App</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground text-center">
-                Download our native mobile app for the best experience
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button className="flex items-center gap-2" variant="outline">
-                  🤖 Download for Android
-                </Button>
-                <Button className="flex items-center gap-2" variant="outline">
-                  🍎 Download for iOS
-                </Button>
-              </div>
-              
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground">
-                  Or continue using the web app - it works great on mobile too! 📱
+          {/* Conditional content based on platform */}
+          {isNativeApp ? (
+            <Card className="p-6 md:col-span-2">
+              <CardHeader className="text-center pb-4">
+                <CheckCircle className="h-12 w-12 mx-auto text-green-600 mb-2" />
+                <CardTitle>Welcome to Drop-In Morocco! 🇲🇦</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  You're using the native {platform === 'ios' ? 'iOS' : 'Android'} app with full access to all features
                 </p>
-              </div>
-            </CardContent>
-          </Card>
+                
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 text-green-700 dark:text-green-300">
+                    <CheckCircle className="h-5 w-5" />
+                    <span className="font-medium">Native App Features Active:</span>
+                  </div>
+                  <div className="text-center mt-2 text-sm text-green-600 dark:text-green-400">
+                    📍 GPS Location • 📷 Camera Access • 🔔 Push Notifications • 📱 Offline Support
+                  </div>
+                </div>
+                
+                <Button className="w-full" variant="hero">
+                  🏋️ Start Finding Gyms
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="p-6 md:col-span-2">
+              <CardHeader className="text-center pb-4">
+                <Smartphone className="h-12 w-12 mx-auto text-purple-600 mb-2" />
+                <CardTitle>Get the Mobile App</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  Download our native mobile app for the best experience
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button className="flex items-center gap-2" variant="outline">
+                    🤖 Download for Android
+                  </Button>
+                  <Button className="flex items-center gap-2" variant="outline">
+                    🍎 Download for iOS
+                  </Button>
+                </div>
+                
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground">
+                    Or continue using the web app - it works great on mobile too! 📱
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </section>
