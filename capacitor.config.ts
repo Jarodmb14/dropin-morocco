@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'dropin-morocco',
   webDir: 'dist',
   server: {
-    url: 'https://8e71d6b8-801b-46fa-8963-f1e31e5a1a32.lovableproject.com?forceHideBadge=true',
+    url: 'http://localhost:5173',
     cleartext: true
   },
   plugins: {
