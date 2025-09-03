@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.8e71d6b8801b46fa8963f1e31e5a1a32',
+  appId: 'com.dropin.morocco',
   appName: 'dropin-morocco',
   webDir: 'dist',
   server: {

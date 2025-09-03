@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">dropin-morocco</string>
+    <string name="title_activity_main">dropin-morocco</string>
+    <string name="package_name">com.dropin.morocco</string>
+    <string name="custom_url_scheme">com.dropin.morocco</string>
+</resources>

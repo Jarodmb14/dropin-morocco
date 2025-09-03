@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import PricingSection from "@/components/PricingSection";
+import MobileOptimized from "@/components/MobileOptimized";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -46,6 +47,7 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <MobileOptimized />
         <PricingSection />
       </main>
       <Footer />
