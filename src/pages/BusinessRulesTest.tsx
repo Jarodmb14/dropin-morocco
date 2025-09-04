@@ -579,17 +579,29 @@ const BusinessRulesTest = () => {
       const allPassed = allTests.every(test => test.passed);
       const passedCount = allTests.filter(test => test.passed).length;
 
+      // Get detailed failure information
+      const failedTests = allTests.filter(test => !test.passed);
+      const failuresByType = {
+        pricing: failedTests.filter(t => t.type === 'Pricing'),
+        commission: failedTests.filter(t => t.type === 'Commission'),
+        validity: failedTests.filter(t => t.type === 'Validity'),
+      };
+
+      console.log('Failed tests details:', failedTests);
+
       addResult({
         test: 'Business Logic Only (No Database)',
         success: allPassed,
         message: allPassed 
           ? `✅ All ${allTests.length} business logic tests passed`
-          : `❌ ${passedCount}/${allTests.length} tests passed`,
+          : `❌ ${passedCount}/${allTests.length} tests passed - Check details below`,
         data: {
           totalTests: allTests.length,
           passedTests: passedCount,
           failedTests: allTests.length - passedCount,
           testResults: allTests,
+          failedDetails: failedTests,
+          failuresByType,
           categories: {
             pricing: allTests.filter(t => t.type === 'Pricing').length,
             commission: allTests.filter(t => t.type === 'Commission').length,

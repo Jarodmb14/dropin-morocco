@@ -410,8 +410,11 @@ export class BusinessRules {
         };
         
       default:
+        // Default to same day expiry
+        const defaultEndOfDay = new Date(now);
+        defaultEndOfDay.setHours(23, 59, 59, 999);
         return {
-          validTo: endOfDay.toISOString(),
+          validTo: defaultEndOfDay.toISOString(),
           durationDays: 1
         };
     }
