@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center bg-gradient-subtle overflow-hidden">
       {/* Content */}
@@ -41,11 +44,21 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <Button variant="hero" size="lg" className="text-lg px-8 py-6">
-              🚀 Get Started Now
+            <Button 
+              variant="hero" 
+              size="lg" 
+              className="text-lg px-8 py-6"
+              onClick={() => navigate('/venues')}
+            >
+              🚀 Browse Venues Now
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-              🎥 Quick Demo
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="text-lg px-8 py-6"
+              onClick={() => navigate('/business-rules-test')}
+            >
+              🧪 Test Business Logic
             </Button>
           </div>
 
