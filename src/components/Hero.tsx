@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Zap, Target, Trophy, Flame } from "lucide-react";
-import { themeTokens } from "@/lib/theme/tokens";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -16,21 +15,21 @@ const Hero = () => {
         <div className="absolute inset-0 grid grid-cols-3 gap-4 p-8 opacity-20">
           <div className="relative overflow-hidden rounded-xl transform rotate-2">
             <img 
-              src="/src/assets/pexels-yassine-benmoussa-1650792656-28293177.jpg"
+              src="src/assets/pexels-yassine-benmoussa-1650792656-28293177.jpg"
               alt="Morocco Culture"
               className="w-full h-48 object-cover filter blur-sm"
             />
           </div>
           <div className="relative overflow-hidden rounded-xl transform -rotate-1 mt-16">
             <img 
-              src="/src/assets/pexels-samiro-2215787 (1).jpg"
+              src="src/assets/pexels-samiro-2215787 (1).jpg"
               alt="Morocco Architecture"
               className="w-full h-48 object-cover filter blur-sm"
             />
           </div>
           <div className="relative overflow-hidden rounded-xl transform rotate-1 mt-8">
             <img 
-              src="/src/assets/pexels-rasabromeo-2963873-11566277.jpg"
+              src="src/assets/pexels-rasabromeo-2963873-11566277.jpg"
               alt="Morocco Lifestyle"
               className="w-full h-48 object-cover filter blur-sm"
             />
@@ -58,11 +57,7 @@ const Hero = () => {
           <div className="mb-10 flex items-center justify-center gap-3">
             <Zap className="w-8 h-8 text-yellow-500 animate-bounce" />
             <div 
-              className="font-black text-lg px-6 py-3 rounded-full border-4 border-red-600 shadow-lg transform rotate-1"
-              style={{ 
-                background: themeTokens.gradients.moroccan,
-                color: 'white'
-              }}
+              className="font-black text-lg px-6 py-3 rounded-full border-4 border-red-600 shadow-lg transform rotate-1 bg-gradient-to-r from-red-500 to-yellow-500 text-white"
             >
               🇲🇦 MOROCCO'S #1 FITNESS APP! 
             </div>
@@ -72,13 +67,8 @@ const Hero = () => {
           <h1 className="mb-10 text-5xl font-black leading-tight md:text-8xl tracking-tight">
             <div className="relative inline-block">
               <span 
-                className="block drop-shadow-2xl"
-                style={{ 
-                  background: themeTokens.gradients.energetic,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textShadow: '4px 4px 8px rgba(0,0,0,0.3)'
-                }}
+                className="block drop-shadow-2xl bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 bg-clip-text text-transparent"
+                style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.3)' }}
               >
                 FITNESS POWER
               </span>

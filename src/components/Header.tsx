@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Menu, Zap, Target } from "lucide-react";
-import { themeTokens } from "@/lib/theme/tokens";
 
 const Header = () => {
   return (
@@ -8,14 +7,9 @@ const Header = () => {
       <div className="container mx-auto flex h-20 items-center justify-between px-6 py-3">
         <div className="flex items-center space-x-4">
           <div className="relative">
-            {/* Your custom logo */}
-            <div className="flex h-12 w-12 items-center justify-center">
-              <img 
-                src="/src/assets/logo.svg" 
-                alt="Drop-In Morocco Logo" 
-                className="h-10 w-10 object-contain"
-                style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))' }}
-              />
+            {/* Simple logo placeholder */}
+            <div className="flex h-12 w-12 items-center justify-center bg-orange-500 rounded-full">
+              <span className="text-2xl">🏋️</span>
             </div>
             {/* Comic-style energy effect */}
             <div className="absolute -top-2 -right-2 animate-pulse">
@@ -24,13 +18,7 @@ const Header = () => {
           </div>
           <div>
             <span 
-              className="text-3xl font-black tracking-tight drop-shadow-lg"
-              style={{ 
-                background: themeTokens.gradients.energetic,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
-              }}
+              className="text-3xl font-black tracking-tight drop-shadow-lg bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 bg-clip-text text-transparent"
             >
               DROP-IN
             </span>
@@ -75,10 +63,7 @@ const Header = () => {
             🔥 SIGN IN
           </Button>
           <Button 
-            className="font-bold text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
-            style={{ 
-              background: themeTokens.gradients.energetic
-            }}
+            className="font-bold text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500"
             size="sm"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-lg" />

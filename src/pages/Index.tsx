@@ -59,11 +59,10 @@ const Index = () => {
           filter: 'blur(10px)'
         }} />
         
-        {/* Moroccan zellige pattern overlay */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url('/src/assets/stickers-zellige-marocain-sans-soudure.jpg.jpg')`,
-          backgroundSize: '100px 100px',
-          backgroundRepeat: 'repeat'
+        {/* Moroccan pattern overlay */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `repeating-linear-gradient(45deg, #FF6B35 0px, #FF6B35 2px, transparent 2px, transparent 20px)`,
+          backgroundSize: '20px 20px'
         }} />
         
         {/* Comic-style action lines */}
