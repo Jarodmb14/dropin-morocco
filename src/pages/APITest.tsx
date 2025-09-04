@@ -152,7 +152,7 @@ const APITest = () => {
               </Button>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button 
                 onClick={() => runSpecificTest('clubs')}
                 disabled={isRunning}
@@ -160,8 +160,6 @@ const APITest = () => {
               >
                 🏢 Test Clubs
               </Button>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button 
                 onClick={() => runSpecificTest('auth')}
                 disabled={isRunning}
@@ -183,6 +181,9 @@ const APITest = () => {
               >
                 📱 Test QR Codes
               </Button>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button 
                 onClick={() => runSpecificTest('admin')}
                 disabled={isRunning}
