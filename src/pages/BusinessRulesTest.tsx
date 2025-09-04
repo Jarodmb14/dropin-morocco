@@ -283,6 +283,24 @@ const BusinessRulesTest = () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       console.log('Current user:', user?.id || 'No user');
 
+      // If no user is authenticated, try to get an existing user from profiles table
+      let ownerId = user?.id;
+      
+      if (!ownerId) {
+        console.log('No authenticated user, looking for existing profile...');
+        const { data: existingProfiles } = await supabase
+          .from('profiles')
+          .select('id')
+          .limit(1);
+        
+        if (existingProfiles && existingProfiles.length > 0) {
+          ownerId = existingProfiles[0].id;
+          console.log('Using existing profile as owner:', ownerId);
+        } else {
+          throw new Error('No authenticated user and no existing profiles found. Please log in or create a user first.');
+        }
+      }
+
       const testVenue = {
         name: 'Test Fitness Center Auto Pricing',
         tier: 'PREMIUM' as const,
@@ -290,7 +308,7 @@ const BusinessRulesTest = () => {
         address: 'Test Address for Auto Pricing',
         amenities: ['cardio', 'weights'],
         is_active: true,
-        owner_id: user?.id || '00000000-0000-0000-0000-000000000000', // Use a default UUID if no user
+        owner_id: ownerId,
       };
 
       console.log('Attempting to insert test venue:', testVenue);
@@ -490,6 +508,109 @@ const BusinessRulesTest = () => {
     }
   };
 
+  // Test 7: Test Business Logic Only (no database required)
+  const testBusinessLogicOnly = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Testing business logic without database...');
+
+      const allTests = [];
+
+      // Test automatic pricing for all tiers
+      const pricingTests = [
+        { tier: 'BASIC', monthlyPrice: 300, expected: 50 },
+        { tier: 'STANDARD', monthlyPrice: 500, expected: 50 },
+        { tier: 'PREMIUM', monthlyPrice: 700, expected: 120 },
+        { tier: 'ULTRA_LUXE', monthlyPrice: 1200, expected: 350 },
+        // Test monthly price fallback
+        { tier: 'PREMIUM', monthlyPrice: 300, expected: 50 }, // < 400
+        { tier: 'PREMIUM', monthlyPrice: 600, expected: 120 }, // 400-800
+        { tier: 'PREMIUM', monthlyPrice: 1000, expected: 350 }, // > 800
+      ];
+
+      for (const test of pricingTests) {
+        const calculated = BusinessRules.calculateBlanePricing(test.tier as any, test.monthlyPrice);
+        allTests.push({
+          type: 'Pricing',
+          tier: test.tier,
+          monthlyPrice: test.monthlyPrice,
+          calculated,
+          expected: test.expected,
+          passed: calculated === test.expected
+        });
+      }
+
+      // Test commission calculations
+      const commissionTests = [50, 120, 350, 1000, 2500];
+      for (const amount of commissionTests) {
+        const commission = BusinessRules.calculateCommission(amount);
+        const expected = Math.round(amount * 0.25);
+        allTests.push({
+          type: 'Commission',
+          amount,
+          commission,
+          expected,
+          partnerAmount: amount - commission,
+          passed: commission === expected
+        });
+      }
+
+      // Test validity periods
+      const validityTests = [
+        { type: 'SINGLE', expectedDays: 1 },
+        { type: 'PACK5', expectedDays: 90 },
+        { type: 'PACK10', expectedDays: 90 },
+        { type: 'PASS_STANDARD', expectedDays: 30 },
+        { type: 'PASS_PREMIUM', expectedDays: 30 },
+      ];
+
+      for (const test of validityTests) {
+        const validity = BusinessRules.getProductValidityPeriod(test.type as any);
+        allTests.push({
+          type: 'Validity',
+          productType: test.type,
+          durationDays: validity.durationDays,
+          expected: test.expectedDays,
+          validTo: validity.validTo,
+          passed: validity.durationDays === test.expectedDays
+        });
+      }
+
+      const allPassed = allTests.every(test => test.passed);
+      const passedCount = allTests.filter(test => test.passed).length;
+
+      addResult({
+        test: 'Business Logic Only (No Database)',
+        success: allPassed,
+        message: allPassed 
+          ? `✅ All ${allTests.length} business logic tests passed`
+          : `❌ ${passedCount}/${allTests.length} tests passed`,
+        data: {
+          totalTests: allTests.length,
+          passedTests: passedCount,
+          failedTests: allTests.length - passedCount,
+          testResults: allTests,
+          categories: {
+            pricing: allTests.filter(t => t.type === 'Pricing').length,
+            commission: allTests.filter(t => t.type === 'Commission').length,
+            validity: allTests.filter(t => t.type === 'Validity').length,
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('Business logic test error:', error);
+      addResult({
+        test: 'Business Logic Only',
+        success: false,
+        message: '❌ Test failed',
+        error: error instanceof Error ? error.message : JSON.stringify(error)
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Run all tests
   const runAllTests = async () => {
     clearResults();
@@ -529,6 +650,9 @@ const BusinessRulesTest = () => {
         </Button>
         <Button onClick={testDatabaseTriggers} disabled={isLoading} className="h-12">
           ⚙️ Test DB Triggers
+        </Button>
+        <Button onClick={testBusinessLogicOnly} disabled={isLoading} className="h-12">
+          🧮 Test Logic Only
         </Button>
         <Button onClick={runAllTests} disabled={isLoading} className="h-12 bg-gradient-to-r from-blue-600 to-purple-600">
           🚀 Run All Tests
