@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { BusinessRules } from './business-rules';
 
 type OrderStatus = Database['public']['Enums']['order_status'];
 type OrderRow = Database['public']['Tables']['orders']['Row'];
@@ -32,23 +33,33 @@ export interface OrderSummary {
 
 export class OrdersAPI {
   /**
-   * Create new order
+   * Create new order (Business Rule 3.1: Create as PENDING)
    */
   static async createOrder(orderData: CreateOrderData[]): Promise<Order> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Authentication required');
 
-      // Calculate order total
-      const summary = await this.calculateOrderSummary(orderData);
+      // Business Rule 1.1: Only authenticated users can purchase
+      const canPurchase = await BusinessRules.canUserPurchase(user.id);
+      if (!canPurchase) throw new Error('User not authorized to purchase');
 
-      // Create order
+      // Calculate order total with business rules
+      const summary = await this.calculateOrderSummary(orderData);
+      const commission = BusinessRules.calculateCommission(summary.total);
+      const netPartnerAmount = summary.total - commission;
+
+      // Business Rule 3.1: Create order with PENDING status
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
           user_id: user.id,
           total_amount: summary.total,
           status: 'PENDING',
+          // Business Rule 4.2: Store commission breakdown
+          gross_amount: summary.total,
+          commission_amount: commission,
+          net_partner_amount: netPartnerAmount,
         })
         .select('*')
         .single();
