@@ -48,7 +48,7 @@ const Hero = () => {
               variant="hero" 
               size="lg" 
               className="text-lg px-8 py-6"
-              onClick={() => navigate('/venues')}
+              onClick={() => window.location.href = '/venues'}
             >
               🚀 Browse Venues Now
             </Button>

@@ -8,6 +8,9 @@ import NotFound from "./pages/NotFound";
 import APITestSimple from "./pages/APITestSimple";
 import BusinessRulesTest from "./pages/BusinessRulesTest";
 import VenueBrowsing from "./pages/VenueBrowsing";
+import VenueBrowsingSimple from "./pages/VenueBrowsingSimple";
+import VenueMap from "./pages/VenueMap";
+import TestPage from "./pages/TestPage";
 import BookingFlow from "./pages/BookingFlow";
 
 const queryClient = new QueryClient();
@@ -22,7 +25,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/api-test" element={<APITestSimple />} />
           <Route path="/business-rules-test" element={<BusinessRulesTest />} />
-          <Route path="/venues" element={<VenueBrowsing />} />
+          <Route path="/venues" element={<VenueMap />} />
           <Route path="/booking/:venueId" element={<BookingFlow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
