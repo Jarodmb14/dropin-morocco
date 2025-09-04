@@ -265,7 +265,7 @@ const VenueBrowsing = () => {
                     <SelectItem value="">All prices</SelectItem>
                     <SelectItem value="budget">Budget (≤50 DHS)</SelectItem>
                     <SelectItem value="standard">Standard (51-120 DHS)</SelectItem>
-                    <SelectItem value="premium">Premium (>120 DHS)</SelectItem>
+                    <SelectItem value="premium">Premium (120+ DHS)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
