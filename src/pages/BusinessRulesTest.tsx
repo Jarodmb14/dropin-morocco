@@ -519,7 +519,7 @@ const BusinessRulesTest = () => {
       // Test automatic pricing for all tiers
       const pricingTests = [
         { tier: 'BASIC', monthlyPrice: 300, expected: 50 },
-        { tier: 'STANDARD', monthlyPrice: 500, expected: 50 },
+        { tier: 'STANDARD', monthlyPrice: 500, expected: 120 }, // 500 is in 400-800 range = 120 DHS
         { tier: 'PREMIUM', monthlyPrice: 700, expected: 120 },
         { tier: 'ULTRA_LUXE', monthlyPrice: 1200, expected: 350 },
         // Test monthly price fallback
