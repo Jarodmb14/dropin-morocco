@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Wind, Leaf } from "lucide-react";
+import { themeTokens, getStandingColors } from "@/lib/theme/tokens";
 
 const PricingSection = () => {
   const tiers = [
@@ -9,7 +10,8 @@ const PricingSection = () => {
       name: "Humble Beginnings",
       price: "50",
       description: "Gentle spaces for new journeys",
-      features: ["🏃 Simple facilities", "🌿 Essential equipment", "💫 Caring guidance", "📍 Local sanctuaries"]
+      features: ["🏃 Simple facilities", "🌿 Essential equipment", "💫 Caring guidance", "📍 Local sanctuaries"],
+      tier: "standard"
     },
     {
       emoji: "🌸",
@@ -17,21 +19,24 @@ const PricingSection = () => {
       price: "120",
       description: "Enhanced wellness experiences",
       features: ["✨ All Humble features", "🔥 Premium equipment", "👥 Community circles", "⭐ Priority care", "📍 More sanctuaries"],
-      popular: true
+      popular: true,
+      tier: "standard"
     },
     {
       emoji: "🌺",
       name: "Flourishing Spirit",
       price: "350", 
       description: "Luxury wellness sanctuaries",
-      features: ["✨ All Blossoming features", "💆 Spa treatments", "👨‍💼 Personal guides", "🛁 Hammam access", "🏆 Premium havens"]
+      features: ["✨ All Blossoming features", "💆 Spa treatments", "👨‍💼 Personal guides", "🛁 Hammam access", "🏆 Premium havens"],
+      tier: "premium"
     },
     {
       emoji: "🌟",
       name: "Transcendent",
       price: "350",
       description: "Ultra-luxury wellness retreats",
-      features: ["✨ All Flourishing features", "🏖️ Exclusive retreats", "🤵 Personal concierge", "♾️ Boundless access", "⭐⭐⭐⭐⭐ Celestial experiences"]
+      features: ["✨ All Flourishing features", "🏖️ Exclusive retreats", "🤵 Personal concierge", "♾️ Boundless access", "⭐⭐⭐⭐⭐ Celestial experiences"],
+      tier: "luxury"
     }
   ];
 
@@ -67,15 +72,15 @@ const PricingSection = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      {/* Magical background elements */}
+    <section className="py-24 relative overflow-hidden" style={{ backgroundColor: themeTokens.base.dustyPink }}>
+      {/* Sophisticated background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-32 right-16 w-32 h-32 bg-gradient-to-br from-rose-200/20 to-pink-200/20 rounded-full blur-2xl animate-pulse delay-500" />
-        <div className="absolute bottom-32 left-16 w-24 h-24 bg-gradient-to-br from-amber-200/20 to-orange-200/20 rounded-full blur-2xl animate-pulse delay-1500" />
+        <div className="absolute top-32 right-16 w-32 h-32 rounded-full blur-2xl animate-pulse delay-500 opacity-20" style={{ backgroundColor: themeTokens.standing.luxury.bg }} />
+        <div className="absolute bottom-32 left-16 w-24 h-24 rounded-full blur-2xl animate-pulse delay-1500 opacity-20" style={{ backgroundColor: themeTokens.standing.premium.bg }} />
         
         {/* Subtle pattern overlay */}
         <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 0C6.716 0 0 6.716 0 15s6.716 15 15 15 15-6.716 15-15S23.284 0 15 0z' fill='%2310b981' fill-opacity='0.1'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 0C6.716 0 0 6.716 0 15s6.716 15 15 15 15-6.716 15-15S23.284 0 15 0z' fill='%236BAA75' fill-opacity='0.1'/%3E%3C/svg%3E")`,
           backgroundSize: '15px 15px'
         }} />
       </div>
@@ -156,46 +161,71 @@ const PricingSection = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tiers.map((tier, index) => (
-            <Card key={index} className={`bg-white/80 backdrop-blur-sm border-0 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 relative overflow-hidden ${tier.popular ? 'ring-2 ring-amber-400 shadow-lg' : 'shadow-lg'}`}>
-              {tier.popular && (
-                <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-center text-sm font-semibold py-3">
-                  <div className="flex items-center justify-center gap-1">
-                    <Sparkles className="w-4 h-4" />
-                    Most Cherished
+          {tiers.map((tier, index) => {
+            const tierColors = getStandingColors(tier.tier as 'standard' | 'premium' | 'luxury');
+            
+            return (
+              <Card 
+                key={index} 
+                className={`bg-white/80 backdrop-blur-sm border-0 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 relative overflow-hidden ${tier.popular ? 'shadow-lg' : 'shadow-lg'}`}
+                style={{
+                  boxShadow: tier.popular 
+                    ? `0 0 0 2px ${tierColors.bg}, 0 10px 25px -5px ${tierColors.bg}40`
+                    : `0 10px 25px -5px ${tierColors.bg}20`
+                }}
+              >
+                {tier.popular && (
+                  <div 
+                    className="text-white text-center text-sm font-semibold py-3"
+                    style={{ backgroundColor: tierColors.bg }}
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <Sparkles className="w-4 h-4" />
+                      Most Cherished
+                    </div>
                   </div>
-                </div>
-              )}
-              
-              {/* Subtle gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-50/20 to-orange-50/20 rounded-2xl" />
-              
-              <CardHeader className="text-center relative">
-                <div className="text-5xl mb-4 relative">
-                  {tier.emoji}
-                  <div className="absolute -top-1 -right-1">
-                    <Wind className="w-4 h-4 text-amber-400 animate-pulse" />
+                )}
+                
+                {/* Tier-specific gradient overlay */}
+                <div 
+                  className="absolute inset-0 rounded-2xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${tierColors.accent} 0%, ${tierColors.bg}10 100%)`
+                  }}
+                />
+                
+                <CardHeader className="text-center relative">
+                  <div className="text-5xl mb-4 relative">
+                    {tier.emoji}
+                    <div className="absolute -top-1 -right-1">
+                      <Wind className="w-4 h-4 animate-pulse" style={{ color: tierColors.bg }} />
+                    </div>
                   </div>
-                </div>
-                <CardTitle className="text-lg font-bold text-stone-800">{tier.name}</CardTitle>
-                <div className="flex items-center justify-center mt-3">
-                  <span className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">{tier.price}</span>
-                  <span className="text-stone-500 ml-1 font-medium">DH</span>
-                </div>
-                <p className="text-sm text-stone-600 mt-2 leading-relaxed">{tier.description}</p>
-              </CardHeader>
-              <CardContent className="relative">
-                <ul className="space-y-3">
-                  {tier.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start text-sm text-stone-600">
-                      <span className="mr-3 flex-shrink-0 text-base">{feature.split(' ')[0]}</span>
-                      <span className="leading-relaxed">{feature.split(' ').slice(1).join(' ')}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
+                  <CardTitle className="text-lg font-bold text-stone-800">{tier.name}</CardTitle>
+                  <div className="flex items-center justify-center mt-3">
+                    <span 
+                      className="text-3xl font-bold"
+                      style={{ color: tierColors.bg }}
+                    >
+                      {tier.price}
+                    </span>
+                    <span className="text-stone-500 ml-1 font-medium">DH</span>
+                  </div>
+                  <p className="text-sm text-stone-600 mt-2 leading-relaxed">{tier.description}</p>
+                </CardHeader>
+                <CardContent className="relative">
+                  <ul className="space-y-3">
+                    {tier.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start text-sm text-stone-600">
+                        <span className="mr-3 flex-shrink-0 text-base">{feature.split(' ')[0]}</span>
+                        <span className="leading-relaxed">{feature.split(' ').slice(1).join(' ')}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>

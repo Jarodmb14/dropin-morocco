@@ -1,44 +1,57 @@
-// Theme tokens for Drop-In Morocco wellness app
-// Sophisticated color system with dusty pink base and tier-specific colors
+// Theme tokens for Drop-In Morocco - Comic/Manga Sport Theme
+// Vibrant, energetic colors with Moroccan cultural elements
 
 export const themeTokens = {
-  // Base colors
+  // Base colors - Comic/Manga inspired
   base: {
-    dustyPink: '#E3BFC0',
+    primary: '#FF6B35', // Energetic Orange
+    secondary: '#004E89', // Bold Blue 
+    accent: '#FFD23F', // Dynamic Yellow
     white: '#FFFFFF',
-    black: '#000000',
+    black: '#1A1A1A',
+    background: '#F8F9FA', // Clean comic background
   },
 
-  // Standing levels with Moroccan-inspired names
+  // Standing levels with Sport/Comic names
   standing: {
-    // Standard level - Palm Green (representing oasis and nature)
-    standard: {
-      bg: '#6BAA75',
+    // Rookie level - Fresh Energy Green
+    rookie: {
+      bg: '#00C851', // Bright green
       text: '#FFFFFF',
-      border: '#5A9664',
-      light: '#8BC297',
-      dark: '#4F8A5A',
-      accent: '#E8F5EA',
+      border: '#00A041',
+      light: '#4DD882',
+      dark: '#00952F',
+      accent: '#E8F8F0',
     },
 
-    // Premium level - Majorelle Blue (inspired by Majorelle Garden, Marrakech)
-    premium: {
-      bg: '#2A5C8D',
+    // Pro level - Electric Blue (Moroccan Atlas inspiration)
+    pro: {
+      bg: '#007BFF', // Electric blue
       text: '#FFFFFF', 
-      border: '#1E4A6F',
-      light: '#3A6FA5',
-      dark: '#1A4058',
-      accent: '#E3EBF3',
+      border: '#0056B3',
+      light: '#40A9FF',
+      dark: '#004085',
+      accent: '#E3F2FF',
     },
 
-    // Luxury level - Terracotta Coral with Gold accents (Moroccan sunset & luxury)
-    luxury: {
-      bg: '#E28B6B',
+    // Champion level - Power Purple (Royal Moroccan)
+    champion: {
+      bg: '#6F42C1', // Royal purple
       text: '#FFFFFF',
-      border: '#D67451',
-      light: '#E9A485',
-      dark: '#C7703E',
-      accent: '#FDF4F1',
+      border: '#59359A',
+      light: '#8E6ED7',
+      dark: '#4A2C85',
+      accent: '#F4F0FF',
+    },
+
+    // Legend level - Fire Red with Gold (Moroccan flag inspiration)
+    legend: {
+      bg: '#DC3545', // Bold red
+      text: '#FFFFFF',
+      border: '#C82333',
+      light: '#E66473',
+      dark: '#A71E2A',
+      accent: '#FFF0F1',
       gold: '#FFD700',
       goldDark: '#E6C200',
     },
@@ -90,14 +103,15 @@ export const themeTokens = {
     },
   },
 
-  // Gradients for magical effects
+  // Gradients for comic/manga effects
   gradients: {
-    dustyPink: 'linear-gradient(135deg, #E3BFC0 0%, #D4A5A7 100%)',
-    standard: 'linear-gradient(135deg, #6BAA75 0%, #5A9664 100%)',
-    premium: 'linear-gradient(135deg, #2A5C8D 0%, #1E4A6F 100%)',
-    luxury: 'linear-gradient(135deg, #E28B6B 0%, #C7703E 100%)',
-    luxuryGold: 'linear-gradient(135deg, #E28B6B 0%, #FFD700 50%, #C7703E 100%)',
-    magical: 'linear-gradient(135deg, #E3BFC0 0%, #6BAA75 50%, #2A5C8D 100%)',
+    primary: 'linear-gradient(135deg, #FF6B35 0%, #FF8A65 100%)',
+    rookie: 'linear-gradient(135deg, #00C851 0%, #4DD882 100%)',
+    pro: 'linear-gradient(135deg, #007BFF 0%, #40A9FF 100%)',
+    champion: 'linear-gradient(135deg, #6F42C1 0%, #8E6ED7 100%)',
+    legend: 'linear-gradient(135deg, #DC3545 0%, #FFD700 50%, #DC3545 100%)',
+    energetic: 'linear-gradient(135deg, #FF6B35 0%, #007BFF 50%, #6F42C1 100%)',
+    moroccan: 'linear-gradient(135deg, #DC3545 0%, #FFD700 100%)', // Flag colors
   },
 
   // Shadow system
@@ -140,16 +154,16 @@ export const themeTokens = {
 } as const;
 
 // Helper functions for easy access
-export const getStandingColors = (tier: 'standard' | 'premium' | 'luxury') => {
+export const getStandingColors = (tier: 'rookie' | 'pro' | 'champion' | 'legend') => {
   return themeTokens.standing[tier];
 };
 
-export const getStandingGradient = (tier: 'standard' | 'premium' | 'luxury') => {
+export const getStandingGradient = (tier: 'rookie' | 'pro' | 'champion' | 'legend') => {
   return themeTokens.gradients[tier];
 };
 
 // Type definitions
-export type StandingTier = 'standard' | 'premium' | 'luxury';
+export type StandingTier = 'rookie' | 'pro' | 'champion' | 'legend';
 export type ColorVariant = 'bg' | 'text' | 'border' | 'light' | 'dark' | 'accent';
 
 // CSS custom properties for use in components

@@ -43,17 +43,33 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#E3BFC0' }}>
-      {/* Sophisticated floating elements */}
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#F8F9FA' }}>
+      {/* Comic-style energy bursts */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse opacity-20" style={{ backgroundColor: '#6BAA75' }} />
-        <div className="absolute top-40 right-20 w-24 h-24 rounded-full blur-2xl animate-pulse delay-1000 opacity-20" style={{ backgroundColor: '#2A5C8D' }} />
-        <div className="absolute bottom-32 left-1/4 w-20 h-20 rounded-full blur-2xl animate-pulse delay-2000 opacity-20" style={{ backgroundColor: '#E28B6B' }} />
+        <div className="absolute top-20 left-10 w-40 h-40 rounded-full animate-pulse opacity-30" style={{ 
+          background: 'radial-gradient(circle, #FF6B35 0%, transparent 70%)',
+          filter: 'blur(20px)'
+        }} />
+        <div className="absolute top-40 right-20 w-32 h-32 rounded-full animate-pulse delay-1000 opacity-30" style={{ 
+          background: 'radial-gradient(circle, #007BFF 0%, transparent 70%)',
+          filter: 'blur(15px)'
+        }} />
+        <div className="absolute bottom-32 left-1/4 w-24 h-24 rounded-full animate-pulse delay-2000 opacity-30" style={{ 
+          background: 'radial-gradient(circle, #6F42C1 0%, transparent 70%)',
+          filter: 'blur(10px)'
+        }} />
         
-        {/* Subtle Moroccan geometric pattern */}
+        {/* Moroccan zellige pattern overlay */}
         <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236BAA75' fill-opacity='0.15'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          backgroundSize: '30px 30px'
+          backgroundImage: `url('/src/assets/stickers-zellige-marocain-sans-soudure.jpg.jpg')`,
+          backgroundSize: '100px 100px',
+          backgroundRepeat: 'repeat'
+        }} />
+        
+        {/* Comic-style action lines */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 2px, #FF6B35 2px, #FF6B35 4px)`,
+          backgroundSize: '20px 20px'
         }} />
       </div>
 

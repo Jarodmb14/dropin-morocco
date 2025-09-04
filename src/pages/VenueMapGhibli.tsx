@@ -488,107 +488,167 @@ const VenueMapGhibli = () => {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {venues.map((venue) => (
-                <Card 
-                  key={venue.id} 
-                  className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden bg-white/90 backdrop-blur-sm relative"
-                  onClick={() => setSelectedVenue(venue)}
-                >
-                  {/* Subtle magic shimmer */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-amber-100/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <div className="relative">
-                    <div className="aspect-video bg-gradient-to-br from-stone-200 via-amber-100 to-orange-200 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10"></div>
-                      
-                      {/* Floating tier badge */}
-                      <div className="absolute top-4 left-4 z-20">
-                        <Badge className={`bg-gradient-to-r ${getTierStyle(venue.tier)} border-0 shadow-lg rounded-full px-3 py-1`}>
-                          {venue.tier.replace('_', ' ').toLowerCase()}
-                        </Badge>
-                      </div>
-                      
-                      {/* Dreamy price display */}
-                      <div className="absolute top-4 right-4 z-20">
-                        <div className="bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-white/50">
-                          <div className="text-lg font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                            {getBlanePricing(venue)} DH
-                          </div>
+              {venues.map((venue) => {
+                const tierColors = getTierColors(venue.tier);
+                const tierName = getTierName(venue.tier);
+                
+                return (
+                  <Card 
+                    key={venue.id} 
+                    className="group border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden bg-white/90 backdrop-blur-sm relative"
+                    onClick={() => setSelectedVenue(venue)}
+                    style={{ 
+                      boxShadow: `0 10px 25px -5px ${tierColors.bg}40, 0 4px 6px -4px ${tierColors.bg}20`
+                    }}
+                  >
+                    {/* Tier-specific shimmer */}
+                    <div 
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" 
+                      style={{
+                        background: `linear-gradient(135deg, ${tierColors.accent} 0%, ${tierColors.bg}10 100%)`
+                      }}
+                    />
+                    
+                    <div className="relative">
+                      <div 
+                        className="aspect-video relative overflow-hidden"
+                        style={{
+                          background: `linear-gradient(135deg, ${tierColors.accent} 0%, ${tierColors.light}30 100%)`
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10"></div>
+                        
+                        {/* Tier badge with specific colors */}
+                        <div className="absolute top-4 left-4 z-20">
+                          <Badge 
+                            className="border-0 shadow-lg rounded-full px-4 py-2 text-white font-semibold"
+                            style={{ 
+                              backgroundColor: tierColors.bg,
+                              color: tierColors.text
+                            }}
+                          >
+                            {tierName}
+                          </Badge>
                         </div>
-                      </div>
-                      
-                      {/* Distance with gentle styling */}
-                      {venue.distance && (
-                        <div className="absolute bottom-4 left-4 z-20">
-                          <div className="bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg border border-white/50">
-                            <div className="text-sm font-semibold text-stone-700 flex items-center gap-1">
-                              <Wind className="w-3 h-3" />
-                              {venue.distance} km away
+                        
+                        {/* Price display with tier accent */}
+                        <div className="absolute top-4 right-4 z-20">
+                          <div className="bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border-2" style={{ borderColor: tierColors.border }}>
+                            <div 
+                              className="text-lg font-bold"
+                              style={{ color: tierColors.bg }}
+                            >
+                              {getBlanePricing(venue)} DH
                             </div>
                           </div>
                         </div>
-                      )}
-                      
-                      {/* Peaceful illustration placeholder */}
-                      <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-30">
-                        🌸
+                        
+                        {/* Distance with tier styling */}
+                        {venue.distance && (
+                          <div className="absolute bottom-4 left-4 z-20">
+                            <div 
+                              className="backdrop-blur-sm rounded-full px-3 py-1 shadow-lg border text-white"
+                              style={{ 
+                                backgroundColor: `${tierColors.bg}95`,
+                                borderColor: tierColors.light
+                              }}
+                            >
+                              <div className="text-sm font-semibold flex items-center gap-1">
+                                <Wind className="w-3 h-3" />
+                                {venue.distance} km away
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Tier-specific illustration */}
+                        <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-30">
+                          {venue.tier === 'ULTRA_LUXE' ? '🌟' : venue.tier === 'PREMIUM' ? '🌺' : '🌸'}
+                        </div>
                       </div>
                     </div>
-                  </div>
                   
-                  <CardContent className="p-6 space-y-4">
-                    <div>
-                      <h3 className="font-bold text-xl text-stone-800 group-hover:text-amber-600 transition-colors duration-300">
-                        {venue.name}
-                      </h3>
-                      <div className="flex items-center space-x-2 mt-2">
-                        <div className="flex items-center space-x-1">
-                          {getStars(venue.rating)}
+                    <CardContent className="p-6 space-y-4 relative">
+                      <div>
+                        <h3 
+                          className="font-bold text-xl text-stone-800 transition-colors duration-300"
+                          style={{
+                            color: venue === selectedVenue ? tierColors.bg : undefined
+                          }}
+                        >
+                          {venue.name}
+                        </h3>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <div className="flex items-center space-x-1">
+                            {getStars(venue.rating)}
+                          </div>
+                          <span className="text-sm text-stone-500">({venue.reviews} souls)</span>
                         </div>
-                        <span className="text-sm text-stone-500">({venue.reviews} souls)</span>
                       </div>
-                    </div>
 
-                    <p className="text-stone-600 text-sm leading-relaxed font-medium">
-                      {venue.description}
-                    </p>
+                      <p className="text-stone-600 text-sm leading-relaxed font-medium">
+                        {venue.description}
+                      </p>
 
-                    <div className="flex items-center text-stone-500 text-sm">
-                      <MapPin className="w-4 h-4 mr-2 text-amber-500" />
-                      {venue.address}
-                    </div>
+                      <div className="flex items-center text-stone-500 text-sm">
+                        <MapPin className="w-4 h-4 mr-2" style={{ color: tierColors.bg }} />
+                        {venue.address}
+                      </div>
 
-                    <div className="flex items-center text-stone-500 text-sm">
-                      <Clock className="w-4 h-4 mr-2 text-amber-500" />
-                      {venue.openHours}
-                    </div>
+                      <div className="flex items-center text-stone-500 text-sm">
+                        <Clock className="w-4 h-4 mr-2" style={{ color: tierColors.bg }} />
+                        {venue.openHours}
+                      </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      {venue.amenities.slice(0, 4).map((amenity) => (
-                        <div key={amenity} className="flex items-center space-x-1 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-full px-3 py-1">
-                          <span className="text-sm">{getAmenityIcon(amenity)}</span>
+                      <div className="flex flex-wrap gap-2">
+                        {venue.amenities.slice(0, 4).map((amenity) => (
+                          <div 
+                            key={amenity} 
+                            className="flex items-center space-x-1 rounded-full px-3 py-1 border"
+                            style={{
+                              backgroundColor: tierColors.accent,
+                              borderColor: tierColors.border
+                            }}
+                          >
+                            <span className="text-sm">{getAmenityIcon(amenity)}</span>
+                          </div>
+                        ))}
+                        {venue.amenities.length > 4 && (
+                          <div className="flex items-center bg-stone-100 rounded-full px-3 py-1">
+                            <span className="text-xs text-stone-600">+{venue.amenities.length - 4} more</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <Button 
+                        className="w-full text-white border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 py-3 font-medium relative overflow-hidden"
+                        style={{
+                          background: `linear-gradient(135deg, ${tierColors.bg} 0%, ${tierColors.dark} 100%)`,
+                          boxShadow: `0 4px 12px ${tierColors.bg}40`
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/booking/${venue.id}`);
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.02)';
+                          e.currentTarget.style.boxShadow = `0 8px 25px ${tierColors.bg}60`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.boxShadow = `0 4px 12px ${tierColors.bg}40`;
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl" />
+                        <div className="flex items-center justify-center gap-2">
+                          <Leaf className="w-5 h-5" />
+                          Begin Journey • {getBlanePricing(venue)} DH
                         </div>
-                      ))}
-                      {venue.amenities.length > 4 && (
-                        <div className="flex items-center bg-stone-100 rounded-full px-3 py-1">
-                          <span className="text-xs text-stone-600">+{venue.amenities.length - 4} more</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <Button 
-                      className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 py-3 font-medium relative overflow-hidden"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/booking/${venue.id}`);
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl" />
-                      Begin Journey • {getBlanePricing(venue)} DH
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         )}
