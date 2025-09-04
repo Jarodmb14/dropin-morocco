@@ -12,6 +12,8 @@ import VenueBrowsingSimple from "./pages/VenueBrowsingSimple";
 import VenueMap from "./pages/VenueMap";
 import VenueMapSimple from "./pages/VenueMapSimple";
 import VenueMapAirbnb from "./pages/VenueMapAirbnb";
+import VenueMapAirbnbSimple from "./pages/VenueMapAirbnbSimple";
+import VenueMapDual from "./pages/VenueMapDual";
 import TestPage from "./pages/TestPage";
 import BookingFlow from "./pages/BookingFlow";
 
@@ -27,7 +29,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/api-test" element={<APITestSimple />} />
           <Route path="/business-rules-test" element={<BusinessRulesTest />} />
-          <Route path="/venues" element={<VenueMapAirbnb />} />
+          <Route path="/venues" element={<VenueMapDual />} />
           <Route path="/booking/:venueId" element={<BookingFlow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
