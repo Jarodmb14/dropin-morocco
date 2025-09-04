@@ -43,16 +43,16 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 relative overflow-hidden">
-      {/* Ghibli-inspired floating patterns */}
+    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#E3BFC0' }}>
+      {/* Sophisticated floating elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-amber-200/20 to-orange-200/20 rounded-full blur-2xl animate-pulse" />
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-rose-200/20 to-pink-200/20 rounded-full blur-2xl animate-pulse delay-1000" />
-        <div className="absolute bottom-32 left-1/4 w-20 h-20 bg-gradient-to-br from-blue-200/20 to-sky-200/20 rounded-full blur-2xl animate-pulse delay-2000" />
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full blur-2xl animate-pulse opacity-20" style={{ backgroundColor: '#6BAA75' }} />
+        <div className="absolute top-40 right-20 w-24 h-24 rounded-full blur-2xl animate-pulse delay-1000 opacity-20" style={{ backgroundColor: '#2A5C8D' }} />
+        <div className="absolute bottom-32 left-1/4 w-20 h-20 rounded-full blur-2xl animate-pulse delay-2000 opacity-20" style={{ backgroundColor: '#E28B6B' }} />
         
         {/* Subtle Moroccan geometric pattern */}
         <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d97706' fill-opacity='0.1'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236BAA75' fill-opacity='0.15'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: '30px 30px'
         }} />
       </div>
