@@ -88,13 +88,19 @@ export class BusinessRules {
   // 2. VENUE & PRODUCT RULES
 
   /**
-   * 2.2 Calculate automatic Blane pricing based on venue tier
+   * 2.2 Calculate automatic Blane pricing based on monthly subscription price (primary) and venue tier (fallback)
    */
   static calculateBlanePricing(venueTier: ClubTier, monthlyPrice?: number): number {
-    // Primary logic: use venue tier
+    // Primary logic: use monthly price if provided
+    if (monthlyPrice) {
+      if (monthlyPrice < 400) return 50;   // Standard gyms or monthly < 400 DHS
+      if (monthlyPrice <= 800) return 120; // Premium gyms/hotels 4★ or monthly 400–800 DHS  
+      return 350;                          // Luxury gyms/hotels 5★ or monthly > 800 DHS
+    }
+    
+    // Fallback: use venue tier if no monthly price
     switch (venueTier) {
       case 'BASIC':
-        return 50; // Standard gyms
       case 'STANDARD':
         return 50; // Standard gyms
       case 'PREMIUM':
@@ -102,12 +108,6 @@ export class BusinessRules {
       case 'ULTRA_LUXE':
         return 350; // Luxury gyms/hotels 5★
       default:
-        // Fallback: use monthly price if provided
-        if (monthlyPrice) {
-          if (monthlyPrice < 400) return 50;
-          if (monthlyPrice <= 800) return 120;
-          return 350;
-        }
         return 50; // Default to standard
     }
   }
