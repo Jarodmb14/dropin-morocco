@@ -266,20 +266,40 @@ const BusinessRulesTest = () => {
     try {
       console.log('Testing venue creation with auto pricing...');
 
+      // First, check if we can access clubs table
+      const { data: existingClubs, error: readError } = await supabase
+        .from('clubs')
+        .select('id, name, tier, monthly_price, auto_blane_price')
+        .limit(1);
+
+      if (readError) {
+        console.error('Cannot read clubs table:', readError);
+        throw new Error(`Cannot access clubs table: ${readError.message}`);
+      }
+
+      console.log('Clubs table accessible, existing clubs:', existingClubs?.length || 0);
+
+      // Get current user to check permissions
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('Current user:', user?.id || 'No user');
+
       const testVenue = {
-        name: 'Test Fitness Center',
-        description: 'Test venue for business rules',
+        name: 'Test Fitness Center Auto Pricing',
+        description: 'Test venue for business rules validation',
         tier: 'PREMIUM',
         city: 'Casablanca',
-        address: 'Test Address',
+        address: 'Test Address for Auto Pricing',
         latitude: 33.5731,
         longitude: -7.5898,
         amenities: ['cardio', 'weights'],
-        contact_phone: '+212522000000',
-        contact_email: 'test@example.com',
+        contact_phone: '+212522999999',
+        contact_email: 'test-auto-pricing@example.com',
         is_active: true,
         monthly_price: 600, // Should result in 120 DHS Blane price
+        owner_id: user?.id, // Set owner to current user if available
       };
+
+      console.log('Attempting to insert test venue:', testVenue);
 
       const { data: venue, error } = await supabase
         .from('clubs')
@@ -287,10 +307,21 @@ const BusinessRulesTest = () => {
         .select('id, name, tier, monthly_price, auto_blane_price')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Insert error details:', error);
+        throw new Error(`Insert failed: ${error.message} (Code: ${error.code || 'unknown'})`);
+      }
+
+      console.log('Venue inserted successfully:', venue);
 
       const expectedPrice = BusinessRules.calculateBlanePricing('PREMIUM', 600);
       const priceCorrect = venue.auto_blane_price === expectedPrice;
+
+      console.log('Auto pricing check:', {
+        calculated: venue.auto_blane_price,
+        expected: expectedPrice,
+        correct: priceCorrect
+      });
 
       addResult({
         test: 'Venue Auto Pricing',
@@ -302,22 +333,118 @@ const BusinessRulesTest = () => {
           monthlyPrice: venue.monthly_price,
           autoBLanePrice: venue.auto_blane_price,
           expectedPrice,
-          priceCorrect
+          priceCorrect,
+          venueId: venue.id
         }
       });
 
       // Clean up test venue
-      await supabase
-        .from('clubs')
-        .delete()
-        .eq('id', venue.id);
+      try {
+        const { error: deleteError } = await supabase
+          .from('clubs')
+          .delete()
+          .eq('id', venue.id);
+        
+        if (deleteError) {
+          console.warn('Could not clean up test venue:', deleteError);
+        } else {
+          console.log('Test venue cleaned up successfully');
+        }
+      } catch (cleanupError) {
+        console.warn('Cleanup failed:', cleanupError);
+      }
 
     } catch (error) {
+      console.error('Venue auto pricing test error:', error);
       addResult({
         test: 'Venue Auto Pricing',
         success: false,
         message: '❌ Test failed',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : JSON.stringify(error)
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Test 6: Test Database Functions (without requiring write permissions)
+  const testDatabaseTriggers = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Testing database functions and triggers...');
+
+      // Test if the calculate_blane_pricing function exists
+      const { data: functionTest, error: functionError } = await supabase
+        .rpc('calculate_blane_pricing', { 
+          venue_tier: 'PREMIUM',
+          monthly_price: 600 
+        });
+
+      let functionExists = !functionError;
+      let calculatedPrice = null;
+
+      if (functionError) {
+        console.log('Function test error (expected if function not accessible via RPC):', functionError);
+        // This is expected - the function might not be exposed via RPC
+        functionExists = false;
+      } else {
+        calculatedPrice = functionTest;
+        console.log('Function returned:', calculatedPrice);
+      }
+
+      // Test if existing clubs have auto_blane_price calculated
+      const { data: existingClubs, error: clubsError } = await supabase
+        .from('clubs')
+        .select('name, tier, monthly_price, auto_blane_price')
+        .not('auto_blane_price', 'is', null)
+        .limit(5);
+
+      if (clubsError) {
+        throw new Error(`Cannot read clubs: ${clubsError.message}`);
+      }
+
+      // Check if any clubs have auto_blane_price set
+      const clubsWithAutoPricing = existingClubs?.filter(club => club.auto_blane_price !== null) || [];
+      
+      // Validate auto pricing on existing clubs
+      const pricingValidation = clubsWithAutoPricing.map(club => {
+        const expectedPrice = BusinessRules.calculateBlanePricing(club.tier as any, club.monthly_price);
+        return {
+          club: club.name,
+          tier: club.tier,
+          monthlyPrice: club.monthly_price,
+          autoBLanePrice: club.auto_blane_price,
+          expectedPrice,
+          isCorrect: club.auto_blane_price === expectedPrice
+        };
+      });
+
+      const allCorrect = pricingValidation.every(item => item.isCorrect);
+
+      addResult({
+        test: 'Database Triggers & Functions',
+        success: allCorrect && clubsWithAutoPricing.length > 0,
+        message: allCorrect && clubsWithAutoPricing.length > 0 
+          ? `✅ Auto pricing working on ${clubsWithAutoPricing.length} clubs` 
+          : clubsWithAutoPricing.length === 0
+            ? '⚠️ No clubs with auto pricing found'
+            : '❌ Some auto pricing calculations incorrect',
+        data: {
+          functionAccessible: functionExists,
+          calculatedPrice,
+          clubsWithAutoPricing: clubsWithAutoPricing.length,
+          totalClubs: existingClubs?.length || 0,
+          validationResults: pricingValidation
+        }
+      });
+
+    } catch (error) {
+      console.error('Database triggers test error:', error);
+      addResult({
+        test: 'Database Triggers & Functions',
+        success: false,
+        message: '❌ Test failed',
+        error: error instanceof Error ? error.message : JSON.stringify(error)
       });
     } finally {
       setIsLoading(false);
@@ -360,6 +487,9 @@ const BusinessRulesTest = () => {
         </Button>
         <Button onClick={testCreateVenueWithAutoPricing} disabled={isLoading} className="h-12">
           🏢 Test Venue Creation
+        </Button>
+        <Button onClick={testDatabaseTriggers} disabled={isLoading} className="h-12">
+          ⚙️ Test DB Triggers
         </Button>
         <Button onClick={runAllTests} disabled={isLoading} className="h-12 bg-gradient-to-r from-blue-600 to-purple-600">
           🚀 Run All Tests
