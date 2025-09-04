@@ -38,6 +38,12 @@ export class PaymentsAPI {
     if (typeof window === 'undefined') return null;
     
     try {
+      // Only load Stripe if we have a publishable key
+      if (!this.stripeConfig.publishableKey) {
+        console.warn('Stripe publishable key not found. Set REACT_APP_STRIPE_PUBLISHABLE_KEY environment variable.');
+        return null;
+      }
+      
       const { loadStripe } = await import('@stripe/stripe-js');
       return await loadStripe(this.stripeConfig.publishableKey);
     } catch (error) {
