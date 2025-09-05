@@ -45,5 +45,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>We use the camera to scan membership QR codes for quick access.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We use your location to find nearby gyms and experiences.</string>
 </dict>
 </plist>

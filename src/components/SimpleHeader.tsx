@@ -1,52 +1,105 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/ Logo.svg";
+
 const SimpleHeader = () => {
+  const { user, profile, signOut, isOwner, isCustomer } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
-    <header className="relative shadow-lg border-b-4 border-orange-500 overflow-hidden">
-      {/* Zellige Pattern Background */}
-      <div className="absolute inset-0" style={{
-        backgroundImage: `url('/src/assets/stickers-zellige-marocain-sans-soudure.jpg.jpg')`,
-        backgroundSize: '120px 120px',
-        backgroundRepeat: 'repeat',
-        opacity: 0.8
-      }} />
-      
-      {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-white/85 backdrop-blur-sm" />
-      
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between relative z-10">
-        {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 flex items-center justify-center">
-            <img 
-              src="/src/assets/logo.svg" 
-              alt="Drop-In Morocco Logo" 
-              className="w-10 h-10 object-contain filter drop-shadow-lg"
-            />
+    <header className="sticky top-0 z-50 shadow-sm border-b border-pink-200 rounded-t-2xl" style={{ backgroundColor: '#E3BFC0' }}>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        {/* Logo on the left - Bold comic style */}
+        <Link to="/" className="flex items-center">
+          <div className="flex items-center space-x-2">
+            <span className="text-4xl font-black text-yellow-400" style={{ 
+              textShadow: '3px 3px 0px #1e3a8a, 6px 6px 0px rgba(0,0,0,0.3)',
+              fontFamily: 'Arial Black, sans-serif',
+              letterSpacing: '2px'
+            }}>
+              DROP
+            </span>
+            <span className="text-3xl text-yellow-400" style={{ filter: 'drop-shadow(2px 2px 0px #1e3a8a)' }}>
+              🏋️
+            </span>
+            <span className="text-4xl font-black text-yellow-400" style={{ 
+              textShadow: '3px 3px 0px #1e3a8a, 6px 6px 0px rgba(0,0,0,0.3)',
+              fontFamily: 'Arial Black, sans-serif',
+              letterSpacing: '2px'
+            }}>
+              IN
+            </span>
           </div>
-          <div>
-            <h1 className="text-3xl font-black text-transparent bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 bg-clip-text">
-              DROP-IN
-            </h1>
-            <p className="text-red-600 font-bold text-sm">🇲🇦 MOROCCO FITNESS</p>
-          </div>
+        </Link>
+
+        {/* Right side - Dynamic content based on auth status */}
+        <div className="flex items-center space-x-4">
+          <Link 
+            to="/venues" 
+            className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
+            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+          >
+            Browse Gyms
+          </Link>
+          
+                           {user ? (
+                   // Authenticated user menu
+                   <>
+                     <Link 
+                       to="/profile" 
+                       className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
+                       style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                     >
+                       Profile
+                     </Link>
+                     {isOwner && (
+                       <Link 
+                         to="/owner" 
+                         className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
+                         style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                       >
+                         Dashboard
+                       </Link>
+                     )}
+                     <div className="flex items-center space-x-4">
+                       <span className="text-sm text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                         Hi, {profile?.full_name || user.email}
+                       </span>
+                       <button
+                         onClick={handleSignOut}
+                         className="bg-black text-white px-6 py-2 text-sm font-semibold hover:bg-gray-800 transition-all duration-200 uppercase tracking-wide"
+                         style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                       >
+                         Sign Out
+                       </button>
+                     </div>
+                   </>
+                 ) : (
+            // Guest user menu
+            <>
+              <Link 
+                to="/auth/login" 
+                className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Login
+              </Link>
+              <Link 
+                to="/auth/signup" 
+                className="text-white px-6 py-2 font-semibold text-sm hover:opacity-90 transition-all duration-200 uppercase tracking-wide"
+                style={{ 
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  backgroundColor: '#E3BFC0'
+                }}
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
-
-        {/* Navigation */}
-        <nav className="hidden md:flex space-x-6">
-          <button className="bg-orange-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-orange-600 transform hover:scale-105 transition-all">
-            💪 GYMS
-          </button>
-          <button className="bg-blue-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-600 transform hover:scale-105 transition-all">
-            🏃 ACTIVITIES
-          </button>
-          <button className="bg-purple-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-600 transform hover:scale-105 transition-all">
-            ⚡ HOW IT WORKS
-          </button>
-        </nav>
-
-        {/* CTA Button */}
-        <button className="bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 text-white px-8 py-3 rounded-lg font-bold hover:scale-105 transform transition-all shadow-lg">
-          🔥 LET'S GO!
-        </button>
       </div>
     </header>
   );

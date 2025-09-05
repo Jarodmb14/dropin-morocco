@@ -11,7 +11,7 @@ const PricingSection = () => {
       price: "50",
       description: "Gentle spaces for new journeys",
       features: ["🏃 Simple facilities", "🌿 Essential equipment", "💫 Caring guidance", "📍 Local sanctuaries"],
-      tier: "standard"
+      tier: "rookie"
     },
     {
       emoji: "🌸",
@@ -20,7 +20,7 @@ const PricingSection = () => {
       description: "Enhanced wellness experiences",
       features: ["✨ All Humble features", "🔥 Premium equipment", "👥 Community circles", "⭐ Priority care", "📍 More sanctuaries"],
       popular: true,
-      tier: "standard"
+      tier: "pro"
     },
     {
       emoji: "🌺",
@@ -28,7 +28,7 @@ const PricingSection = () => {
       price: "350", 
       description: "Luxury wellness sanctuaries",
       features: ["✨ All Blossoming features", "💆 Spa treatments", "👨‍💼 Personal guides", "🛁 Hammam access", "🏆 Premium havens"],
-      tier: "premium"
+      tier: "champion"
     },
     {
       emoji: "🌟",
@@ -36,7 +36,7 @@ const PricingSection = () => {
       price: "350",
       description: "Ultra-luxury wellness retreats",
       features: ["✨ All Flourishing features", "🏖️ Exclusive retreats", "🤵 Personal concierge", "♾️ Boundless access", "⭐⭐⭐⭐⭐ Celestial experiences"],
-      tier: "luxury"
+      tier: "legend"
     }
   ];
 
@@ -72,11 +72,11 @@ const PricingSection = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden" style={{ backgroundColor: themeTokens.base.dustyPink }}>
+    <section className="py-24 relative overflow-hidden" style={{ backgroundColor: themeTokens.base.background }}>
       {/* Sophisticated background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-32 right-16 w-32 h-32 rounded-full blur-2xl animate-pulse delay-500 opacity-20" style={{ backgroundColor: themeTokens.standing.luxury.bg }} />
-        <div className="absolute bottom-32 left-16 w-24 h-24 rounded-full blur-2xl animate-pulse delay-1500 opacity-20" style={{ backgroundColor: themeTokens.standing.premium.bg }} />
+        <div className="absolute top-32 right-16 w-32 h-32 rounded-full blur-2xl animate-pulse delay-500 opacity-20" style={{ backgroundColor: themeTokens.standing.legend.bg }} />
+        <div className="absolute bottom-32 left-16 w-24 h-24 rounded-full blur-2xl animate-pulse delay-1500 opacity-20" style={{ backgroundColor: themeTokens.standing.champion.bg }} />
         
         {/* Subtle pattern overlay */}
         <div className="absolute inset-0 opacity-5" style={{
@@ -162,7 +162,7 @@ const PricingSection = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {tiers.map((tier, index) => {
-            const tierColors = getStandingColors(tier.tier as 'standard' | 'premium' | 'luxury');
+            const tierColors = getStandingColors(tier.tier as 'rookie' | 'pro' | 'champion' | 'legend');
             
             return (
               <Card 

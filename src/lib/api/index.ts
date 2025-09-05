@@ -1,3 +1,13 @@
+// Import API classes
+import { AuthAPI } from './auth';
+import { ClubsAPI } from './clubs';
+import { ProductsAPI } from './products';
+import { OrdersAPI } from './orders';
+import { QRCodesAPI } from './qr-codes';
+import { PaymentsAPI } from './payments';
+import { AdminAPI } from './admin';
+import { LocationAPI } from './location';
+
 // Main API exports for Drop-In Morocco Backend
 export { AuthAPI } from './auth';
 export { ClubsAPI } from './clubs';
@@ -6,6 +16,7 @@ export { OrdersAPI } from './orders';
 export { QRCodesAPI } from './qr-codes';
 export { PaymentsAPI } from './payments';
 export { AdminAPI } from './admin';
+export { LocationAPI } from './location';
 
 // Re-export types
 export type { AuthUser } from './auth';
@@ -15,6 +26,7 @@ export type { Order, CreateOrderData, OrderSummary } from './orders';
 export type { QRCode, QRScanResult } from './qr-codes';
 export type { PaymentMethod, PaymentIntent } from './payments';
 export type { DashboardStats, AdminAction } from './admin';
+export type { ClubLocation, LocationSearchParams, BoundingBox } from './location';
 
 // API Client class for easier usage
 export class DropInAPI {
@@ -25,6 +37,7 @@ export class DropInAPI {
   static qrCodes = QRCodesAPI;
   static payments = PaymentsAPI;
   static admin = AdminAPI;
+  static location = LocationAPI;
 
   /**
    * Initialize the API client
@@ -161,6 +174,54 @@ export class DropInAPI {
     } catch (error) {
       console.error('Get admin dashboard error:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Location-based gym discovery flow
+   */
+  static async discoverNearbyGyms(
+    latitude: number,
+    longitude: number,
+    maxDistanceKm: number = 10,
+    tier?: string
+  ) {
+    try {
+      // 1. Get nearby clubs using LocationAPI
+      const nearbyClubs = await LocationAPI.getNearbyClubs(
+        latitude,
+        longitude,
+        maxDistanceKm
+      );
+
+      // 2. Filter by tier if specified
+      const filteredClubs = tier 
+        ? nearbyClubs.filter(club => club.tier === tier)
+        : nearbyClubs;
+
+      // 3. Get popular cities for suggestions
+      const popularCities = await LocationAPI.getPopularCities();
+
+      return {
+        success: true,
+        clubs: filteredClubs,
+        totalFound: filteredClubs.length,
+        popularCities: popularCities.slice(0, 5),
+        searchParams: {
+          latitude,
+          longitude,
+          maxDistanceKm,
+          tier: tier || 'all'
+        }
+      };
+    } catch (error) {
+      console.error('Discover nearby gyms error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Location search failed',
+        clubs: [],
+        totalFound: 0
+      };
     }
   }
 }

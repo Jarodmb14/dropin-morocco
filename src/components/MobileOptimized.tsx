@@ -1,25 +1,31 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { MapPin, Camera, QrCode, Smartphone, CheckCircle } from "lucide-react";
-import { useGeolocation } from "@/hooks/useGeolocation";
+import { useEnhancedGeolocation } from "@/hooks/useEnhancedGeolocation";
+import TouchOptimizedButton from "@/components/TouchOptimizedButton";
 import { Capacitor } from '@capacitor/core';
+import QRScanner from '@/components/QRScanner';
 
 const MobileOptimized = () => {
-  const { latitude, longitude, loading, error, getCurrentLocation } = useGeolocation();
-  const [showQRCode, setShowQRCode] = useState(false);
+  const { latitude, longitude, loading, error, getCurrentPosition, startWatching, stopWatching, isWatching } = useEnhancedGeolocation({ watch: false });
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const [qrResult, setQrResult] = useState<string | null>(null);
   
   // Detect if we're running in a native mobile app
   const isNativeApp = Capacitor.isNativePlatform();
   const platform = Capacitor.getPlatform();
 
   const handleFindNearbyGyms = () => {
-    getCurrentLocation();
+    getCurrentPosition().catch(() => {});
   };
 
-  const handleScanQR = () => {
-    // In a real implementation, this would use @capacitor/camera to scan QR codes
-    setShowQRCode(true);
+  const handleQRScanResult = (result: string) => {
+    setQrResult(result);
+    setShowQRScanner(false);
+    // Here you could process the QR code result
+    console.log('QR Code scanned:', result);
   };
 
   return (
@@ -63,13 +69,32 @@ const MobileOptimized = () => {
                 <p className="text-center text-red-600 text-sm">❌ {error}</p>
               )}
               
-              <Button 
-                onClick={handleFindNearbyGyms} 
-                className="w-full"
-                disabled={loading}
-              >
-                📍 Find Gyms Near Me
-              </Button>
+              <div className="grid grid-cols-2 gap-2">
+                <TouchOptimizedButton 
+                  onClick={handleFindNearbyGyms} 
+                  className="w-full"
+                  disabled={loading}
+                >
+                  📍 Locate Me
+                </TouchOptimizedButton>
+                {!isWatching ? (
+                  <TouchOptimizedButton 
+                    onClick={() => startWatching().catch(() => {})} 
+                    className="w-full"
+                    variant="outline"
+                  >
+                    ▶️ Live Track
+                  </TouchOptimizedButton>
+                ) : (
+                  <TouchOptimizedButton 
+                    onClick={() => stopWatching().catch(() => {})} 
+                    className="w-full"
+                    variant="destructive"
+                  >
+                    ⏹ Stop
+                  </TouchOptimizedButton>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -84,20 +109,34 @@ const MobileOptimized = () => {
                 Scan your membership QR code for instant gym entry
               </p>
               
-              {showQRCode && (
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                  <div className="text-6xl mb-2">📱</div>
-                  <p className="text-sm">QR Scanner would open here</p>
+              {qrResult && (
+                <div className="text-center p-4 bg-green-100 dark:bg-green-800 rounded-lg">
+                  <div className="text-2xl mb-2">✅</div>
+                  <p className="text-sm font-medium">QR Code Scanned!</p>
+                  <p className="text-xs text-muted-foreground mt-1 break-all">
+                    {qrResult.length > 50 ? `${qrResult.substring(0, 50)}...` : qrResult}
+                  </p>
                 </div>
               )}
               
-              <Button 
-                onClick={handleScanQR} 
-                className="w-full"
-                variant="outline"
-              >
-                {isNativeApp ? '📷 Open Camera Scanner' : '📷 Scan QR Code'}
-              </Button>
+              <Dialog open={showQRScanner} onOpenChange={setShowQRScanner}>
+                <DialogTrigger asChild>
+                  <TouchOptimizedButton 
+                    className="w-full h-12 text-base"
+                    variant="outline"
+                  >
+                    <Camera className="h-5 w-5 mr-2" />
+                    {isNativeApp ? 'Open Camera Scanner' : 'Scan QR Code'}
+                  </TouchOptimizedButton>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md p-0 border-0">
+                  <QRScanner 
+                    onScanResult={handleQRScanResult}
+                    onClose={() => setShowQRScanner(false)}
+                    title="Scan Membership QR"
+                  />
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
 

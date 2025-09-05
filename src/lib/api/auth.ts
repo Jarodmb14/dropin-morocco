@@ -61,6 +61,36 @@ export class AuthAPI {
   }
 
   /**
+   * Register user (alias for signUp)
+   */
+  static async register(userData: {
+    email: string;
+    password: string;
+    name?: string;
+    phone?: string;
+    role?: UserRole;
+  }) {
+    try {
+      const result = await this.signUp(userData.email, userData.password, {
+        full_name: userData.name,
+        phone: userData.phone,
+        role: userData.role,
+      });
+      
+      return {
+        success: true,
+        user: result.user,
+        session: result.session,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Registration failed',
+      };
+    }
+  }
+
+  /**
    * Sign in user
    */
   static async signIn(email: string, password: string) {
@@ -75,6 +105,25 @@ export class AuthAPI {
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Login user (alias for signIn)
+   */
+  static async login(email: string, password: string) {
+    try {
+      const result = await this.signIn(email, password);
+      return {
+        success: true,
+        user: result.user,
+        session: result.session,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Login failed',
+      };
     }
   }
 

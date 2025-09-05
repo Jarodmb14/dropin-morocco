@@ -27,8 +27,8 @@ export interface StripeConfig {
 
 export class PaymentsAPI {
   private static stripeConfig: StripeConfig = {
-    publishableKey: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || '',
-    secretKey: process.env.STRIPE_SECRET_KEY || '',
+    publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
+    secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY || '',
   };
 
   /**
@@ -40,7 +40,7 @@ export class PaymentsAPI {
     try {
       // Only load Stripe if we have a publishable key
       if (!this.stripeConfig.publishableKey) {
-        console.warn('Stripe publishable key not found. Set REACT_APP_STRIPE_PUBLISHABLE_KEY environment variable.');
+        console.warn('Stripe publishable key not found. Set VITE_STRIPE_PUBLISHABLE_KEY environment variable.');
         return null;
       }
       

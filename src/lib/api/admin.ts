@@ -52,14 +52,14 @@ export class AdminAPI {
         supabase.from('qr_codes').select('*', { count: 'exact', head: true }).eq('status', 'ACTIVE'),
       ]);
 
-      // Get total revenue
+      // Get total revenue (match schema: amount_total, paid_at)
       const { data: payments } = await supabase
         .from('payments')
-        .select('amount')
-        .eq('status', 'completed')
-        .gt('amount', 0);
+        .select('amount_total')
+        .not('paid_at', 'is', null)
+        .gt('amount_total', 0);
 
-      const totalRevenue = payments?.reduce((sum, p) => sum + p.amount, 0) || 0;
+      const totalRevenue = payments?.reduce((sum, p) => sum + (p as any).amount_total, 0) || 0;
 
       // Get monthly growth data
       const lastMonth = new Date();
@@ -76,13 +76,13 @@ export class AdminAPI {
           .gte('created_at', lastMonth.toISOString()),
         supabase
           .from('payments')
-          .select('amount')
-          .eq('status', 'completed')
-          .gt('amount', 0)
-          .gte('created_at', lastMonth.toISOString()),
+          .select('amount_total, paid_at')
+          .not('paid_at', 'is', null)
+          .gt('amount_total', 0)
+          .gte('paid_at', lastMonth.toISOString()),
       ]);
 
-      const lastMonthRevenueTotal = lastMonthRevenue.data?.reduce((sum, p) => sum + p.amount, 0) || 0;
+      const lastMonthRevenueTotal = lastMonthRevenue.data?.reduce((sum, p: any) => sum + p.amount_total, 0) || 0;
 
       return {
         totalUsers: usersCount.count || 0,
