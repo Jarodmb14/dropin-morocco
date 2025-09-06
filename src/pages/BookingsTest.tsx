@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { BookingsAPI, CreateBookingData, BookingWithDetails } from '@/lib/api/bookings';
 import { DropInAPI } from '@/lib/api';
+import { supabase } from '@/integrations/supabase/client';
 
 const BookingsTest: React.FC = () => {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
@@ -53,11 +54,18 @@ const BookingsTest: React.FC = () => {
   const loadBookings = async () => {
     setLoading(true);
     try {
-      // For testing, we'll get bookings for the first user if available
-      const bookingsData = await BookingsAPI.getUserBookings('test-user-id', 20);
-      setBookings(bookingsData);
+      // For testing, we'll get bookings for a valid UUID or skip if no user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const bookingsData = await BookingsAPI.getUserBookings(user.id, 20);
+        setBookings(bookingsData);
+      } else {
+        console.log('No authenticated user, skipping bookings load');
+        setBookings([]);
+      }
     } catch (error) {
       console.error('Error loading bookings:', error);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
@@ -69,9 +77,19 @@ const BookingsTest: React.FC = () => {
       return;
     }
 
+    // Check if user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      alert('Please log in to create bookings');
+      return;
+    }
+
     setLoading(true);
     try {
-      const newBooking = await BookingsAPI.createBooking(bookingForm);
+      const newBooking = await BookingsAPI.createBooking({
+        ...bookingForm,
+        user_id: user.id // Use authenticated user's ID
+      });
       if (newBooking) {
         alert('Booking created successfully!');
         setBookingForm({
@@ -91,7 +109,7 @@ const BookingsTest: React.FC = () => {
       }
     } catch (error) {
       console.error('Error creating booking:', error);
-      alert('Error creating booking');
+      alert('Error creating booking: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
