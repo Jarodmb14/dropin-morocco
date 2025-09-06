@@ -38,47 +38,71 @@ export class LocationAPI {
     maxDistanceKm: number = 10
   ): Promise<ClubLocation[]> {
     try {
-      // Fallback to regular clubs query if PostGIS functions don't exist
+      // Try to use PostGIS function first
       const { data, error } = await supabase
-        .from('clubs')
-        .select('*')
-        .eq('is_active', true);
+        .rpc('find_nearby_clubs', {
+          user_lat: latitude,
+          user_lng: longitude,
+          max_distance_km: maxDistanceKm
+        });
 
       if (error) {
-        console.error('Error fetching nearby clubs:', error);
-        throw error;
+        console.warn('PostGIS function not available, falling back to regular query:', error);
+        
+        // Fallback to regular clubs query
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('is_active', true);
+
+        if (fallbackError) {
+          console.error('Error fetching nearby clubs:', fallbackError);
+          throw fallbackError;
+        }
+
+        // Use client-side distance calculation with city coordinates
+        const mockCoordinates = {
+          'Casablanca': { lat: 33.5731, lng: -7.5898 },
+          'Rabat': { lat: 34.0209, lng: -6.8416 },
+          'Marrakech': { lat: 31.6295, lng: -8.0089 },
+          'Fez': { lat: 34.0331, lng: -5.0003 },
+          'Agadir': { lat: 30.4278, lng: -9.5981 },
+        };
+
+        return fallbackData.map((club: any) => {
+          const clubLat = club.latitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lat || 33.5731;
+          const clubLng = club.longitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lng || -7.5898;
+          const distance = this.calculateDistance(latitude, longitude, clubLat, clubLng);
+          
+          return {
+            id: club.id,
+            name: club.name,
+            address: club.address,
+            city: club.city,
+            tier: club.tier,
+            amenities: club.amenities,
+            monthly_price: club.monthly_price || 0,
+            distance_km: distance,
+            latitude: clubLat,
+            longitude: clubLng,
+          };
+        }).filter(club => club.distance_km <= maxDistanceKm)
+          .sort((a, b) => a.distance_km - b.distance_km);
       }
 
-      // Use mock coordinates for now since latitude/longitude columns don't exist
-      const mockCoordinates = {
-        'Casablanca': { lat: 33.5731, lng: -7.5898 },
-        'Rabat': { lat: 34.0209, lng: -6.8416 },
-        'Marrakech': { lat: 31.6295, lng: -8.0089 },
-        'Fez': { lat: 34.0331, lng: -5.0003 },
-        'Agadir': { lat: 30.4278, lng: -9.5981 },
-      };
-
-      return data.map((club: any) => {
-        const cityCoords = mockCoordinates[club.city as keyof typeof mockCoordinates] || { lat: 33.5731, lng: -7.5898 };
-        const distance = this.calculateDistance(
-          latitude, longitude,
-          cityCoords.lat, cityCoords.lng
-        );
-        
-        return {
-          id: club.id,
-          name: club.name,
-          address: club.address,
-          city: club.city,
-          tier: club.tier,
-          amenities: club.amenities,
-          monthly_price: club.monthly_price || 0,
-          distance_km: distance,
-          latitude: cityCoords.lat,
-          longitude: cityCoords.lng,
-        };
-      }).filter(club => club.distance_km <= maxDistanceKm)
-        .sort((a, b) => a.distance_km - b.distance_km);
+      // Return PostGIS results
+      return data.map((club: any) => ({
+        id: club.id,
+        name: club.name,
+        address: club.address,
+        city: club.city,
+        tier: club.tier,
+        amenities: club.amenities,
+        monthly_price: club.monthly_price || 0,
+        distance_km: club.distance_km,
+        latitude: club.latitude,
+        longitude: club.longitude,
+      }));
     } catch (error) {
       console.error('LocationAPI.getNearbyClubs error:', error);
       throw error;
@@ -94,50 +118,75 @@ export class LocationAPI {
     userLng?: number
   ): Promise<ClubLocation[]> {
     try {
-      // Fallback to regular clubs query
+      // Try to use PostGIS function first
       const { data, error } = await supabase
-        .from('clubs')
-        .select('*')
-        .eq('is_active', true)
-        .ilike('city', `%${city}%`);
+        .rpc('search_clubs_by_city', {
+          search_city: city,
+          limit_count: 20
+        });
 
       if (error) {
-        console.error('Error searching clubs by city:', error);
-        throw error;
+        console.warn('PostGIS function not available, falling back to regular query:', error);
+        
+        // Fallback to regular clubs query
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('is_active', true)
+          .ilike('city', `%${city}%`);
+
+        if (fallbackError) {
+          console.error('Error searching clubs by city:', fallbackError);
+          throw fallbackError;
+        }
+
+        const mockCoordinates = {
+          'Casablanca': { lat: 33.5731, lng: -7.5898 },
+          'Rabat': { lat: 34.0209, lng: -6.8416 },
+          'Marrakech': { lat: 31.6295, lng: -8.0089 },
+          'Fez': { lat: 34.0331, lng: -5.0003 },
+          'Agadir': { lat: 30.4278, lng: -9.5981 },
+        };
+
+        return fallbackData.map((club: any) => {
+          const clubLat = club.latitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lat || 33.5731;
+          const clubLng = club.longitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lng || -7.5898;
+          const distance = (userLat && userLng) 
+            ? this.calculateDistance(userLat, userLng, clubLat, clubLng)
+            : undefined;
+          
+          return {
+            id: club.id,
+            name: club.name,
+            address: club.address,
+            city: club.city,
+            tier: club.tier,
+            amenities: club.amenities,
+            monthly_price: club.monthly_price || 0,
+            distance_km: distance,
+            latitude: clubLat,
+            longitude: clubLng,
+          };
+        }).sort((a, b) => {
+          if (a.distance_km && b.distance_km) {
+            return a.distance_km - b.distance_km;
+          }
+          return a.name.localeCompare(b.name);
+        });
       }
 
-      const mockCoordinates = {
-        'Casablanca': { lat: 33.5731, lng: -7.5898 },
-        'Rabat': { lat: 34.0209, lng: -6.8416 },
-        'Marrakech': { lat: 31.6295, lng: -8.0089 },
-        'Fez': { lat: 34.0331, lng: -5.0003 },
-        'Agadir': { lat: 30.4278, lng: -9.5981 },
-      };
-
-      return data.map((club: any) => {
-        const cityCoords = mockCoordinates[club.city as keyof typeof mockCoordinates] || { lat: 33.5731, lng: -7.5898 };
-        const distance = (userLat && userLng) 
-          ? this.calculateDistance(userLat, userLng, cityCoords.lat, cityCoords.lng)
-          : undefined;
-        
-        return {
-          id: club.id,
-          name: club.name,
-          address: club.address,
-          city: club.city,
-          tier: club.tier,
-          amenities: club.amenities,
-          monthly_price: club.monthly_price || 0,
-          distance_km: distance,
-          latitude: cityCoords.lat,
-          longitude: cityCoords.lng,
-        };
-      }).sort((a, b) => {
-        if (a.distance_km && b.distance_km) {
-          return a.distance_km - b.distance_km;
-        }
-        return a.name.localeCompare(b.name);
-      });
+      // Return PostGIS results
+      return data.map((club: any) => ({
+        id: club.id,
+        name: club.name,
+        address: club.address,
+        city: club.city,
+        tier: club.tier,
+        amenities: club.amenities,
+        monthly_price: club.monthly_price || 0,
+        latitude: club.latitude,
+        longitude: club.longitude,
+      }));
     } catch (error) {
       console.error('LocationAPI.searchClubsByCity error:', error);
       throw error;
@@ -149,39 +198,66 @@ export class LocationAPI {
    */
   static async getClubsInBounds(bounds: BoundingBox): Promise<ClubLocation[]> {
     try {
-      // Fallback to regular clubs query
+      // Try to use PostGIS function first
       const { data, error } = await supabase
-        .from('clubs')
-        .select('*')
-        .eq('is_active', true);
+        .rpc('get_clubs_in_bounds', {
+          min_lat: bounds.south,
+          min_lng: bounds.west,
+          max_lat: bounds.north,
+          max_lng: bounds.east
+        });
 
       if (error) {
-        console.error('Error fetching clubs in bounds:', error);
-        throw error;
+        console.warn('PostGIS function not available, falling back to regular query:', error);
+        
+        // Fallback to regular clubs query
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('is_active', true);
+
+        if (fallbackError) {
+          console.error('Error fetching clubs in bounds:', fallbackError);
+          throw fallbackError;
+        }
+
+        const mockCoordinates = {
+          'Casablanca': { lat: 33.5731, lng: -7.5898 },
+          'Rabat': { lat: 34.0209, lng: -6.8416 },
+          'Marrakech': { lat: 31.6295, lng: -8.0089 },
+          'Fez': { lat: 34.0331, lng: -5.0003 },
+          'Agadir': { lat: 30.4278, lng: -9.5981 },
+        };
+
+        return fallbackData.map((club: any) => {
+          const clubLat = club.latitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lat || 33.5731;
+          const clubLng = club.longitude || mockCoordinates[club.city as keyof typeof mockCoordinates]?.lng || -7.5898;
+          return {
+            id: club.id,
+            name: club.name,
+            address: club.address,
+            city: club.city,
+            tier: club.tier,
+            amenities: club.amenities,
+            monthly_price: club.monthly_price || 0,
+            latitude: clubLat,
+            longitude: clubLng,
+          };
+        });
       }
 
-      const mockCoordinates = {
-        'Casablanca': { lat: 33.5731, lng: -7.5898 },
-        'Rabat': { lat: 34.0209, lng: -6.8416 },
-        'Marrakech': { lat: 31.6295, lng: -8.0089 },
-        'Fez': { lat: 34.0331, lng: -5.0003 },
-        'Agadir': { lat: 30.4278, lng: -9.5981 },
-      };
-
-      return data.map((club: any) => {
-        const cityCoords = mockCoordinates[club.city as keyof typeof mockCoordinates] || { lat: 33.5731, lng: -7.5898 };
-        return {
-          id: club.id,
-          name: club.name,
-          address: club.address,
-          city: club.city,
-          tier: club.tier,
-          amenities: club.amenities,
-          monthly_price: club.monthly_price || 0,
-          latitude: cityCoords.lat,
-          longitude: cityCoords.lng,
-        };
-      });
+      // Return PostGIS results
+      return data.map((club: any) => ({
+        id: club.id,
+        name: club.name,
+        address: club.address,
+        city: club.city,
+        tier: club.tier,
+        amenities: club.amenities,
+        monthly_price: club.monthly_price || 0,
+        latitude: club.latitude,
+        longitude: club.longitude,
+      }));
     } catch (error) {
       console.error('LocationAPI.getClubsInBounds error:', error);
       throw error;
