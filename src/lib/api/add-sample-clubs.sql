@@ -1,23 +1,17 @@
 -- Add Sample Clubs for Testing - EXTENDED VERSION (CORRECTED)
 -- Run this in your Supabase SQL Editor to add test clubs
 -- NOTE: Run add-description-column.sql first to add the description column
--- NOTE: This script creates a sample profile first, then uses it for all clubs
+-- NOTE: This script finds existing profiles to use as club owners
 
--- Step 1: Create a sample profile for club ownership
-INSERT INTO profiles (id, full_name, email, phone, role, country, created_at, updated_at)
-VALUES (
-  '00000000-0000-0000-0000-000000000000',
-  'Sample Gym Owner',
-  'owner@samplegym.com',
-  '+212600000000',
-  'CLUB_OWNER',
-  'Morocco',
-  NOW(),
-  NOW()
-)
-ON CONFLICT (id) DO NOTHING;
+-- Step 1: Find an existing profile to use as club owner
+-- This query will show you available profiles to use as owners
+SELECT id, full_name, email, role 
+FROM profiles 
+WHERE role = 'CLUB_OWNER' OR role = 'ADMIN'
+LIMIT 1;
 
 -- Step 2: Insert Sample Clubs (with description column) - 42 clubs across Morocco
+-- IMPORTANT: Replace '00000000-0000-0000-0000-000000000000' below with an actual profile ID from the query above
 INSERT INTO clubs (name, description, tier, city, address, latitude, longitude, amenities, contact_phone, contact_email, is_active, owner_id) VALUES
 -- CASABLANCA (8 clubs)
 ('FitZone Casablanca', 'Modern fitness center in the heart of Casablanca with state-of-the-art equipment and professional trainers', 'STANDARD', 'Casablanca', 'Boulevard Mohammed V, Casablanca', 33.5731, -7.5898, to_jsonb(ARRAY['cardio', 'weights', 'group_classes']), '+212522123456', 'info@fitzone-casa.ma', true, '00000000-0000-0000-0000-000000000000'),
@@ -136,3 +130,10 @@ FROM clubs
 WHERE is_active = true 
 GROUP BY tier 
 ORDER BY tier;
+
+-- INSTRUCTIONS:
+-- 1. Run the SELECT query at the top to find available profile IDs
+-- 2. Copy one of the profile IDs from the results
+-- 3. Replace all instances of '00000000-0000-0000-0000-000000000000' in the INSERT statement with the actual profile ID
+-- 4. Run the INSERT statement to add the clubs
+-- 5. Run the verification queries at the bottom to confirm the clubs were added
