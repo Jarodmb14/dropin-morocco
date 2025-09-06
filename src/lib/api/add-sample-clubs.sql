@@ -100,7 +100,7 @@ INSERT INTO clubs (name, description, tier, city, address, latitude, longitude, 
 -- EL JADIDA (1 club)
 ('Portuguese Fitness', 'Gym in historic Portuguese city with cultural fitness programs', 'STANDARD', 'El Jadida', 'Centre Ville, El Jadida', 33.2311, -8.5008, to_jsonb(ARRAY['cardio', 'weights', 'cultural_programs']), '+212523012345', 'contact@portuguesefitness.ma', true, '00000000-0000-0000-0000-000000000042')
 
-ON CONFLICT (name) DO NOTHING;
+;
 
 -- Verify the clubs were inserted
 SELECT 
