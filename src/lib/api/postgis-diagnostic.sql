@@ -83,50 +83,33 @@ WHERE routine_schema = 'public'
   AND routine_name IN ('find_nearby_clubs', 'search_clubs_by_city', 'get_clubs_in_bounds')
 ORDER BY routine_name;
 
--- 8. Sample location data check
+-- 8. Sample location data check (safe version)
 SELECT 
   'Sample Location Data:' as check_type,
   COUNT(*) as total_clubs,
   CASE 
     WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'latitude' AND table_schema = 'public')
-    THEN (SELECT COUNT(latitude) FROM clubs)
-    ELSE 0
-  END as clubs_with_latitude,
+    THEN 'Latitude column exists'
+    ELSE 'Latitude column missing'
+  END as latitude_status,
   CASE 
     WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'longitude' AND table_schema = 'public')
-    THEN (SELECT COUNT(longitude) FROM clubs)
-    ELSE 0
-  END as clubs_with_longitude,
+    THEN 'Longitude column exists'
+    ELSE 'Longitude column missing'
+  END as longitude_status,
   CASE 
     WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'location' AND table_schema = 'public')
-    THEN (SELECT COUNT(location) FROM clubs)
-    ELSE 0
-  END as clubs_with_location_geometry
+    THEN 'Location column exists'
+    ELSE 'Location column missing'
+  END as location_status
 FROM clubs;
 
--- 9. Sample of actual location data
+-- 9. Sample of actual location data (safe version)
 SELECT 
   'Sample Location Values:' as check_type,
   name,
   city,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'latitude' AND table_schema = 'public')
-    THEN latitude::TEXT
-    ELSE 'N/A'
-  END as latitude,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'longitude' AND table_schema = 'public')
-    THEN longitude::TEXT
-    ELSE 'N/A'
-  END as longitude,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'location' AND table_schema = 'public')
-    THEN CASE 
-      WHEN location IS NOT NULL THEN 'Has geometry'
-      ELSE 'No geometry'
-    END
-    ELSE 'No location column'
-  END as geometry_status
+  'Check column existence first' as note
 FROM clubs 
 LIMIT 5;
 
