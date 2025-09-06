@@ -269,7 +269,7 @@ const BookingsTest: React.FC = () => {
                   address: 'Test Address, Casablanca',
                   latitude: 33.5731,
                   longitude: -7.5898,
-                  amenities: ['cardio', 'weights'],
+                  amenities: ['cardio', 'weights'] as any,
                   contact_phone: '+212522123456',
                   contact_email: 'test@gym.com',
                   is_active: true,
