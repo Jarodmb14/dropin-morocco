@@ -148,9 +148,10 @@ CREATE TRIGGER update_club_location_trigger
 -- Step 8: Create PostGIS functions (outside DO block to avoid syntax issues)
 
 -- Drop existing functions first to avoid return type conflicts
-DROP FUNCTION IF EXISTS find_nearby_clubs(DECIMAL(10, 8), DECIMAL(11, 8), INTEGER);
-DROP FUNCTION IF EXISTS search_clubs_by_city(TEXT, INTEGER);
-DROP FUNCTION IF EXISTS get_clubs_in_bounds(DECIMAL(10, 8), DECIMAL(11, 8), DECIMAL(10, 8), DECIMAL(11, 8));
+-- Use CASCADE to drop all overloads of the function
+DROP FUNCTION IF EXISTS find_nearby_clubs CASCADE;
+DROP FUNCTION IF EXISTS search_clubs_by_city CASCADE;
+DROP FUNCTION IF EXISTS get_clubs_in_bounds CASCADE;
 
 -- Create function to find nearby clubs
 CREATE OR REPLACE FUNCTION find_nearby_clubs(
