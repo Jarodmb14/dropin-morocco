@@ -7,6 +7,7 @@ import { QRCodesAPI } from './qr-codes';
 import { PaymentsAPI } from './payments';
 import { AdminAPI } from './admin';
 import { LocationAPI } from './location';
+import { ReviewsAPI } from './reviews';
 
 // Main API exports for Drop-In Morocco Backend
 export { AuthAPI } from './auth';
@@ -17,6 +18,7 @@ export { QRCodesAPI } from './qr-codes';
 export { PaymentsAPI } from './payments';
 export { AdminAPI } from './admin';
 export { LocationAPI } from './location';
+export { ReviewsAPI } from './reviews';
 
 // Re-export types
 export type { AuthUser } from './auth';
@@ -27,6 +29,7 @@ export type { QRCode, QRScanResult } from './qr-codes';
 export type { PaymentMethod, PaymentIntent } from './payments';
 export type { DashboardStats, AdminAction } from './admin';
 export type { ClubLocation, LocationSearchParams, BoundingBox } from './location';
+export type { Review, ReviewWithUser, CreateReviewData, ReviewFilters, ClubRatingSummary } from './reviews';
 
 // API Client class for easier usage
 export class DropInAPI {
@@ -38,6 +41,7 @@ export class DropInAPI {
   static payments = PaymentsAPI;
   static admin = AdminAPI;
   static location = LocationAPI;
+  static reviews = ReviewsAPI;
 
   /**
    * Initialize the API client

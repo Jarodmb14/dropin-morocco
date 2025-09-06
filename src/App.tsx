@@ -22,6 +22,7 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import AuthTest from "./pages/AuthTest";
 import LocationTest from "./pages/LocationTest";
+import ReviewsTest from "./pages/ReviewsTest";
 
 const App = () => (
   <ErrorBoundary>
@@ -33,8 +34,9 @@ const App = () => (
           <Route path="/" element={<ComicHomepage />} />
           <Route path="/venues" element={<UnifiedLocation />} />
           <Route path="/gyms" element={<ComicVenues />} />
-          <Route path="/test" element={<SimpleTest />} />
-          <Route path="/location-test" element={<LocationTest />} />
+             <Route path="/test" element={<SimpleTest />} />
+             <Route path="/location-test" element={<LocationTest />} />
+             <Route path="/reviews-test" element={<ReviewsTest />} />
 
           {/* Owner (club) routes - Protected */}
           <Route path="/owner" element={
