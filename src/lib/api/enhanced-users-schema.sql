@@ -309,7 +309,11 @@ CREATE POLICY "Admins can view all profiles" ON profiles
     )
   );
 
--- Step 9: Add sample data for testing
+-- Step 9: Sample data insertion (commented out to avoid foreign key conflicts)
+-- Note: Sample data requires existing auth.users entries
+-- Uncomment and modify the UUIDs below if you have existing users in auth.users
+
+/*
 INSERT INTO profiles (
   id, 
   full_name, 
@@ -332,9 +336,9 @@ INSERT INTO profiles (
   terms_accepted_at,
   privacy_accepted_at
 ) VALUES 
--- Sample Customer
+-- Sample Customer (replace with actual auth.users UUID)
 (
-  gen_random_uuid(),
+  'REPLACE_WITH_ACTUAL_USER_UUID',
   'Ahmed Benali',
   'ahmed.benali@example.com',
   '+212612345678',
@@ -355,9 +359,9 @@ INSERT INTO profiles (
   NOW(),
   NOW()
 ),
--- Sample Gym Owner
+-- Sample Gym Owner (replace with actual auth.users UUID)
 (
-  gen_random_uuid(),
+  'REPLACE_WITH_ACTUAL_OWNER_UUID',
   'Fatima Alami',
   'fatima.alami@gym.com',
   '+212698765432',
@@ -379,6 +383,7 @@ INSERT INTO profiles (
   NOW()
 )
 ON CONFLICT (id) DO NOTHING;
+*/
 
 -- Step 10: Create view for customer dashboard data
 CREATE OR REPLACE VIEW customer_dashboard AS

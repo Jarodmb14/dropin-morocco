@@ -183,7 +183,14 @@ Aggregated gym owner statistics including:
 ## Testing
 
 ### Sample Data
-The migration includes sample users:
+The migration does NOT include sample data to avoid foreign key conflicts with `auth.users`. 
+
+To add sample data:
+1. Create users in the auth system first (via signup/login)
+2. Get their UUIDs: `SELECT id, email FROM auth.users;`
+3. Run: `src/lib/api/sample-users-data.sql` (after replacing UUIDs)
+
+Sample users available:
 - **Customer**: Ahmed Benali (Casablanca, 50 credits)
 - **Gym Owner**: Fatima Alami (Elite Fitness Center, verified)
 
