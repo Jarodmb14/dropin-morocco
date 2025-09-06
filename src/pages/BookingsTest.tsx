@@ -16,6 +16,7 @@ const BookingsTest: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [qrCode, setQrCode] = useState<string>('');
   const [qrValidation, setQrValidation] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
   // Form state for creating booking
   const [bookingForm, setBookingForm] = useState<CreateBookingData>({
@@ -33,7 +34,13 @@ const BookingsTest: React.FC = () => {
   useEffect(() => {
     loadClubs();
     loadBookings();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+  };
 
   const loadClubs = async () => {
     try {
@@ -245,6 +252,11 @@ const BookingsTest: React.FC = () => {
         <CardContent>
           <p><strong>Clubs loaded:</strong> {clubs.length}</p>
           <p><strong>Bookings loaded:</strong> {bookings.length}</p>
+          <p><strong>Authentication:</strong> 
+            <span className="ml-2">
+              {user ? `✅ Logged in as ${user.email}` : '❌ Not logged in'}
+            </span>
+          </p>
           {clubs.length > 0 && (
             <div>
               <p><strong>Available clubs:</strong></p>
@@ -255,6 +267,74 @@ const BookingsTest: React.FC = () => {
               </ul>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Quick Login for Testing */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Test Login</CardTitle>
+          <CardDescription>Use this to quickly log in for testing bookings</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="test-email">Test Email</Label>
+              <Input 
+                id="test-email" 
+                type="email" 
+                placeholder="test@example.com" 
+                defaultValue="test@example.com"
+              />
+            </div>
+            <div>
+              <Label htmlFor="test-password">Test Password</Label>
+              <Input 
+                id="test-password" 
+                type="password" 
+                placeholder="password123" 
+                defaultValue="password123"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={async () => {
+              const email = (document.getElementById('test-email') as HTMLInputElement)?.value;
+              const password = (document.getElementById('test-password') as HTMLInputElement)?.value;
+              if (email && password) {
+                try {
+                  const { error } = await supabase.auth.signInWithPassword({ email, password });
+                  if (error) {
+                    alert('Login failed: ' + error.message);
+                  } else {
+                    alert('Login successful!');
+                    checkAuth(); // Update user state
+                    loadBookings(); // Reload bookings after login
+                  }
+                } catch (err) {
+                  alert('Login error: ' + (err as Error).message);
+                }
+              }
+            }}>
+              Quick Login
+            </Button>
+            <Button variant="outline" onClick={async () => {
+              try {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                  alert('Logout failed: ' + error.message);
+                } else {
+                  alert('Logged out successfully!');
+                  setUser(null); // Clear user state
+                  setBookings([]); // Clear bookings after logout
+                }
+              } catch (err) {
+                alert('Logout error: ' + (err as Error).message);
+              }
+            }}>
+              Logout
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
