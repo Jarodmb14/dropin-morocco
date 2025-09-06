@@ -234,14 +234,49 @@ const BookingsTest: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Bookings System Test</h1>
-        <div className="flex gap-2">
-          <Button onClick={loadClubs} disabled={loading}>
-            {loading ? 'Loading...' : 'Refresh Clubs'}
-          </Button>
-          <Button onClick={loadBookings} disabled={loading}>
-            {loading ? 'Loading...' : 'Refresh Bookings'}
-          </Button>
-        </div>
+          <div className="flex gap-2">
+            <Button onClick={loadClubs} disabled={loading}>
+              {loading ? 'Loading...' : 'Refresh Clubs'}
+            </Button>
+            <Button onClick={loadBookings} disabled={loading}>
+              {loading ? 'Loading...' : 'Refresh Bookings'}
+            </Button>
+            <Button variant="outline" onClick={async () => {
+              try {
+                // Add a sample club directly via API
+                const sampleClub = {
+                  name: 'Test Gym ' + Date.now(),
+                  description: 'A test gym for booking testing',
+                  tier: 'STANDARD',
+                  city: 'Casablanca',
+                  address: 'Test Address, Casablanca',
+                  latitude: 33.5731,
+                  longitude: -7.5898,
+                  amenities: ['cardio', 'weights'],
+                  contact_phone: '+212522123456',
+                  contact_email: 'test@gym.com',
+                  is_active: true,
+                  owner_id: '00000000-0000-0000-0000-000000000001'
+                };
+                
+                const { data, error } = await supabase
+                  .from('clubs')
+                  .insert([sampleClub])
+                  .select();
+                
+                if (error) {
+                  alert('Error adding club: ' + error.message);
+                } else {
+                  alert('Test club added successfully!');
+                  loadClubs(); // Reload clubs
+                }
+              } catch (err) {
+                alert('Error: ' + (err as Error).message);
+              }
+            }}>
+              Add Test Club
+            </Button>
+          </div>
       </div>
 
       {/* Debug Info */}
