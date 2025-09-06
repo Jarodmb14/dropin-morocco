@@ -263,6 +263,7 @@ const BookingsTest: React.FC = () => {
                 // Add a sample club directly via API
                 const sampleClub = {
                   name: 'Test Gym ' + Date.now(),
+                  description: 'A test gym for booking testing with modern equipment',
                   tier: 'STANDARD',
                   city: 'Casablanca',
                   address: 'Test Address, Casablanca',
