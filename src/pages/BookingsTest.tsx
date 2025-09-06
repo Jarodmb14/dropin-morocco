@@ -36,10 +36,17 @@ const BookingsTest: React.FC = () => {
 
   const loadClubs = async () => {
     try {
-      const clubsData = await DropInAPI.clubs.getAllClubs();
+      const clubsData = await DropInAPI.clubs.getClubs();
       setClubs(clubsData);
+      console.log('Loaded clubs:', clubsData);
     } catch (error) {
       console.error('Error loading clubs:', error);
+      // Set some mock clubs for testing if the API fails
+      setClubs([
+        { id: 'mock-club-1', name: 'Atlas Power Gym', tier: 'STANDARD' },
+        { id: 'mock-club-2', name: 'Casablanca Pro Fitness', tier: 'PREMIUM' },
+        { id: 'mock-club-3', name: 'Rabat Champion Club', tier: 'LUXURY' }
+      ]);
     }
   };
 
@@ -202,10 +209,36 @@ const BookingsTest: React.FC = () => {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Bookings System Test</h1>
-        <Button onClick={loadBookings} disabled={loading}>
-          {loading ? 'Loading...' : 'Refresh Bookings'}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={loadClubs} disabled={loading}>
+            {loading ? 'Loading...' : 'Refresh Clubs'}
+          </Button>
+          <Button onClick={loadBookings} disabled={loading}>
+            {loading ? 'Loading...' : 'Refresh Bookings'}
+          </Button>
+        </div>
       </div>
+
+      {/* Debug Info */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Debug Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p><strong>Clubs loaded:</strong> {clubs.length}</p>
+          <p><strong>Bookings loaded:</strong> {bookings.length}</p>
+          {clubs.length > 0 && (
+            <div>
+              <p><strong>Available clubs:</strong></p>
+              <ul className="list-disc list-inside">
+                {clubs.map((club) => (
+                  <li key={club.id}>{club.name} ({club.tier})</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Create Booking Form */}
       <Card>
