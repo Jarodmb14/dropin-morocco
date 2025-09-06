@@ -14,22 +14,19 @@ WHERE table_name = 'clubs'
   AND table_schema = 'public'
 ORDER BY ordinal_position;
 
--- Step 3: Add proper PostGIS geometry column if needed
+-- Step 3: Handle existing location column and dependent views
 DO $$
 BEGIN
-  -- Check if location column exists and is proper PostGIS geometry
-  IF NOT EXISTS (
+  -- Check if location column exists
+  IF EXISTS (
     SELECT 1 FROM information_schema.columns 
     WHERE table_name = 'clubs' 
     AND column_name = 'location'
-    AND data_type = 'USER-DEFINED'
     AND table_schema = 'public'
   ) THEN
-    -- Add PostGIS geometry column
-    ALTER TABLE clubs ADD COLUMN location GEOMETRY(POINT, 4326);
-    RAISE NOTICE 'Added PostGIS geometry column to clubs table';
-  ELSE
-    -- Check if it's already a proper geometry column
+    RAISE NOTICE 'Location column already exists, checking if it needs conversion...';
+    
+    -- Check if it's already a proper PostGIS geometry column
     IF EXISTS (
       SELECT 1 FROM information_schema.columns 
       WHERE table_name = 'clubs' 
@@ -37,20 +34,21 @@ BEGIN
       AND data_type = 'USER-DEFINED'
       AND table_schema = 'public'
     ) THEN
-      RAISE NOTICE 'Location column already exists, checking if it needs conversion...';
-      
+      RAISE NOTICE 'Location column is already PostGIS geometry type';
+    ELSE
       -- Try to convert existing location column to proper geometry
       BEGIN
         ALTER TABLE clubs ALTER COLUMN location TYPE GEOMETRY(POINT, 4326) USING ST_GeomFromText(location::text, 4326);
         RAISE NOTICE 'Converted location column to PostGIS geometry';
       EXCEPTION WHEN OTHERS THEN
         RAISE NOTICE 'Could not convert existing location column: %', SQLERRM;
-        -- Drop and recreate if conversion fails
-        ALTER TABLE clubs DROP COLUMN IF EXISTS location;
-        ALTER TABLE clubs ADD COLUMN location GEOMETRY(POINT, 4326);
-        RAISE NOTICE 'Recreated location column as PostGIS geometry';
+        RAISE NOTICE 'Location column exists but cannot be converted. Please check manually.';
       END;
     END IF;
+  ELSE
+    -- Add PostGIS geometry column if it doesn't exist
+    ALTER TABLE clubs ADD COLUMN location GEOMETRY(POINT, 4326);
+    RAISE NOTICE 'Added PostGIS geometry column to clubs table';
   END IF;
 END $$;
 

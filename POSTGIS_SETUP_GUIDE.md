@@ -17,18 +17,42 @@ This guide will help you set up PostGIS location data for the Drop-In Morocco ap
 
 ## 🚀 Step-by-Step Setup
 
-### Step 1: Run the PostGIS Implementation Script
+### Step 1: Run the PostGIS Diagnostic Script
+
+1. **First, diagnose the current state**
+   ```sql
+   -- Copy and run: src/lib/api/postgis-diagnostic.sql
+   ```
+   This will show you:
+   - ✅ PostGIS extension status
+   - ✅ Current clubs table structure
+   - ✅ Dependent views and objects
+   - ✅ Location column type
+   - ✅ Recommendations for next steps
+
+### Step 2: Run the PostGIS Implementation Script
 
 1. **Open Supabase SQL Editor**
    - Go to your Supabase Dashboard
    - Navigate to "SQL Editor"
    - Create a new query
 
-2. **Copy and Execute the Script**
+2. **Choose the appropriate script:**
+   
+   **Option A: Safe Implementation (Recommended)**
+   ```sql
+   -- Copy the entire content from: src/lib/api/postgis-safe-implementation.sql
+   ```
+   This script:
+   - ✅ Safely handles existing location columns
+   - ✅ Checks for dependent views before making changes
+   - ✅ Only creates functions if location column exists
+   - ✅ Provides detailed logging of each step
+   
+   **Option B: Full Implementation (If no dependent views)**
    ```sql
    -- Copy the entire content from: src/lib/api/postgis-location-implementation.sql
    ```
-   
    This script will:
    - ✅ Enable PostGIS extension
    - ✅ Add proper geometry columns to clubs table
@@ -143,14 +167,35 @@ clubs (
    CREATE EXTENSION IF NOT EXISTS postgis;
    ```
 
-2. **"Function find_nearby_clubs does not exist"**
+2. **"Cannot drop column location because other objects depend on it"**
+   ```sql
+   -- This error occurs when there are dependent views
+   -- Solution: Use the safe implementation script instead
+   -- Run: src/lib/api/postgis-safe-implementation.sql
+   ```
+
+3. **"Function find_nearby_clubs does not exist"**
    - Ensure the PostGIS implementation script ran completely
    - Check for any SQL errors in the execution
+   - Run the diagnostic script to verify setup
 
-3. **"Location column type error"**
+4. **"Location column type error"**
    ```sql
-   -- Fix location column type
+   -- Check current column type first
+   SELECT column_name, data_type FROM information_schema.columns 
+   WHERE table_name = 'clubs' AND column_name = 'location';
+   
+   -- If it's not PostGIS geometry, convert it
    ALTER TABLE clubs ALTER COLUMN location TYPE GEOMETRY(POINT, 4326);
+   ```
+
+5. **"Dependent views prevent column changes"**
+   ```sql
+   -- Check what views depend on the clubs table
+   SELECT schemaname, viewname FROM pg_views 
+   WHERE definition LIKE '%clubs%' AND schemaname = 'public';
+   
+   -- Use the safe implementation script that handles this automatically
    ```
 
 ### Performance Optimization
