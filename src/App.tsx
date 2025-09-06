@@ -24,6 +24,7 @@ import AuthTest from "./pages/AuthTest";
 import LocationTest from "./pages/LocationTest";
 import ReviewsTest from "./pages/ReviewsTest";
 import UsersTest from "./pages/UsersTest";
+import BookingsTest from "./pages/BookingsTest";
 
 const App = () => (
   <ErrorBoundary>
@@ -39,6 +40,7 @@ const App = () => (
              <Route path="/location-test" element={<LocationTest />} />
              <Route path="/reviews-test" element={<ReviewsTest />} />
              <Route path="/users-test" element={<UsersTest />} />
+            <Route path="/bookings-test" element={<BookingsTest />} />
 
           {/* Owner (club) routes - Protected */}
           <Route path="/owner" element={
