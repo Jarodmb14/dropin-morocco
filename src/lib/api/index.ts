@@ -8,6 +8,7 @@ import { PaymentsAPI } from './payments';
 import { AdminAPI } from './admin';
 import { LocationAPI } from './location';
 import { ReviewsAPI } from './reviews';
+import { UsersAPI } from './users';
 
 // Main API exports for Drop-In Morocco Backend
 export { AuthAPI } from './auth';
@@ -19,6 +20,7 @@ export { PaymentsAPI } from './payments';
 export { AdminAPI } from './admin';
 export { LocationAPI } from './location';
 export { ReviewsAPI } from './reviews';
+export { UsersAPI } from './users';
 
 // Re-export types
 export type { AuthUser } from './auth';
@@ -30,6 +32,7 @@ export type { PaymentMethod, PaymentIntent } from './payments';
 export type { DashboardStats, AdminAction } from './admin';
 export type { ClubLocation, LocationSearchParams, BoundingBox } from './location';
 export type { Review, ReviewWithUser, CreateReviewData, ReviewFilters, ClubRatingSummary } from './reviews';
+export type { UserProfile, CustomerDashboard, GymOwnerDashboard, UpdateProfileData, CreditTransaction } from './users';
 
 // API Client class for easier usage
 export class DropInAPI {
@@ -42,6 +45,7 @@ export class DropInAPI {
   static admin = AdminAPI;
   static location = LocationAPI;
   static reviews = ReviewsAPI;
+  static users = UsersAPI;
 
   /**
    * Initialize the API client
