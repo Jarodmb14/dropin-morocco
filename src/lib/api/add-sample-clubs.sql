@@ -1,10 +1,23 @@
 -- Add Sample Clubs for Testing - EXTENDED VERSION (CORRECTED)
 -- Run this in your Supabase SQL Editor to add test clubs
 -- NOTE: Run add-description-column.sql first to add the description column
--- NOTE: All clubs use owner_id '00000000-0000-0000-0000-000000000000' 
---       Replace with actual profile IDs from your profiles table if needed
+-- NOTE: This script creates a sample profile first, then uses it for all clubs
 
--- Insert Sample Clubs (with description column) - 30+ clubs across Morocco
+-- Step 1: Create a sample profile for club ownership
+INSERT INTO profiles (id, full_name, email, phone, role, country, created_at, updated_at)
+VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'Sample Gym Owner',
+  'owner@samplegym.com',
+  '+212600000000',
+  'CLUB_OWNER',
+  'Morocco',
+  NOW(),
+  NOW()
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Step 2: Insert Sample Clubs (with description column) - 42 clubs across Morocco
 INSERT INTO clubs (name, description, tier, city, address, latitude, longitude, amenities, contact_phone, contact_email, is_active, owner_id) VALUES
 -- CASABLANCA (8 clubs)
 ('FitZone Casablanca', 'Modern fitness center in the heart of Casablanca with state-of-the-art equipment and professional trainers', 'STANDARD', 'Casablanca', 'Boulevard Mohammed V, Casablanca', 33.5731, -7.5898, to_jsonb(ARRAY['cardio', 'weights', 'group_classes']), '+212522123456', 'info@fitzone-casa.ma', true, '00000000-0000-0000-0000-000000000000'),
