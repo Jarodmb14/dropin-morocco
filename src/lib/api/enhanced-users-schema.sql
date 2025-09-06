@@ -385,7 +385,7 @@ INSERT INTO profiles (
 ON CONFLICT (id) DO NOTHING;
 */
 
--- Step 10: Create view for customer dashboard data
+-- Step 10: Create view for customer dashboard data (without orders table)
 CREATE OR REPLACE VIEW customer_dashboard AS
 SELECT 
   p.id,
@@ -399,17 +399,17 @@ SELECT
   p.fitness_level,
   p.preferred_activities,
   p.last_login_at,
-  COUNT(DISTINCT o.id) as total_bookings,
-  COUNT(DISTINCT CASE WHEN o.status = 'PAID' THEN o.id END) as completed_bookings,
+  -- Booking stats (will be added when bookings table is implemented)
+  0 as total_bookings,
+  0 as completed_bookings,
   COUNT(DISTINCT r.id) as total_reviews
 FROM profiles p
-LEFT JOIN orders o ON o.user_id = p.id
 LEFT JOIN reviews r ON r.user_id = p.id
 WHERE p.role = 'CUSTOMER' AND p.is_active = true
 GROUP BY p.id, p.full_name, p.email, p.phone, p.total_credits, p.used_credits, 
          p.membership_status, p.fitness_level, p.preferred_activities, p.last_login_at;
 
--- Step 11: Create view for gym owner dashboard data
+-- Step 11: Create view for gym owner dashboard data (without orders table)
 CREATE OR REPLACE VIEW gym_owner_dashboard AS
 SELECT 
   p.id as owner_id,
@@ -419,12 +419,12 @@ SELECT
   p.verification_status,
   COUNT(DISTINCT c.id) as total_clubs,
   COUNT(DISTINCT CASE WHEN c.is_active = true THEN c.id END) as active_clubs,
-  COUNT(DISTINCT o.id) as total_bookings,
-  COUNT(DISTINCT CASE WHEN o.status = 'PAID' THEN o.id END) as completed_bookings,
-  COALESCE(SUM(CASE WHEN o.status = 'PAID' THEN o.total_amount ELSE 0 END), 0) as total_revenue
+  -- Booking stats (will be added when bookings table is implemented)
+  0 as total_bookings,
+  0 as completed_bookings,
+  0 as total_revenue
 FROM profiles p
 LEFT JOIN clubs c ON c.owner_id = p.id
-LEFT JOIN orders o ON o.club_id = c.id
 WHERE p.role = 'CLUB_OWNER' AND p.is_active = true
 GROUP BY p.id, p.full_name, p.email, p.business_name, p.verification_status;
 
