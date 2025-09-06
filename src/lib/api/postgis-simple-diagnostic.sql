@@ -1,5 +1,5 @@
--- PostGIS Diagnostic Script for Drop-In Morocco
--- This script helps diagnose the current state of PostGIS and location data
+-- Simple PostGIS Diagnostic Script for Drop-In Morocco
+-- This script safely checks the current state without causing errors
 
 -- 1. Check if PostGIS extension is enabled
 SELECT 
@@ -24,8 +24,7 @@ SELECT
   'Clubs Table Structure:' as check_type,
   column_name,
   data_type,
-  is_nullable,
-  column_default
+  is_nullable
 FROM information_schema.columns 
 WHERE table_name = 'clubs' 
   AND table_schema = 'public'
@@ -83,54 +82,41 @@ WHERE routine_schema = 'public'
   AND routine_name IN ('find_nearby_clubs', 'search_clubs_by_city', 'get_clubs_in_bounds')
 ORDER BY routine_name;
 
--- 8. Sample location data check
+-- 8. Count total clubs
 SELECT 
-  'Sample Location Data:' as check_type,
-  COUNT(*) as total_clubs,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'latitude' AND table_schema = 'public')
-    THEN (SELECT COUNT(latitude) FROM clubs)
-    ELSE 0
-  END as clubs_with_latitude,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'longitude' AND table_schema = 'public')
-    THEN (SELECT COUNT(longitude) FROM clubs)
-    ELSE 0
-  END as clubs_with_longitude,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'location' AND table_schema = 'public')
-    THEN (SELECT COUNT(location) FROM clubs)
-    ELSE 0
-  END as clubs_with_location_geometry
+  'Total Clubs:' as check_type,
+  COUNT(*) as total_clubs
 FROM clubs;
 
--- 9. Sample of actual location data
+-- 9. Check if latitude column exists
 SELECT 
-  'Sample Location Values:' as check_type,
-  name,
-  city,
+  'Latitude Column:' as check_type,
   CASE 
     WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'latitude' AND table_schema = 'public')
-    THEN latitude::TEXT
-    ELSE 'N/A'
-  END as latitude,
+    THEN 'Latitude column EXISTS'
+    ELSE 'Latitude column does NOT exist'
+  END as latitude_status;
+
+-- 10. Check if longitude column exists
+SELECT 
+  'Longitude Column:' as check_type,
   CASE 
     WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'longitude' AND table_schema = 'public')
-    THEN longitude::TEXT
-    ELSE 'N/A'
-  END as longitude,
-  CASE 
-    WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'clubs' AND column_name = 'location' AND table_schema = 'public')
-    THEN CASE 
-      WHEN location IS NOT NULL THEN 'Has geometry'
-      ELSE 'No geometry'
-    END
-    ELSE 'No location column'
-  END as geometry_status
+    THEN 'Longitude column EXISTS'
+    ELSE 'Longitude column does NOT exist'
+  END as longitude_status;
+
+-- 11. Sample club data (safe)
+SELECT 
+  'Sample Club Data:' as check_type,
+  name,
+  city,
+  tier,
+  is_active
 FROM clubs 
 LIMIT 5;
 
--- 10. Recommendations
+-- 12. Recommendations
 SELECT 
   'Recommendations:' as check_type,
   CASE 
@@ -158,13 +144,24 @@ SELECT
   END as recommendation_2,
   CASE 
     WHEN NOT EXISTS (
-      SELECT 1 FROM pg_indexes 
-      WHERE tablename = 'clubs' 
-      AND indexdef LIKE '%GIST%'
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'clubs' 
+      AND column_name = 'latitude'
+      AND table_schema = 'public'
     )
-    THEN '3. Add spatial index: CREATE INDEX idx_clubs_location_gist ON clubs USING GIST (location);'
-    ELSE '3. Spatial index exists ✓'
-  END as recommendation_3;
+    THEN '3. Add latitude column: ALTER TABLE clubs ADD COLUMN latitude DECIMAL(10, 8);'
+    ELSE '3. Latitude column exists ✓'
+  END as recommendation_3,
+  CASE 
+    WHEN NOT EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'clubs' 
+      AND column_name = 'longitude'
+      AND table_schema = 'public'
+    )
+    THEN '4. Add longitude column: ALTER TABLE clubs ADD COLUMN longitude DECIMAL(11, 8);'
+    ELSE '4. Longitude column exists ✓'
+  END as recommendation_4;
 
 -- Success message
-SELECT 'PostGIS diagnostic completed!' as result;
+SELECT 'Simple PostGIS diagnostic completed!' as result;

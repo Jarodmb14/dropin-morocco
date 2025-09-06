@@ -20,15 +20,24 @@ This guide will help you set up PostGIS location data for the Drop-In Morocco ap
 ### Step 1: Run the PostGIS Diagnostic Script
 
 1. **First, diagnose the current state**
+   
+   **Option A: Simple Diagnostic (Recommended)**
    ```sql
-   -- Copy and run: src/lib/api/postgis-diagnostic.sql
+   -- Copy and run: src/lib/api/postgis-simple-diagnostic.sql
    ```
    This will show you:
    - ✅ PostGIS extension status
    - ✅ Current clubs table structure
    - ✅ Dependent views and objects
    - ✅ Location column type
+   - ✅ Column existence checks
    - ✅ Recommendations for next steps
+   
+   **Option B: Detailed Diagnostic**
+   ```sql
+   -- Copy and run: src/lib/api/postgis-diagnostic.sql
+   ```
+   This provides more detailed analysis but may show errors if columns don't exist yet.
 
 ### Step 2: Run the PostGIS Implementation Script
 
