@@ -44,9 +44,26 @@ const BookingsTest: React.FC = () => {
 
   const loadClubs = async () => {
     try {
+      console.log('Attempting to load clubs...');
       const clubsData = await DropInAPI.clubs.getClubs();
-      setClubs(clubsData);
       console.log('Loaded clubs:', clubsData);
+      setClubs(clubsData);
+      
+      // Also try direct Supabase query as fallback
+      if (!clubsData || clubsData.length === 0) {
+        console.log('No clubs from API, trying direct Supabase query...');
+        const { data, error } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (error) {
+          console.error('Direct Supabase query error:', error);
+        } else {
+          console.log('Direct Supabase clubs:', data);
+          setClubs(data || []);
+        }
+      }
     } catch (error) {
       console.error('Error loading clubs:', error);
       // Set some mock clubs for testing if the API fails
@@ -292,14 +309,37 @@ const BookingsTest: React.FC = () => {
               {user ? `✅ Logged in as ${user.email}` : '❌ Not logged in'}
             </span>
           </p>
+          
+          {/* Debug: Show raw clubs data */}
+          <div className="mt-4 p-3 bg-gray-100 rounded">
+            <p><strong>Debug - Raw clubs data:</strong></p>
+            <pre className="text-xs overflow-auto max-h-32">
+              {JSON.stringify(clubs, null, 2)}
+            </pre>
+          </div>
+          
           {clubs.length > 0 && (
-            <div>
+            <div className="mt-4">
               <p><strong>Available clubs:</strong></p>
               <ul className="list-disc list-inside">
                 {clubs.map((club) => (
-                  <li key={club.id}>{club.name} ({club.tier})</li>
+                  <li key={club.id}>{club.name} ({club.tier}) - {club.city}</li>
                 ))}
               </ul>
+            </div>
+          )}
+          
+          {clubs.length === 0 && (
+            <div className="mt-4 p-3 bg-yellow-100 rounded">
+              <p><strong>⚠️ No clubs found!</strong></p>
+              <p>This could mean:</p>
+              <ul className="list-disc list-inside text-sm">
+                <li>No clubs in database</li>
+                <li>API error</li>
+                <li>RLS policy blocking access</li>
+                <li>Clubs marked as inactive</li>
+              </ul>
+              <p className="text-sm mt-2">Check browser console for detailed error messages.</p>
             </div>
           )}
         </CardContent>
