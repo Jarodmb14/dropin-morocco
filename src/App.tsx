@@ -25,6 +25,10 @@ import LocationTest from "./pages/LocationTest";
 import ReviewsTest from "./pages/ReviewsTest";
 import UsersTest from "./pages/UsersTest";
 import BookingsTest from "./pages/BookingsTest";
+import SimpleClubsTest from "./pages/SimpleClubsTest";
+import SupabaseTest from "./pages/SupabaseTest";
+import NetworkTest from "./pages/NetworkTest";
+import ClubsDebug from "./pages/ClubsDebug";
 
 const App = () => (
   <ErrorBoundary>
@@ -41,6 +45,10 @@ const App = () => (
              <Route path="/reviews-test" element={<ReviewsTest />} />
              <Route path="/users-test" element={<UsersTest />} />
             <Route path="/bookings-test" element={<BookingsTest />} />
+            <Route path="/simple-clubs-test" element={<SimpleClubsTest />} />
+            <Route path="/supabase-test" element={<SupabaseTest />} />
+            <Route path="/network-test" element={<NetworkTest />} />
+            <Route path="/clubs-debug" element={<ClubsDebug />} />
 
           {/* Owner (club) routes - Protected */}
           <Route path="/owner" element={
