@@ -458,8 +458,12 @@ CREATE POLICY "Admins can view all bookings" ON bookings
   );
 
 -- Step 15: Update dashboard views to include booking data
--- Update customer dashboard view
-CREATE OR REPLACE VIEW customer_dashboard AS
+-- Drop existing views first to avoid data type conflicts
+DROP VIEW IF EXISTS customer_dashboard CASCADE;
+DROP VIEW IF EXISTS gym_owner_dashboard CASCADE;
+
+-- Recreate customer dashboard view with correct data types
+CREATE VIEW customer_dashboard AS
 SELECT 
   p.id,
   p.full_name,
@@ -472,10 +476,10 @@ SELECT
   p.fitness_level,
   p.preferred_activities,
   p.last_login_at,
-  -- Booking stats
-  COUNT(DISTINCT b.id) as total_bookings,
-  COUNT(DISTINCT CASE WHEN b.status = 'COMPLETED' THEN b.id END) as completed_bookings,
-  COUNT(DISTINCT r.id) as total_reviews
+  -- Booking stats (cast to integer to match existing schema)
+  COUNT(DISTINCT b.id)::INTEGER as total_bookings,
+  COUNT(DISTINCT CASE WHEN b.status = 'COMPLETED' THEN b.id END)::INTEGER as completed_bookings,
+  COUNT(DISTINCT r.id)::INTEGER as total_reviews
 FROM profiles p
 LEFT JOIN bookings b ON b.user_id = p.id
 LEFT JOIN reviews r ON r.user_id = p.id
@@ -483,19 +487,19 @@ WHERE p.role = 'CUSTOMER' AND p.is_active = true
 GROUP BY p.id, p.full_name, p.email, p.phone, p.total_credits, p.used_credits, 
          p.membership_status, p.fitness_level, p.preferred_activities, p.last_login_at;
 
--- Update gym owner dashboard view
-CREATE OR REPLACE VIEW gym_owner_dashboard AS
+-- Recreate gym owner dashboard view with correct data types
+CREATE VIEW gym_owner_dashboard AS
 SELECT 
   p.id as owner_id,
   p.full_name as owner_name,
   p.email as owner_email,
   p.business_name,
   p.verification_status,
-  COUNT(DISTINCT c.id) as total_clubs,
-  COUNT(DISTINCT CASE WHEN c.is_active = true THEN c.id END) as active_clubs,
-  -- Booking stats
-  COUNT(DISTINCT b.id) as total_bookings,
-  COUNT(DISTINCT CASE WHEN b.status = 'COMPLETED' THEN b.id END) as completed_bookings,
+  COUNT(DISTINCT c.id)::INTEGER as total_clubs,
+  COUNT(DISTINCT CASE WHEN c.is_active = true THEN c.id END)::INTEGER as active_clubs,
+  -- Booking stats (cast to integer to match existing schema)
+  COUNT(DISTINCT b.id)::INTEGER as total_bookings,
+  COUNT(DISTINCT CASE WHEN b.status = 'COMPLETED' THEN b.id END)::INTEGER as completed_bookings,
   COALESCE(SUM(CASE WHEN b.status = 'COMPLETED' THEN b.total_amount ELSE 0 END), 0) as total_revenue
 FROM profiles p
 LEFT JOIN clubs c ON c.owner_id = p.id
