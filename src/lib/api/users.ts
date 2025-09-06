@@ -247,7 +247,7 @@ export class UsersAPI {
   static async getGymOwnerWithClubs(ownerId: string): Promise<any[]> {
     try {
       const { data, error } = await supabase.rpc('get_gym_owner_with_clubs', {
-        owner_id: ownerId
+        input_owner_id: ownerId
       });
 
       if (error) {

@@ -239,7 +239,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Step 7: Create function to get gym owners with their clubs
-CREATE OR REPLACE FUNCTION get_gym_owner_with_clubs(owner_id UUID)
+CREATE OR REPLACE FUNCTION get_gym_owner_with_clubs(input_owner_id UUID)
 RETURNS TABLE (
   owner_id UUID,
   owner_name TEXT,
@@ -271,7 +271,7 @@ BEGIN
     c.is_active as club_is_active
   FROM profiles p
   LEFT JOIN clubs c ON c.owner_id = p.id
-  WHERE p.id = owner_id 
+  WHERE p.id = input_owner_id 
     AND p.role = 'CLUB_OWNER'
     AND p.is_active = true;
 END;
