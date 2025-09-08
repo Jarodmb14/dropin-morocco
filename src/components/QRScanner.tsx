@@ -50,20 +50,29 @@ export const QRScanner: React.FC<QRScannerProps> = ({ onQRCodeScanned, onClose }
             
             setLastScannedCode(qrText);
             
-            // Validate the QR code
-            const qrData = QRCodeGenerator.parseQRCodeData(qrText);
-            if (qrData) {
-              const isValid = QRCodeGenerator.isQRCodeValid(qrData);
-              setValidationResult({
-                valid: isValid,
-                data: qrData,
-                message: isValid ? 'QR code is valid for gym access' : 'QR code is expired or not yet valid'
-              });
-            } else {
+            // Validate the QR code with better error handling
+            try {
+              const qrData = QRCodeGenerator.parseQRCodeData(qrText);
+              if (qrData) {
+                const isValid = QRCodeGenerator.isQRCodeValid(qrData);
+                setValidationResult({
+                  valid: isValid,
+                  data: qrData,
+                  message: isValid ? 'QR code is valid for gym access' : 'QR code is expired or not yet valid'
+                });
+              } else {
+                setValidationResult({
+                  valid: false,
+                  data: null,
+                  message: 'Invalid QR code format - not a valid gym booking QR code'
+                });
+              }
+            } catch (parseError) {
+              console.error('QR code parsing error:', parseError);
               setValidationResult({
                 valid: false,
                 data: null,
-                message: 'Invalid QR code format'
+                message: 'Error parsing QR code - invalid format'
               });
             }
             

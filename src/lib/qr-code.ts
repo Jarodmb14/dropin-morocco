@@ -104,12 +104,24 @@ export class QRCodeGenerator {
    */
   static parseQRCodeData(qrString: string): QRCodeData | null {
     try {
+      // Check if the string is empty or invalid
+      if (!qrString || typeof qrString !== 'string') {
+        console.error('Invalid QR string:', qrString);
+        return null;
+      }
+
+      // Try to parse as JSON
       const data = JSON.parse(qrString);
+      
+      // Validate the parsed data
       if (this.validateQRCodeData(data)) {
         return data as QRCodeData;
       }
+      
+      console.error('QR data validation failed:', data);
       return null;
     } catch (error) {
+      console.error('QR code parsing error:', error, 'QR string:', qrString);
       return null;
     }
   }

@@ -11,6 +11,7 @@ const ComicVenues = () => {
   const [searchRadius, setSearchRadius] = useState(10); // Default 10km radius
   const [showAllGyms, setShowAllGyms] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
 
   // Fetch gyms from database
   useEffect(() => {
@@ -285,9 +286,31 @@ const ComicVenues = () => {
                   <div className="p-4 bg-gray-50/80 backdrop-blur-sm border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <h3 className="text-lg font-space-grotesk font-semibold text-gray-900">
-                        🗺️ Interactive Map
+                        {viewMode === 'map' ? '🗺️ Interactive Map' : '📋 Gym List'}
                       </h3>
                       <div className="flex items-center gap-4">
+                        <div className="flex bg-white rounded-lg border border-gray-200 overflow-hidden">
+                          <button
+                            onClick={() => setViewMode('map')}
+                            className={`px-3 py-1 text-sm font-space-grotesk font-medium transition-colors ${
+                              viewMode === 'map' 
+                                ? 'bg-blue-600 text-white' 
+                                : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                          >
+                            🗺️ Map
+                          </button>
+                          <button
+                            onClick={() => setViewMode('list')}
+                            className={`px-3 py-1 text-sm font-space-grotesk font-medium transition-colors ${
+                              viewMode === 'list' 
+                                ? 'bg-blue-600 text-white' 
+                                : 'bg-white text-gray-600 hover:bg-gray-50'
+                            }`}
+                          >
+                            📋 List
+                          </button>
+                        </div>
                         <div className="text-sm text-gray-600 font-space-grotesk">
                           {loading ? '🔄 Loading...' : `${filteredGyms.length} gyms shown`}
                         </div>
@@ -302,11 +325,92 @@ const ComicVenues = () => {
                           <p className="text-gray-600 font-space-grotesk">Loading gyms...</p>
                         </div>
                       </div>
-                    ) : (
+                    ) : viewMode === 'map' ? (
                       <MapView 
                         gyms={filteredGyms || []}
                         userLocation={currentLocation ? [currentLocation.lat, currentLocation.lng] : undefined}
                       />
+                    ) : (
+                      <div className="h-full overflow-y-auto p-4">
+                        <div className="space-y-4">
+                          {filteredGyms.length === 0 ? (
+                            <div className="text-center py-12">
+                              <div className="text-4xl mb-4">🏋️‍♂️</div>
+                              <h3 className="text-lg font-space-grotesk font-semibold text-gray-900 mb-2">
+                                No gyms found
+                              </h3>
+                              <p className="text-gray-600 font-space-grotesk">
+                                Try adjusting your search radius or location
+                              </p>
+                            </div>
+                          ) : (
+                            filteredGyms.map((gym) => (
+                              <div key={gym.id} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-2">
+                                      <h3 className="text-lg font-space-grotesk font-semibold text-gray-900">
+                                        {gym.name}
+                                      </h3>
+                                      <span className={`px-2 py-1 rounded-full text-xs font-space-grotesk font-medium ${gym.tierColor}`}>
+                                        {gym.tier}
+                                      </span>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4 text-sm text-gray-600 font-space-grotesk mb-3">
+                                      <div className="flex items-center gap-1">
+                                        <span>📍</span>
+                                        <span>{gym.address}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <span>⭐</span>
+                                        <span>{gym.rating} ({gym.review_count} reviews)</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <span>💰</span>
+                                        <span>{gym.price_per_hour} MAD/hour</span>
+                                      </div>
+                                    </div>
+                                    
+                                    {gym.description && (
+                                      <p className="text-sm text-gray-600 font-space-grotesk mb-3 line-clamp-2">
+                                        {gym.description}
+                                      </p>
+                                    )}
+                                    
+                                    {gym.amenities && gym.amenities.length > 0 && (
+                                      <div className="flex flex-wrap gap-2">
+                                        {gym.amenities.slice(0, 4).map((amenity: string, index: number) => (
+                                          <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-space-grotesk">
+                                            {amenity}
+                                          </span>
+                                        ))}
+                                        {gym.amenities.length > 4 && (
+                                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-space-grotesk">
+                                            +{gym.amenities.length - 4} more
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="ml-4 flex flex-col items-end gap-2">
+                                    <button
+                                      onClick={() => window.location.href = `/gym/${gym.id}`}
+                                      className="px-4 py-2 bg-blue-600 text-white rounded-lg font-space-grotesk font-medium hover:bg-blue-700 transition-colors"
+                                    >
+                                      View Details
+                                    </button>
+                                    <div className="text-sm text-gray-500 font-space-grotesk">
+                                      {gym.distance}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
