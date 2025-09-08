@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/ Logo.svg";
 
 const SimpleHeader = () => {
-  const { user, signOut, isOwner, isCustomer } = useAuth();
+  const { user, signOut, isOwner, isCustomer, isAdmin } = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -73,6 +73,15 @@ const SimpleHeader = () => {
                          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                        >
                          Dashboard
+                       </Link>
+                     )}
+                     {isAdmin && (
+                       <Link 
+                         to="/simple-admin" 
+                         className="bg-red-600 text-white hover:bg-red-700 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide rounded"
+                         style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                       >
+                         Admin Panel
                        </Link>
                      )}
                      <div className="flex items-center space-x-4">
