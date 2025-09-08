@@ -29,6 +29,7 @@ import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
+import AdminTest from "./pages/AdminTest";
 import LocationTest from "./pages/LocationTest";
 import ReviewsTest from "./pages/ReviewsTest";
 import UsersTest from "./pages/UsersTest";
@@ -131,6 +132,7 @@ const App = () => (
           <Route path="/gym-booking" element={<GymBooking />} />
           <Route path="/qr-scanner" element={<QRScanner />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin-test" element={<AdminTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="*" element={<NotFound />} />
           </Routes>

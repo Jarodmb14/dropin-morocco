@@ -12,7 +12,7 @@ import { MapPin, Star, Clock, Users, Wifi, Car, Dumbbell, Coffee, ParkingCircle,
 import BasicImage from '@/assets/Basic.png';
 import StandardImage from '@/assets/Standard.png';
 import PremiumImage from '@/assets/Premium.png';
-import LuxuryImage from '@/assets/Luxury.png';
+import LuxuryImage from '@/assets/luxury.png';
 import { QRCodeGenerator } from '@/lib/qr-code';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
 import { QRScanner } from '@/components/QRScanner';
