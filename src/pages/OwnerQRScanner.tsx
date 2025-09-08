@@ -101,7 +101,7 @@ const OwnerQRScanner = () => {
       console.log('🔍 QR Code scanned:', qrData);
       
       // Parse QR code data
-      const bookingData = QRCodeGenerator.parseBookingQRData(qrData);
+      const bookingData = QRCodeGenerator.parseQRCodeData(qrData);
       
       if (!bookingData) {
         alert('❌ Invalid QR code format');
