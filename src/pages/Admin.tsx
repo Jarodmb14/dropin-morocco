@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { DropInAPI } from "@/lib/api";
 import { seedData } from "@/lib/api/seed-data";
+import { supabase } from "@/integrations/supabase/client";
 import { Database, Users, Building, Package, QrCode, BarChart3, CheckCircle, XCircle, Eye, Search } from "lucide-react";
 
 const Admin = () => {
@@ -67,43 +68,22 @@ const Admin = () => {
 
   const checkAdminStatus = async () => {
     try {
-      // Get current user session from multiple possible sources
-      let sessionData = localStorage.getItem('supabase_session');
-      let parsed = null;
+      // Use proper Supabase client to get current user
+      const { data: { user }, error } = await supabase.auth.getUser();
       
-      // Try different session storage keys that Supabase might use
-      if (!sessionData) {
-        sessionData = localStorage.getItem('sb-obqhxrqpxoaiublaoidv-auth-token');
-      }
-      if (!sessionData) {
-        sessionData = localStorage.getItem('supabase.auth.token');
-      }
-      
-      if (!sessionData) {
-        console.log('Admin check - No session data found in localStorage');
-        console.log('Available localStorage keys:', Object.keys(localStorage));
+      if (error) {
+        console.error('Admin check - Auth error:', error);
         setIsAdmin(false);
         return;
       }
 
-      try {
-        parsed = JSON.parse(sessionData);
-      } catch (parseError) {
-        console.error('Error parsing session data:', parseError);
-        console.log('Raw session data:', sessionData);
+      if (!user) {
+        console.log('Admin check - No user found');
         setIsAdmin(false);
         return;
       }
 
-      // Try multiple paths to find the user email
-      const userEmail = parsed.user?.email || 
-                      parsed.current_user?.email || 
-                      parsed.user_metadata?.email || 
-                      parsed.email ||
-                      parsed.user?.user_metadata?.email;
-      
-      console.log('Admin check - Full session data:', parsed);
-      console.log('Admin check - User email found:', userEmail);
+      console.log('Admin check - User found:', user.email);
       
       // Simple email-based admin check (bypassing profiles table completely)
       const adminEmails = [
@@ -115,39 +95,60 @@ const Admin = () => {
         'admin@test.com'
       ];
       
-      if (userEmail && adminEmails.includes(userEmail)) {
+      if (user.email && adminEmails.includes(user.email)) {
         console.log('Admin check - User is admin (by email whitelist)');
         setIsAdmin(true);
         return;
       }
 
-      // Also check if user has ADMIN role in session metadata
-      const userRole = parsed.user?.user_metadata?.role || parsed.user_metadata?.role || parsed.user?.role;
-      console.log('Admin check - User role found in session:', userRole);
+      // Also check if user has ADMIN role in user metadata
+      const userRole = user.user_metadata?.role;
+      console.log('Admin check - User role found in metadata:', userRole);
       
       if (userRole === 'ADMIN') {
-        console.log('Admin check - User is admin (by session role)');
+        console.log('Admin check - User is admin (by metadata role)');
         setIsAdmin(true);
         return;
+      }
+
+      // Try to get role from profiles table as fallback
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (!profileError && profile?.role === 'ADMIN') {
+          console.log('Admin check - User is admin (by profiles table)');
+          setIsAdmin(true);
+          return;
+        }
+      } catch (profileError) {
+        console.log('Admin check - Could not check profiles table:', profileError);
       }
 
       console.log('Admin check - User is not admin');
       console.log('Admin check - Available admin emails:', adminEmails);
       setIsAdmin(false);
     } catch (error) {
-      console.error('Error checking admin status:', error);
+      console.error('Admin check error:', error);
       setIsAdmin(false);
     }
   };
 
   const loadPendingGyms = async () => {
     try {
-      const response = await fetch('https://obqhxrqpxoaiublaoidv.supabase.co/rest/v1/clubs?is_active=eq.false&select=*', {
-        headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE'
-        }
-      });
-      const gyms = await response.json();
+      const { data: gyms, error } = await supabase
+        .from('clubs')
+        .select('*')
+        .eq('is_active', false);
+      
+      if (error) {
+        console.error('Error loading pending gyms:', error);
+        return;
+      }
+      
       setPendingGyms(gyms || []);
     } catch (error) {
       console.error('Error loading pending gyms:', error);
