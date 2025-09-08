@@ -55,6 +55,7 @@ const OwnerQRScanner = () => {
       setIsLoading(true);
       
       // Load owner's gyms
+      console.log('🔍 Loading gyms for owner ID:', user?.id);
       const gymsResponse = await fetch(`https://obqhxrqpxoaiublaoidv.supabase.co/rest/v1/clubs?owner_id=eq.${user?.id}&select=*`, {
         headers: {
           'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE'
@@ -63,13 +64,19 @@ const OwnerQRScanner = () => {
       
       if (gymsResponse.ok) {
         const gymsData = await gymsResponse.json();
+        console.log('🏋️ Loaded owner gyms:', gymsData);
         setGyms(gymsData);
         
         // Load bookings for all owner's gyms
         if (gymsData.length > 0) {
           const gymIds = gymsData.map((gym: any) => gym.id).join(',');
+          console.log('🆔 Gym IDs for booking query:', gymIds);
           await loadBookings(gymIds);
+        } else {
+          console.warn('⚠️ No gyms found for owner:', user?.id);
         }
+      } else {
+        console.error('❌ Failed to load gyms:', gymsResponse.status, gymsResponse.statusText);
       }
       
     } catch (error) {
@@ -109,10 +116,18 @@ const OwnerQRScanner = () => {
       }
       
       // Check if this booking belongs to one of the owner's gyms
+      console.log('🔍 Debugging QR validation:');
+      console.log('📱 QR bookingData:', bookingData);
+      console.log('🏋️ Owner gyms:', gyms);
+      console.log('🆔 Booking club_id:', bookingData.club_id);
+      console.log('🆔 Gym IDs:', gyms.map(gym => gym.id));
+      
       const isOwnerBooking = gyms.some(gym => gym.id === bookingData.club_id);
+      console.log('✅ Is owner booking:', isOwnerBooking);
       
       if (!isOwnerBooking) {
-        alert('❌ This QR code is not for your gym');
+        console.error('❌ QR validation failed - not owner booking');
+        alert(`❌ This QR code is not for your gym.\n\nDebug info:\nQR Club ID: ${bookingData.club_id}\nYour Gym IDs: ${gyms.map(gym => gym.id).join(', ')}`);
         return;
       }
       
@@ -289,6 +304,37 @@ const OwnerQRScanner = () => {
                       </Badge>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Debug Info */}
+            <Card className="bg-yellow-50 border border-yellow-200">
+              <CardHeader>
+                <CardTitle className="text-lg font-space-grotesk font-semibold text-yellow-800">
+                  🐛 Debug Info
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="font-medium text-yellow-800">Owner ID:</span>
+                    <span className="text-yellow-700 ml-2">{user?.id}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-yellow-800">Gyms Count:</span>
+                    <span className="text-yellow-700 ml-2">{gyms.length}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-yellow-800">Gym IDs:</span>
+                    <div className="text-yellow-700 ml-2 text-xs">
+                      {gyms.map(gym => gym.id).join(', ')}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-yellow-800">Bookings Count:</span>
+                    <span className="text-yellow-700 ml-2">{bookings.length}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
