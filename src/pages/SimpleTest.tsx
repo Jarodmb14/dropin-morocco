@@ -1,18 +1,15 @@
+import { useAuth } from '@/contexts/AuthContext';
+
 const SimpleTest = () => {
+  const { user, loading } = useAuth();
+
   return (
-    <div className="min-h-screen bg-orange-100 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-orange-600 mb-4">
-          🏋️ DROP-IN MOROCCO
-        </h1>
-        <p className="text-2xl text-gray-700">
-          Comic/Manga Fitness App Test
-        </p>
-        <div className="mt-8">
-          <button className="bg-orange-500 text-white px-8 py-4 rounded-lg text-xl font-bold hover:bg-orange-600">
-            IT WORKS! 🎉
-          </button>
-        </div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Simple Auth Test</h1>
+      <div className="space-y-2">
+        <p><strong>Loading:</strong> {loading ? 'True' : 'False'}</p>
+        <p><strong>User:</strong> {user ? user.email : 'Not logged in'}</p>
+        <p><strong>Status:</strong> AuthContext is working!</p>
       </div>
     </div>
   );

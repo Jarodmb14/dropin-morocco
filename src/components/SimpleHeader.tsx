@@ -3,10 +3,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/ Logo.svg";
 
 const SimpleHeader = () => {
-  const { user, profile, signOut, isOwner, isCustomer } = useAuth();
+  const { user, signOut, isOwner, isCustomer } = useAuth();
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      console.log('SimpleHeader: Starting sign out...');
+      await signOut();
+      console.log('SimpleHeader: Sign out completed');
+      
+      // Force a page reload to ensure clean state
+      window.location.reload();
+    } catch (error) {
+      console.error('SimpleHeader: Sign out error:', error);
+      // Even if there's an error, force reload to clear state
+      window.location.reload();
+    }
   };
 
   return (
@@ -66,7 +77,7 @@ const SimpleHeader = () => {
                      )}
                      <div className="flex items-center space-x-4">
                        <span className="text-sm text-gray-600 font-medium" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                         Hi, {profile?.full_name || user.email}
+                         Hi, {user?.user_metadata?.full_name || user.email}
                        </span>
                        <button
                          onClick={handleSignOut}

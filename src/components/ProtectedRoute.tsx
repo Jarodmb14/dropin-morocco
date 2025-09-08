@@ -13,7 +13,7 @@ const ProtectedRoute = ({
   requiredRole, 
   fallbackPath = '/' 
 }: ProtectedRouteProps) => {
-  const { user, profile, loading } = useAuth();
+  const { user, userRole, loading } = useAuth();
 
   if (loading) {
     return (
@@ -30,7 +30,7 @@ const ProtectedRoute = ({
     return <Navigate to="/auth/login" replace />;
   }
 
-  if (requiredRole && profile?.role !== requiredRole) {
+  if (requiredRole && userRole !== requiredRole) {
     return <Navigate to={fallbackPath} replace />;
   }
 

@@ -10,11 +10,26 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
-    persistSession: false, // Disable session persistence to prevent hanging
-    autoRefreshToken: false, // Disable auto-refresh to prevent hanging
+    storage: {
+      getItem: (key: string) => {
+        const item = localStorage.getItem(key);
+        console.log(`Supabase storage getItem(${key}):`, item ? 'Found' : 'Not found');
+        return item;
+      },
+      setItem: (key: string, value: string) => {
+        console.log(`Supabase storage setItem(${key}):`, 'Setting session');
+        localStorage.setItem(key, value);
+      },
+      removeItem: (key: string) => {
+        console.log(`Supabase storage removeItem(${key}):`, 'Removing session');
+        localStorage.removeItem(key);
+      }
+    },
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
   },
   realtime: {
-    enabled: false // Disable realtime to prevent WebSocket hanging
+    enabled: false
   }
 });

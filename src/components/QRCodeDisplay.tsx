@@ -33,12 +33,12 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ booking, onRefresh
     generateQRCode();
   }, [booking]);
 
-  const downloadQRCode = () => {
-    if (qrCodeDataURL) {
-      const link = document.createElement('a');
-      link.download = `booking-${booking.id || booking.booking_id}-qr.png`;
-      link.href = qrCodeDataURL;
-      link.click();
+  const downloadQRCode = async () => {
+    try {
+      await QRCodeGenerator.downloadQRCodePNG(booking);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download QR code. Please try again.');
     }
   };
 
@@ -120,75 +120,64 @@ export const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ booking, onRefresh
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Gym Access QR Code
-          </CardTitle>
-          {getStatusBadge()}
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* QR Code Display */}
-        <div className="flex justify-center">
-          <div className="border-2 border-gray-200 rounded-lg p-4 bg-white">
-            <img 
-              src={qrCodeDataURL} 
-              alt="Booking QR Code" 
-              className="w-64 h-64"
-            />
+    <div className="qr-code-container">
+      <Card className="border-0 shadow-none bg-transparent">
+        <CardContent className="p-0">
+          {/* QR Code Display */}
+          <div className="flex justify-center mb-4">
+            <div className="border-2 border-gray-300 rounded-xl p-6 bg-white shadow-sm">
+              <img 
+                src={qrCodeDataURL} 
+                alt="Booking QR Code" 
+                className="w-48 h-48"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Booking Details */}
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Booking ID:</span>
-            <span className="font-mono">{booking.id || booking.booking_id}</span>
+          {/* Validity Status */}
+          <div className="text-center mb-4">
+            {getValidityStatus()}
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Club:</span>
-            <span>{booking.club_name || 'Unknown Club'}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Start:</span>
-            <span>{formatDateTime(booking.scheduled_start)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">End:</span>
-            <span>{formatDateTime(booking.scheduled_end)}</span>
-          </div>
-        </div>
 
-        {/* Validity Status */}
-        <div className="pt-2 border-t">
-          {getValidityStatus()}
-        </div>
+          {/* Booking Details */}
+          <div className="bg-gray-50 rounded-lg p-3 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600 font-space-grotesk">Booking ID:</span>
+              <span className="font-mono font-space-grotesk font-medium">{booking.id?.slice(0, 8) || booking.booking_id?.slice(0, 8)}...</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600 font-space-grotesk">Club:</span>
+              <span className="font-space-grotesk font-medium">{booking.club_name || 'Unknown Club'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600 font-space-grotesk">Start:</span>
+              <span className="font-space-grotesk font-medium">{formatDateTime(booking.scheduled_start)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600 font-space-grotesk">End:</span>
+              <span className="font-space-grotesk font-medium">{formatDateTime(booking.scheduled_end)}</span>
+            </div>
+          </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 pt-4">
-          <Button onClick={downloadQRCode} className="flex-1">
-            <Download className="h-4 w-4 mr-2" />
-            Download QR Code
-          </Button>
-          {onRefresh && (
-            <Button onClick={onRefresh} variant="outline">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
+          {/* Actions */}
+          <div className="flex gap-2 mt-4">
+            <Button 
+              onClick={downloadQRCode} 
+              className="flex-1 font-space-grotesk font-medium"
+              size="sm"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download
             </Button>
-          )}
-        </div>
-
-        {/* Instructions */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="text-sm text-blue-800">
-            <strong>Instructions:</strong> Show this QR code at the gym entrance. 
-            The code is valid only during your scheduled time slot.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+            {onRefresh && (
+              <Button onClick={onRefresh} variant="outline" size="sm">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

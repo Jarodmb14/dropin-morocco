@@ -3,20 +3,11 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import NetworkErrorHandler from "./components/NetworkErrorHandler";
+import SimpleTest from "./pages/SimpleTest";
 import ComicHomepage from "./pages/ComicHomepage";
 import ComicVenues from "./pages/ComicVenues";
-import ComicVenuesNoMap from "./pages/ComicVenuesNoMap";
-import VenuesTest from "./pages/VenuesTest";
-import ComicVenuesMinimal from "./pages/ComicVenuesMinimal";
-import GymDetail from "./pages/GymDetail";
-import AuthTest from "./pages/AuthTest";
-import PaymentTest from "./pages/PaymentTest";
-import SimpleTest from "./pages/SimpleTest";
 import UnifiedLocation from "./pages/UnifiedLocation";
 import OwnerDashboard from "./pages/OwnerDashboard";
-import OwnerQRScanner from "./pages/OwnerQRScanner";
-import CreateGym from "./pages/CreateGym";
-import ManageGym from "./pages/ManageGym";
 import NotFound from "./pages/NotFound";
 import GymBooking from "./pages/GymBooking";
 import QRScanner from "./pages/QRScanner";
@@ -29,6 +20,7 @@ import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
+import AuthTest from "./pages/AuthTest";
 import LocationTest from "./pages/LocationTest";
 import ReviewsTest from "./pages/ReviewsTest";
 import UsersTest from "./pages/UsersTest";
@@ -42,11 +34,6 @@ import { SimpleAirbnbMap } from "./pages/SimpleAirbnbMap";
 import { TestMap } from "./pages/TestMap";
 import { MinimalMap } from "./pages/MinimalMap";
 import SimpleTestPage from "./pages/SimpleTestPage";
-import { MapTestPage } from "./pages/MapTestPage";
-import { SimpleGymMapPage } from "./pages/SimpleGymMapPage";
-import { BasicMapPage } from "./pages/BasicMapPage";
-import MinimalTest from "./pages/MinimalTest";
-import SimpleMapTest from "./pages/SimpleMapTest";
 
 const App = () => (
   <BrowserRouter>
@@ -56,14 +43,7 @@ const App = () => (
           <Routes>
           {/* Customer app entry */}
           <Route path="/" element={<ComicHomepage />} />
-          <Route path="/venues" element={<ComicVenues />} />
-          <Route path="/gym/:id" element={<GymDetail />} />
-          <Route path="/auth-test" element={<AuthTest />} />
-          <Route path="/payment-test" element={<PaymentTest />} />
-          <Route path="/simple-test" element={<SimpleTest />} />
-          <Route path="/venues-test" element={<VenuesTest />} />
-          <Route path="/venues-minimal" element={<ComicVenuesMinimal />} />
-          <Route path="/venues-no-map" element={<ComicVenuesNoMap />} />
+          <Route path="/venues" element={<UnifiedLocation />} />
           <Route path="/gyms" element={<ComicVenues />} />
                   <Route path="/map" element={<GymMapPage />} />
                   <Route path="/simple-map" element={<SimpleAirbnbMap />} />
@@ -91,24 +71,9 @@ const App = () => (
               <OwnerDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/owner/dashboard" element={
-            <ProtectedRoute requiredRole="CLUB_OWNER">
-              <OwnerDashboard />
-            </ProtectedRoute>
-          } />
           <Route path="/owner/scan" element={
             <ProtectedRoute requiredRole="CLUB_OWNER">
-              <OwnerQRScanner />
-            </ProtectedRoute>
-          } />
-          <Route path="/owner/create-gym" element={
-            <ProtectedRoute requiredRole="CLUB_OWNER">
-              <CreateGym />
-            </ProtectedRoute>
-          } />
-          <Route path="/owner/manage-gym/:id" element={
-            <ProtectedRoute requiredRole="CLUB_OWNER">
-              <ManageGym />
+              <QRScanner />
             </ProtectedRoute>
           } />
 

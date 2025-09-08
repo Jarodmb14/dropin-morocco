@@ -33,18 +33,28 @@ const OwnerDashboard = () => {
                 Manage check-ins, scan QR codes, and review history.
               </p>
             </div>
-            <div className="flex gap-4">
-              <Link 
-                to="/owner/scan" 
-                className="text-white px-8 py-4 font-semibold text-lg hover:opacity-90 transition-all duration-200 uppercase tracking-wide"
-                style={{ 
-                  fontFamily: 'Space Grotesk, sans-serif',
-                  backgroundColor: '#E3BFC0'
-                }}
-              >
-                Open QR Scanner
-              </Link>
-            </div>
+             <div className="flex gap-4">
+               <Link 
+                 to="/owner/scan" 
+                 className="text-white px-8 py-4 font-semibold text-lg hover:opacity-90 transition-all duration-200 uppercase tracking-wide"
+                 style={{ 
+                   fontFamily: 'Space Grotesk, sans-serif',
+                   backgroundColor: '#E3BFC0'
+                 }}
+               >
+                 Open QR Scanner
+               </Link>
+               <Link 
+                 to="/owner/create-gym" 
+                 className="text-white px-8 py-4 font-semibold text-lg hover:opacity-90 transition-all duration-200 uppercase tracking-wide"
+                 style={{ 
+                   fontFamily: 'Space Grotesk, sans-serif',
+                   backgroundColor: '#BFC0E3'
+                 }}
+               >
+                 Add New Gym
+               </Link>
+             </div>
           </div>
 
           {/* History */}

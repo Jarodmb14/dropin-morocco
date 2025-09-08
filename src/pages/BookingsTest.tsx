@@ -10,7 +10,9 @@ import { BookingsAPI, CreateBookingData, BookingWithDetails } from '@/lib/api/bo
 import { DropInAPI } from '@/lib/api';
 import { supabase } from '@/integrations/supabase/client';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
+import { QRScanner } from '@/components/QRScanner';
 import { QRCodeGenerator } from '@/lib/qr-code';
+import { Camera } from 'lucide-react';
 
 const BookingsTest: React.FC = () => {
   const [bookings, setBookings] = useState<BookingWithDetails[]>([]);
@@ -20,6 +22,7 @@ const BookingsTest: React.FC = () => {
   const [qrValidation, setQrValidation] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [showScanner, setShowScanner] = useState(false);
 
   // Form state for creating booking
   const [bookingForm, setBookingForm] = useState<CreateBookingData>({
@@ -204,6 +207,15 @@ const BookingsTest: React.FC = () => {
               setBookings(userBookings);
             } else {
               console.log('❌ Failed to load bookings:', response.status, response.statusText);
+              
+              // If 401, the token is invalid/expired
+              if (response.status === 401) {
+                console.log('🔐 Token expired or invalid, clearing stored session');
+                localStorage.removeItem('supabase.auth.token');
+                setUser(null);
+                alert('Your session has expired. Please log in again.');
+              }
+              
               setBookings([]);
             }
           } else {
@@ -568,6 +580,47 @@ const BookingsTest: React.FC = () => {
             </Button>
             <Button onClick={loadBookings} disabled={loading}>
               {loading ? 'Loading...' : 'Refresh Bookings'}
+            </Button>
+            <Button 
+              onClick={async () => {
+                try {
+                  const storedSession = localStorage.getItem('supabase.auth.token');
+                  if (!storedSession) {
+                    alert('No stored session found. Please log in first.');
+                    return;
+                  }
+                  
+                  const sessionData = JSON.parse(storedSession);
+                  console.log('🔍 Current session data:', sessionData);
+                  
+                  // Test the token by making a simple API call
+                  const response = await fetch('https://obqhxrqpxoaiublaoidv.supabase.co/rest/v1/bookings?select=count', {
+                    headers: {
+                      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE',
+                      'Authorization': `Bearer ${sessionData.access_token}`
+                    }
+                  });
+                  
+                  console.log('🔍 Token test response:', response.status, response.statusText);
+                  
+                  if (response.ok) {
+                    alert(`✅ Token is valid! Status: ${response.status}`);
+                  } else {
+                    alert(`❌ Token is invalid! Status: ${response.status} ${response.statusText}`);
+                    if (response.status === 401) {
+                      localStorage.removeItem('supabase.auth.token');
+                      setUser(null);
+                    }
+                  }
+                } catch (error) {
+                  console.error('Token test error:', error);
+                  alert('Error testing token: ' + (error as Error).message);
+                }
+              }}
+              variant="outline"
+              disabled={loading}
+            >
+              Test Auth Token
             </Button>
             <Button 
               onClick={async () => {
@@ -1193,11 +1246,14 @@ const BookingsTest: React.FC = () => {
           {qrValidation && (
             <div className="p-4 border rounded-lg">
               <h4 className="font-semibold mb-2">QR Code Validation Result:</h4>
-              <p><strong>Valid:</strong> {qrValidation.is_valid ? 'Yes' : 'No'}</p>
-              {qrValidation.booking_id && <p><strong>Booking ID:</strong> {qrValidation.booking_id}</p>}
-              {qrValidation.club_name && <p><strong>Club:</strong> {qrValidation.club_name}</p>}
-              {qrValidation.user_name && <p><strong>User:</strong> {qrValidation.user_name}</p>}
-              {qrValidation.status && <p><strong>Status:</strong> {qrValidation.status}</p>}
+              <p><strong>Valid:</strong> {qrValidation.valid ? 'Yes' : 'No'}</p>
+              {qrValidation.data?.bookingId && <p><strong>Booking ID:</strong> {qrValidation.data.bookingId}</p>}
+              {qrValidation.data?.clubId && <p><strong>Club ID:</strong> {qrValidation.data.clubId}</p>}
+              {qrValidation.data?.userId && <p><strong>User ID:</strong> {qrValidation.data.userId}</p>}
+              {qrValidation.data?.status && <p><strong>Status:</strong> {qrValidation.data.status}</p>}
+              {qrValidation.data?.scheduledStart && <p><strong>Valid From:</strong> {new Date(qrValidation.data.scheduledStart).toLocaleString()}</p>}
+              {qrValidation.data?.scheduledEnd && <p><strong>Valid Until:</strong> {new Date(qrValidation.data.scheduledEnd).toLocaleString()}</p>}
+              <p><strong>Message:</strong> {qrValidation.message}</p>
             </div>
           )}
         </CardContent>
@@ -1583,6 +1639,87 @@ const BookingsTest: React.FC = () => {
         </Card>
       )}
 
+      {/* QR Code Testing Tools */}
+      <Card>
+        <CardHeader>
+          <CardTitle>QR Code Testing Tools</CardTitle>
+          <CardDescription>Generate test QR codes and test scanning functionality</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2 flex-wrap">
+            <Button 
+              onClick={() => {
+                // Generate a test QR code for immediate scanning
+                const testQR = JSON.stringify({
+                  bookingId: 'test-booking-' + Date.now(),
+                  userId: user?.id || 'test-user-id',
+                  clubId: 'test-club-id',
+                  scheduledStart: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+                  scheduledEnd: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
+                  status: 'CONFIRMED',
+                  timestamp: new Date().toISOString()
+                });
+                
+                setQrCode(testQR);
+                setSelectedBooking({
+                  id: 'test-booking-' + Date.now(),
+                  booking_id: 'test-booking-' + Date.now(),
+                  user_id: user?.id || 'test-user-id',
+                  club_id: 'test-club-id',
+                  status: 'CONFIRMED',
+                  scheduled_start: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+                  scheduled_end: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+                  club_name: 'Test Gym'
+                });
+                setQrValidation({
+                  valid: true,
+                  data: JSON.parse(testQR),
+                  message: 'Test QR code generated - ready for scanning!'
+                });
+                
+                console.log('🧪 Test QR code generated:', testQR);
+                alert('Test QR code generated! You can now scan it or download it.');
+              }}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Camera className="h-4 w-4" />
+              Generate Test QR
+            </Button>
+            
+            <Button 
+              onClick={() => setShowScanner(true)}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Camera className="h-4 w-4" />
+              Scan QR Code
+            </Button>
+            
+            {qrCode && (
+              <Button 
+                onClick={() => {
+                  setQrCode('');
+                  setSelectedBooking(null);
+                  setQrValidation(null);
+                }}
+                variant="destructive"
+              >
+                Clear QR Code
+              </Button>
+            )}
+          </div>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p className="text-sm text-blue-800">
+              <strong>Instructions:</strong> Click "Generate Test QR" to create a test QR code, 
+              then click "Scan QR Code" to test the camera scanner. Point your camera at the 
+              generated QR code to test the scanning functionality.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* QR Code Actions */}
       {qrCode && (
         <Card>
@@ -1633,6 +1770,42 @@ const BookingsTest: React.FC = () => {
                 variant="destructive"
               >
                 Clear QR Code
+              </Button>
+              <Button 
+                onClick={() => setShowScanner(true)}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Camera className="h-4 w-4" />
+                Scan QR Code
+              </Button>
+              <Button 
+                onClick={() => {
+                  // Generate a test QR code for immediate scanning
+                  const testQR = JSON.stringify({
+                    bookingId: 'test-booking-' + Date.now(),
+                    userId: user?.id || 'test-user-id',
+                    clubId: 'test-club-id',
+                    scheduledStart: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+                    scheduledEnd: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
+                    status: 'CONFIRMED',
+                    timestamp: new Date().toISOString()
+                  });
+                  
+                  setQrCode(testQR);
+                  setQrValidation({
+                    valid: true,
+                    data: JSON.parse(testQR),
+                    message: 'Test QR code generated - ready for scanning!'
+                  });
+                  
+                  console.log('🧪 Test QR code generated:', testQR);
+                  alert('Test QR code generated! You can now scan it or download it.');
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Generate Test QR
               </Button>
             </div>
             
@@ -1770,6 +1943,37 @@ const BookingsTest: React.FC = () => {
             )}
           </CardContent>
         </Card>
+      )}
+
+      {/* QR Scanner Modal */}
+      {showScanner && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <QRScanner
+            onQRCodeScanned={(qrData) => {
+              console.log('📱 QR Code scanned from camera:', qrData);
+              setQrCode(qrData);
+              setShowScanner(false);
+              
+              // Validate the scanned QR code
+              const parsedData = QRCodeGenerator.parseQRCodeData(qrData);
+              if (parsedData) {
+                const isValid = QRCodeGenerator.isQRCodeValid(parsedData);
+                setQrValidation({
+                  valid: isValid,
+                  data: parsedData,
+                  message: isValid ? 'QR code is valid for gym access' : 'QR code is expired or not yet valid'
+                });
+              } else {
+                setQrValidation({
+                  valid: false,
+                  data: null,
+                  message: 'Invalid QR code format'
+                });
+              }
+            }}
+            onClose={() => setShowScanner(false)}
+          />
+        </div>
       )}
     </div>
   );

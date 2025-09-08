@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Leaflet Popup Styles */
+.custom-popup .leaflet-popup-content-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.custom-popup .leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.custom-popup .leaflet-popup-tip {
+  background: white;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Custom Div Icon for Markers */
+.custom-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
 /* Drop-In Marketplace Design System - Moroccan-inspired sports & wellness platform
 All colors MUST be HSL.
 */

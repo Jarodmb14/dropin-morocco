@@ -127,6 +127,84 @@ export class QRCodeGenerator {
   }
 
   /**
+   * Download QR code as PNG file
+   */
+  static async downloadQRCodePNG(booking: any, filename?: string): Promise<void> {
+    try {
+      const qrData = this.generateBookingQRData(booking);
+      const dataURL = await this.generateQRCodeDataURL(qrData);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = filename || `booking-${qrData.bookingId.slice(0, 8)}-qr.png`;
+      link.href = dataURL;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading QR code:', error);
+      throw new Error('Failed to download QR code');
+    }
+  }
+
+  /**
+   * Download QR code as SVG file
+   */
+  static async downloadQRCodeSVG(booking: any, filename?: string): Promise<void> {
+    try {
+      const qrData = this.generateBookingQRData(booking);
+      const svg = await this.generateQRCodeSVG(qrData);
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = filename || `booking-${qrData.bookingId.slice(0, 8)}-qr.svg`;
+      link.href = 'data:image/svg+xml;base64,' + btoa(svg);
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading QR code SVG:', error);
+      throw new Error('Failed to download QR code SVG');
+    }
+  }
+
+  /**
+   * Generate QR code with custom styling
+   */
+  static async generateStyledQRCode(booking: any, options?: {
+    width?: number;
+    margin?: number;
+    darkColor?: string;
+    lightColor?: string;
+    logo?: string;
+  }): Promise<string> {
+    try {
+      const qrData = this.generateBookingQRData(booking);
+      const qrString = JSON.stringify(qrData);
+      
+      const defaultOptions = {
+        width: 300,
+        margin: 3,
+        darkColor: '#000000',
+        lightColor: '#FFFFFF',
+        errorCorrectionLevel: 'M' as const
+      };
+      
+      const finalOptions = { ...defaultOptions, ...options };
+      
+      const dataURL = await QRCode.toDataURL(qrString, finalOptions);
+      return dataURL;
+    } catch (error) {
+      console.error('Error generating styled QR code:', error);
+      throw new Error('Failed to generate styled QR code');
+    }
+  }
+
+  /**
    * Generate a unique QR code string for a booking
    */
   static generateQRCodeString(booking: any): string {

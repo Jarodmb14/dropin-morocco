@@ -4,16 +4,16 @@ import SimpleHeader from "@/components/SimpleHeader";
 import { supabase } from "@/integrations/supabase/client";
 
 const UserProfile = () => {
-  const { user, profile, updatePassword } = useAuth();
+  const { user, userRole, updatePassword } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Profile form state
+  // Profile form state - get data from user metadata instead of profile
   const [profileData, setProfileData] = useState({
-    full_name: profile?.full_name || '',
-    phone: profile?.phone || '',
+    full_name: user?.user_metadata?.full_name || '',
+    phone: user?.user_metadata?.phone || '',
     email: user?.email || '',
   });
 
@@ -25,14 +25,14 @@ const UserProfile = () => {
   });
 
   useEffect(() => {
-    if (profile) {
+    if (user) {
       setProfileData({
-        full_name: profile.full_name || '',
-        phone: profile.phone || '',
-        email: user?.email || '',
+        full_name: user.user_metadata?.full_name || '',
+        phone: user.user_metadata?.phone || '',
+        email: user.email || '',
       });
     }
-  }, [profile, user]);
+  }, [user]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,18 +41,24 @@ const UserProfile = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
+      // Update user metadata instead of profiles table
+      const { error } = await supabase.auth.updateUser({
+        data: {
           full_name: profileData.full_name,
           phone: profileData.phone,
-        })
-        .eq('id', user?.id);
+        }
+      });
 
       if (error) {
         setError(error.message);
       } else {
         setMessage("Profile updated successfully!");
+        // Update local state
+        setProfileData({
+          ...profileData,
+          full_name: profileData.full_name,
+          phone: profileData.phone,
+        });
       }
     } catch (err) {
       setError("Failed to update profile. Please try again.");
@@ -98,7 +104,7 @@ const UserProfile = () => {
     }
   };
 
-  if (!user || !profile) {
+  if (!user) {
     return (
       <div className="min-h-screen" style={{ backgroundColor: '#F2E4E5' }}>
         <SimpleHeader />
@@ -237,7 +243,7 @@ const UserProfile = () => {
                   Account Type
                 </label>
                 <div className="px-0 py-4 border-0 border-b-2 border-gray-300 bg-gray-50 text-gray-700 text-lg font-semibold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  {profile.role === 'CLUB_OWNER' ? '🏢 Gym Owner' : '👤 Customer'}
+                  {userRole === 'CLUB_OWNER' ? '🏢 Gym Owner' : '👤 Customer'}
                 </div>
               </div>
 
