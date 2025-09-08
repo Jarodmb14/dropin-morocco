@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { getTierPastelGradient, getTierEmojiColor, getTierEmoji } from '@/utils/tierColors';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -305,90 +306,50 @@ const GymDetail = () => {
     setIsCreatingBooking(true);
     
     try {
-      const sessionData = localStorage.getItem('supabase_session');
-      if (!sessionData) {
-        console.error('❌ No session data found');
+      // Use the proper Supabase client for authentication
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('❌ Session error:', sessionError);
+        alert('❌ Authentication error. Please log in again.');
+        return;
+      }
+      
+      if (!session) {
+        console.error('❌ No active session found');
         alert('❌ Please log in to create a booking.');
         return;
       }
       
-      let parsed;
-      try {
-        parsed = JSON.parse(sessionData);
-      } catch (parseError) {
-        console.error('❌ Invalid session data:', parseError);
-        alert('❌ Invalid session. Please log in again.');
-        localStorage.removeItem('supabase_session');
-        return;
-      }
-      
-      const accessToken = parsed.access_token;
-      if (!accessToken) {
-        console.error('❌ No access token in session');
-        alert('❌ Invalid session. Please log in again.');
-        localStorage.removeItem('supabase_session');
-        return;
-      }
-      
-      console.log('🔑 Using access token:', accessToken.slice(0, 20) + '...');
-      
-      // Verify user authentication with Supabase
-      console.log('👤 Verifying user authentication...');
-      const userResponse = await fetch('https://obqhxrqpxoaiublaoidv.supabase.co/auth/v1/user', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE'
-        }
-      });
-      
-      console.log('👤 User verification status:', userResponse.status);
-      if (!userResponse.ok) {
-        console.error('❌ User authentication failed:', userResponse.status);
-        alert('❌ Authentication failed. Please log in again.');
-        localStorage.removeItem('supabase_session');
-        return;
-      }
-      
-      const userData = await userResponse.text();
-      console.log('👤 User data:', userData);
+      console.log('✅ User authenticated:', session.user.email);
       
       const bookingData = {
         user_id: user.id,
         club_id: gym.id,
-        booking_type: selectedPass,
+        booking_type: 'SINGLE_SESSION' as const,
         scheduled_start: `${selectedDate}T${selectedTime}:00.000Z`,
         scheduled_end: `${selectedDate}T${parseInt(selectedTime.split(':')[0]) + parseInt(selectedDuration)}:${selectedTime.split(':')[1]}:00.000Z`,
         credits_required: parseInt(selectedDuration),
         price_per_credit: gym.price_per_hour,
         total_amount: gym.price_per_hour * parseInt(selectedDuration),
-        payment_status: 'PENDING',
+        payment_status: 'PENDING' as const,
         payment_method: 'STRIPE',
         notes: `Booking for ${gym.name} - ${selectedPass} - ${selectedDuration} hour(s)`
       };
 
       console.log('📝 Creating booking:', bookingData);
 
-      // Test API connectivity first
-      console.log('🔍 Testing API connectivity...');
-      const testResponse = await fetch('https://obqhxrqpxoaiublaoidv.supabase.co/rest/v1/bookings?select=id&limit=1', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE'
-        }
-      });
+      // Create booking using Supabase client
+      console.log('🔍 Creating booking via Supabase...');
+      const { data: booking, error: bookingError } = await supabase
+        .from('bookings')
+        .insert(bookingData as any)
+        .select()
+        .single();
       
-      console.log('🔍 API test response status:', testResponse.status);
-      
-      // Check if test response is empty
-      const testResponseText = await testResponse.text();
-      console.log('🔍 API test response text:', testResponseText);
-      
-      if (!testResponse.ok) {
-        console.error('❌ API test failed:', testResponse.status, testResponse.statusText);
-        console.error('❌ Test response text:', testResponseText);
-        console.log('🔄 API test failed, falling back to simulated booking...');
+      if (bookingError) {
+        console.error('❌ Booking creation failed:', bookingError);
+        console.log('🔄 Booking failed, falling back to simulated booking...');
         
         // Create a simulated booking for testing
         const simulatedBooking = {
@@ -418,129 +379,19 @@ const GymDetail = () => {
         return;
       }
       
-      if (!testResponseText || testResponseText.trim() === '') {
-        console.error('❌ API test returned empty response');
-        console.log('🔄 Falling back to simulated booking...');
-        
-        // Create a simulated booking for testing
-        const simulatedBooking = {
-          id: `sim-${Date.now()}`,
-          user_id: user.id,
-          club_id: gym.id,
-          booking_type: selectedPass,
-          scheduled_start: `${selectedDate}T${selectedTime}:00.000Z`,
-          scheduled_end: `${selectedDate}T${parseInt(selectedTime.split(':')[0]) + parseInt(selectedDuration)}:${selectedTime.split(':')[1]}:00.000Z`,
-          status: 'CONFIRMED',
-          created_at: new Date().toISOString(),
-          club_name: gym.name
-        };
-        
-        console.log('🎭 Simulated booking created:', simulatedBooking);
-        
-        // Generate QR code for simulated booking
-        const qrData = QRCodeGenerator.generateBookingQRData(simulatedBooking);
-        console.log('🎯 QR Code generated for simulated booking:', qrData);
-        
-        setBookingData(simulatedBooking);
-        setShowBookingModal(false);
-        setShowPaymentModal(false);
-        setShowQRModal(true);
-        
-        alert('✅ Simulated booking created! (API is currently unavailable)');
-        return;
-      }
-
-      const response = await fetch('https://obqhxrqpxoaiublaoidv.supabase.co/rest/v1/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9icWh4cnFweG9haXVibGFvaWR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mzk3MjQsImV4cCI6MjA3MjMxNTcyNH0.djty3cbe78iEU_2DWgWFpkf_3v_X9U_SzAWOW5i2voE'
-        },
-        body: JSON.stringify(bookingData)
-      });
-
-      if (response.ok) {
-        // Check if response has content
-        const responseText = await response.text();
-        console.log('📝 Raw response:', responseText);
-        
-        if (!responseText || responseText.trim() === '') {
-          console.error('❌ Empty response from API');
-          console.log('🔄 Main API returned empty response, falling back to simulated booking...');
-          
-          // Create a simulated booking for testing
-          const simulatedBooking = {
-            id: `sim-${Date.now()}`,
-            user_id: user.id,
-            club_id: gym.id,
-            booking_type: selectedPass,
-            scheduled_start: `${selectedDate}T${selectedTime}:00.000Z`,
-            scheduled_end: `${selectedDate}T${parseInt(selectedTime.split(':')[0]) + parseInt(selectedDuration)}:${selectedTime.split(':')[1]}:00.000Z`,
-            status: 'CONFIRMED',
-            created_at: new Date().toISOString(),
-            club_name: gym.name
-          };
-          
-          console.log('🎭 Simulated booking created:', simulatedBooking);
-          
-          // Generate QR code for simulated booking
-          const qrData = QRCodeGenerator.generateBookingQRData(simulatedBooking);
-          console.log('🎯 QR Code generated for simulated booking:', qrData);
-          
-          setBookingData(simulatedBooking);
-          setShowBookingModal(false);
-          setShowPaymentModal(false);
-          setShowQRModal(true);
-          
-          alert('✅ Simulated booking created! (API returned empty response)');
-          return;
-        }
-        
-        let booking;
-        try {
-          booking = JSON.parse(responseText);
-        } catch (parseError) {
-          console.error('❌ JSON parse error:', parseError);
-          console.error('❌ Response text:', responseText);
-          alert('❌ Invalid response format from server. Please try again.');
-          return;
-        }
-        
-        console.log('✅ Booking created:', booking);
-        
-        // Handle both array and single object responses
-        const bookingData = Array.isArray(booking) ? booking[0] : booking;
-        
-        // Generate QR code
-        const qrData = QRCodeGenerator.generateBookingQRData(bookingData);
-        console.log('🎯 QR Code generated:', qrData);
-        
-        setBookingData(bookingData);
-        setShowBookingModal(false);
-        setShowPaymentModal(false);
-        setShowQRModal(true);
-        
-        alert('✅ Booking created successfully! Your QR code is ready.');
-      } else {
-        const errorText = await response.text();
-        console.error('❌ Booking creation failed:', {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorText,
-          bookingData
-        });
-        
-        let errorMessage = 'Failed to create booking';
-        try {
-          const errorJson = JSON.parse(errorText);
-          errorMessage = errorJson.message || errorJson.error || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-        
-        alert(`❌ ${errorMessage}. Please try again.`);
-      }
+      // Success case - real booking was created
+      console.log('✅ Real booking created successfully:', booking);
+      
+      // Generate QR code for the real booking
+      const qrData = QRCodeGenerator.generateBookingQRData(booking);
+      console.log('🎯 QR Code generated:', qrData);
+      
+      setBookingData(booking);
+      setShowBookingModal(false);
+      setShowPaymentModal(false);
+      setShowQRModal(true);
+      
+      alert('✅ Booking created successfully! Your QR code is ready.');
     } catch (error) {
       console.error('❌ Booking error:', error);
       console.error('❌ Error details:', {
@@ -553,33 +404,7 @@ const GymDetail = () => {
         selectedPass
       });
       
-      console.log('🔄 Main API call failed, falling back to simulated booking...');
-      
-      // Create a simulated booking for testing
-      const simulatedBooking = {
-        id: `sim-${Date.now()}`,
-        user_id: user.id,
-        club_id: gym.id,
-        booking_type: selectedPass,
-        scheduled_start: `${selectedDate}T${selectedTime}:00.000Z`,
-        scheduled_end: `${selectedDate}T${parseInt(selectedTime.split(':')[0]) + parseInt(selectedDuration)}:${selectedTime.split(':')[1]}:00.000Z`,
-        status: 'CONFIRMED',
-        created_at: new Date().toISOString(),
-        club_name: gym.name
-      };
-      
-      console.log('🎭 Simulated booking created:', simulatedBooking);
-      
-      // Generate QR code for simulated booking
-      const qrData = QRCodeGenerator.generateBookingQRData(simulatedBooking);
-      console.log('🎯 QR Code generated for simulated booking:', qrData);
-      
-      setBookingData(simulatedBooking);
-      setShowBookingModal(false);
-      setShowPaymentModal(false);
-      setShowQRModal(true);
-      
-      alert('✅ Simulated booking created! (API call failed)');
+      alert('❌ Failed to create booking. Please try again.');
     } finally {
       setIsCreatingBooking(false);
     }
