@@ -1,175 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { ReviewsAPI, ClubRatingSummary } from '../lib/api/reviews';
-import ReviewsSection from '../components/ReviewsSection';
-import RatingDisplay from '../components/RatingDisplay';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ReviewsAPI, ReviewWithUser, ClubRatingSummary } from '@/lib/api/reviews';
+import { ReviewsSection } from '@/components/ReviewsSection';
 
-const ReviewsTest: React.FC = () => {
-  const [clubId, setClubId] = useState('test-club-1');
-  const [clubName, setClubName] = useState('Test Gym');
+const ReviewsTest = () => {
+  const [reviews, setReviews] = useState<ReviewWithUser[]>([]);
   const [ratingSummary, setRatingSummary] = useState<ClubRatingSummary | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Mock club data for testing
-  const mockClubs = [
-    { id: 'test-club-1', name: 'Atlas Power Gym' },
-    { id: 'test-club-2', name: 'Casablanca Pro Fitness' },
-    { id: 'test-club-3', name: 'Rabat Champion Club' }
-  ];
+  // Test club ID - you can change this to any club ID from your database
+  const testClubId = 'club-1';
+  const testClubName = 'Elite Fitness Center';
 
   useEffect(() => {
-    loadRatingSummary();
-  }, [clubId]);
+    loadTestData();
+  }, []);
 
-  const loadRatingSummary = async () => {
+  const loadTestData = async () => {
     try {
       setLoading(true);
-      const summary = await ReviewsAPI.getClubRatingSummary(clubId);
+      
+      // Load reviews for test club
+      const reviewsData = await ReviewsAPI.getClubReviews(testClubId);
+      setReviews(reviewsData);
+
+      // Load rating summary
+      const summary = await ReviewsAPI.getClubRatingSummary(testClubId);
       setRatingSummary(summary);
     } catch (error) {
-      console.error('Error loading rating summary:', error);
-      // Set mock data for testing
-      setRatingSummary({
-        average_rating: 4.2,
-        total_reviews: 15,
-        rating_breakdown: {
-          '1': 0,
-          '2': 1,
-          '3': 2,
-          '4': 6,
-          '5': 6
-        }
-      });
+      console.error('Error loading test data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClubChange = (clubId: string) => {
-    setClubId(clubId);
-    const club = mockClubs.find(c => c.id === clubId);
-    setClubName(club?.name || 'Unknown Club');
+  const createTestReview = async () => {
+    try {
+      await ReviewsAPI.createReview({
+        club_id: testClubId,
+        rating: 5,
+        title: 'Amazing gym!',
+        comment: 'This is a test review. The facilities are excellent and the staff is very friendly.',
+        cleanliness: 5,
+        equipment: 4,
+        staff_friendliness: 5,
+        value_for_money: 4,
+        atmosphere: 5
+      });
+      
+      alert('Test review created successfully!');
+      loadTestData(); // Refresh data
+    } catch (error: any) {
+      console.error('Error creating test review:', error);
+      alert(`Error: ${error.message}`);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            Reviews System Test
-          </h1>
-          
-          {/* Club Selector */}
-          <div className="bg-white rounded-lg p-4 shadow-sm border mb-6">
-            <h3 className="font-semibold mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Select Club to Test
-            </h3>
-            <div className="flex gap-2">
-              {mockClubs.map((club) => (
-                <button
-                  key={club.id}
-                  onClick={() => handleClubChange(club.id)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    clubId === club.id
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                >
-                  {club.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Current Club Rating Display */}
-          {ratingSummary && (
-            <div className="bg-white rounded-lg p-4 shadow-sm border mb-6">
-              <h3 className="font-semibold mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Current Rating for {clubName}
-              </h3>
-              <div className="flex items-center gap-4">
-                <RatingDisplay
-                  rating={ratingSummary.average_rating}
-                  reviewCount={ratingSummary.total_reviews}
-                  size="lg"
-                />
-                <div className="text-sm text-gray-600">
-                  Average: {ratingSummary.average_rating.toFixed(1)}/5.0
-                </div>
-              </div>
-            </div>
-          )}
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading reviews test...</p>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Reviews System Test</h1>
+          <p className="text-lg text-gray-600">Test the reviews and ratings functionality</p>
+        </div>
+
+        {/* Test Actions */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Test Actions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-x-4">
+              <Button onClick={createTestReview} variant="outline">
+                Create Test Review
+              </Button>
+              <Button onClick={loadTestData} variant="outline">
+                Refresh Data
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Reviews Section */}
-        <ReviewsSection
-          clubId={clubId}
-          clubName={clubName}
-          onReviewCreated={() => {
-            console.log('Review created!');
-            loadRatingSummary(); // Reload rating summary
-          }}
-        />
+        <ReviewsSection clubId={testClubId} clubName={testClubName} />
 
-        {/* API Test Section */}
-        <div className="mt-8 bg-white rounded-lg p-6 shadow-sm border">
-          <h3 className="font-semibold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            API Test Functions
-          </h3>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={loadRatingSummary}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Load Rating Summary
-            </button>
-            
-            <button
-              onClick={async () => {
-                try {
-                  const canReview = await ReviewsAPI.canUserReviewClub(clubId);
-                  alert(`Can review: ${canReview}`);
-                } catch (error) {
-                  console.error('Error checking review eligibility:', error);
-                }
-              }}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-            >
-              Check Review Eligibility
-            </button>
-            
-            <button
-              onClick={async () => {
-                try {
-                  const reviews = await ReviewsAPI.getClubReviews(clubId, { limit: 5 });
-                  console.log('Club reviews:', reviews);
-                  alert(`Found ${reviews.length} reviews`);
-                } catch (error) {
-                  console.error('Error fetching reviews:', error);
-                }
-              }}
-              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
-            >
-              Get Club Reviews
-            </button>
-            
-            <button
-              onClick={async () => {
-                try {
-                  const featured = await ReviewsAPI.getFeaturedReviews(clubId, 3);
-                  console.log('Featured reviews:', featured);
-                  alert(`Found ${featured.length} featured reviews`);
-                } catch (error) {
-                  console.error('Error fetching featured reviews:', error);
-                }
-              }}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-            >
-              Get Featured Reviews
-            </button>
-          </div>
-        </div>
+        {/* Raw Data Display */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Raw Data (Debug)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Rating Summary:</h4>
+                <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
+                  {JSON.stringify(ratingSummary, null, 2)}
+                </pre>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-2">Reviews ({reviews.length}):</h4>
+                <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto max-h-64">
+                  {JSON.stringify(reviews, null, 2)}
+                </pre>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

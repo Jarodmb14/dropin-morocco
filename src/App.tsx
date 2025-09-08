@@ -30,8 +30,10 @@ import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import AdminTest from "./pages/AdminTest";
-import LocationTest from "./pages/LocationTest";
+import AdminDebug from "./pages/AdminDebug";
+import SimpleAdminDebug from "./pages/SimpleAdminDebug";
 import ReviewsTest from "./pages/ReviewsTest";
+import LocationTest from "./pages/LocationTest";
 import UsersTest from "./pages/UsersTest";
 import BookingsTest from "./pages/BookingsTest";
 import SimpleClubsTest from "./pages/SimpleClubsTest";
@@ -133,6 +135,9 @@ const App = () => (
           <Route path="/qr-scanner" element={<QRScanner />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-test" element={<AdminTest />} />
+          <Route path="/admin-debug" element={<AdminDebug />} />
+          <Route path="/simple-admin-debug" element={<SimpleAdminDebug />} />
+          <Route path="/reviews-test" element={<ReviewsTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="*" element={<NotFound />} />
           </Routes>

@@ -16,6 +16,7 @@ import LuxuryImage from '@/assets/luxury.png';
 import { QRCodeGenerator } from '@/lib/qr-code';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
 import { QRScanner } from '@/components/QRScanner';
+import { ReviewsSection } from '@/components/ReviewsSection';
 import { loadStripe } from '@stripe/stripe-js';
 
 interface Gym {
@@ -1127,6 +1128,9 @@ const GymDetail = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Reviews Section */}
+            <ReviewsSection clubId={gym.id} clubName={gym.name} />
           </div>
 
           {/* Sidebar */}
