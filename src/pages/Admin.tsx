@@ -49,10 +49,28 @@ const Admin = () => {
 
   const loadStats = async () => {
     try {
-      const dashboardData = await DropInAPI.getAdminDashboard();
-      setStats(dashboardData);
+      // Simple stats loading without complex API calls
+      const [usersCount, clubsCount, pendingCount] = await Promise.all([
+        supabase.from('profiles').select('*', { count: 'exact', head: true }),
+        supabase.from('clubs').select('*', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.from('clubs').select('*', { count: 'exact', head: true }).eq('is_active', false),
+      ]);
+
+      setStats({
+        totalUsers: usersCount.count || 0,
+        totalClubs: clubsCount.count || 0,
+        pendingClubs: pendingCount.count || 0,
+        totalRevenue: 0, // Simplified for now
+      });
     } catch (error) {
       console.error("Error loading stats:", error);
+      // Set default stats if API fails
+      setStats({
+        totalUsers: 0,
+        totalClubs: 0,
+        pendingClubs: 0,
+        totalRevenue: 0,
+      });
     }
   };
 
@@ -157,13 +175,23 @@ const Admin = () => {
 
   const handleApproveGym = async (gymId: string) => {
     try {
-      await DropInAPI.admin.updateClubStatus(gymId, true);
+      const { error } = await supabase
+        .from('clubs')
+        .update({ is_active: true })
+        .eq('id', gymId);
+      
+      if (error) {
+        throw error;
+      }
+      
       toast({
         title: "Gym Approved!",
         description: "The gym has been approved and is now active.",
       });
       loadPendingGyms(); // Refresh the list
+      loadStats(); // Refresh stats
     } catch (error) {
+      console.error('Approve gym error:', error);
       toast({
         title: "Error",
         description: "Failed to approve gym",
@@ -174,13 +202,23 @@ const Admin = () => {
 
   const handleRejectGym = async (gymId: string) => {
     try {
-      await DropInAPI.admin.updateClubStatus(gymId, false);
+      const { error } = await supabase
+        .from('clubs')
+        .update({ is_active: false })
+        .eq('id', gymId);
+      
+      if (error) {
+        throw error;
+      }
+      
       toast({
         title: "Gym Rejected",
         description: "The gym has been rejected.",
       });
       loadPendingGyms(); // Refresh the list
+      loadStats(); // Refresh stats
     } catch (error) {
+      console.error('Reject gym error:', error);
       toast({
         title: "Error",
         description: "Failed to reject gym",
