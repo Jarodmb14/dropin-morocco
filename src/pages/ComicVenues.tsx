@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SimpleHeader from "@/components/SimpleHeader";
 import { MapView } from "@/components/MapView";
 import { LocationSearch } from "@/components/LocationSearch";
 import { supabase } from '@/integrations/supabase/client';
 
 const ComicVenues = () => {
+  const navigate = useNavigate();
   const [allVenues, setAllVenues] = useState<any[]>([]);
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -396,7 +398,7 @@ const ComicVenues = () => {
                                   
                                   <div className="ml-4 flex flex-col items-end gap-2">
                                     <button
-                                      onClick={() => window.location.href = `/gym/${gym.id}`}
+                                      onClick={() => navigate(`/gym/${gym.id}`)}
                                       className="px-4 py-2 bg-blue-600 text-white rounded-lg font-space-grotesk font-medium hover:bg-blue-700 transition-colors"
                                     >
                                       View Details
