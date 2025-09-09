@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
 import { useExerciseData } from '@/hooks/useExerciseDB';
 import { BODY_PART_MAP, getExerciseDBBodyPart } from '@/lib/bodypart-map';
+import { BodyDiagram } from '@/components/BodyDiagram';
 import { Dumbbell, Target, Zap, Heart, Activity, Loader2 } from 'lucide-react';
 
 interface BodyPart {
@@ -82,9 +83,9 @@ const BodyPartsSelection = () => {
       })
     : fallbackBodyParts;
 
-  const handleBodyPartClick = (bodyPart: BodyPart) => {
+  const handleBodyPartClick = (bodyPartId: string) => {
     // Use the mapping to get the correct internal key for navigation
-    const internalKey = BODY_PART_MAP[bodyPart.id] || bodyPart.id;
+    const internalKey = BODY_PART_MAP[bodyPartId] || bodyPartId;
     navigate(`/exercises/${internalKey}`);
   };
 
@@ -147,194 +148,13 @@ const BodyPartsSelection = () => {
         {/* Interactive Body Diagram */}
         <div className="flex justify-center mb-12">
           <div className="relative">
-            <svg
-              width="600"
-              height="800"
-              viewBox="0 0 600 800"
-              className="cursor-pointer"
-            >
-              {/* Front View Body */}
-              <g>
-                {/* Head */}
-                <circle
-                  cx="300"
-                  cy="80"
-                  r="40"
-                  fill="#374151"
-                  stroke="#6b7280"
-                  strokeWidth="3"
-                />
-                
-                {/* Neck */}
-                <rect
-                  x="280"
-                  y="120"
-                  width="40"
-                  height="25"
-                  fill="#374151"
-                  stroke="#6b7280"
-                  strokeWidth="2"
-                />
-
-                {/* Chest */}
-                <path
-                  d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
-                  fill={selectedPart === 'chest' ? "#f87171" : "#ef4444"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'chest') || bodyParts[0])}
-                  onMouseEnter={() => setSelectedPart('chest')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Shoulders */}
-                <path
-                  d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
-                  fill={selectedPart === 'shoulders' ? "#60a5fa" : "#3b82f6"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'shoulders') || bodyParts[1])}
-                  onMouseEnter={() => setSelectedPart('shoulders')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Biceps */}
-                <path
-                  d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
-                  fill={selectedPart === 'biceps' ? "#34d399" : "#10b981"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'biceps') || bodyParts[2])}
-                  onMouseEnter={() => setSelectedPart('biceps')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Triceps */}
-                <path
-                  d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
-                  fill={selectedPart === 'triceps' ? "#a78bfa" : "#8b5cf6"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'triceps') || bodyParts[3])}
-                  onMouseEnter={() => setSelectedPart('triceps')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Abs */}
-                <path
-                  d="M 220 250 L 380 250 L 380 350 L 220 350 Z"
-                  fill={selectedPart === 'abs' ? "#fb923c" : "#f97316"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'abs') || bodyParts[4])}
-                  onMouseEnter={() => setSelectedPart('abs')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Glutes */}
-                <path
-                  d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
-                  fill={selectedPart === 'glutes' ? "#f472b6" : "#ec4899"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'glutes') || bodyParts[7])}
-                  onMouseEnter={() => setSelectedPart('glutes')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Legs */}
-                <path
-                  d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
-                  fill={selectedPart === 'legs' ? "#818cf8" : "#6366f1"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'legs') || bodyParts[6])}
-                  onMouseEnter={() => setSelectedPart('legs')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-              </g>
-
-              {/* Back View Body */}
-              <g transform="translate(0, 0)">
-                {/* Back */}
-                <path
-                  d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
-                  fill={selectedPart === 'back' ? "#5eead4" : "#14b8a6"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'back') || bodyParts[5])}
-                  onMouseEnter={() => setSelectedPart('back')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Back Shoulders */}
-                <path
-                  d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
-                  fill={selectedPart === 'shoulders' ? "#60a5fa" : "#3b82f6"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'shoulders') || bodyParts[1])}
-                  onMouseEnter={() => setSelectedPart('shoulders')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Back Arms */}
-                <path
-                  d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
-                  fill={selectedPart === 'triceps' ? "#a78bfa" : "#8b5cf6"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'triceps') || bodyParts[3])}
-                  onMouseEnter={() => setSelectedPart('triceps')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                <path
-                  d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
-                  fill={selectedPart === 'biceps' ? "#34d399" : "#10b981"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'biceps') || bodyParts[2])}
-                  onMouseEnter={() => setSelectedPart('biceps')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Back Glutes */}
-                <path
-                  d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
-                  fill={selectedPart === 'glutes' ? "#f472b6" : "#ec4899"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'glutes') || bodyParts[7])}
-                  onMouseEnter={() => setSelectedPart('glutes')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-                
-                {/* Back Legs */}
-                <path
-                  d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
-                  fill={selectedPart === 'legs' ? "#818cf8" : "#6366f1"}
-                  stroke="#ffffff"
-                  strokeWidth="4"
-                  className="transition-colors cursor-pointer hover:opacity-80"
-                  onClick={() => handleBodyPartClick(bodyParts.find(p => p.id === 'legs') || bodyParts[6])}
-                  onMouseEnter={() => setSelectedPart('legs')}
-                  onMouseLeave={() => setSelectedPart(null)}
-                />
-              </g>
-            </svg>
+            <BodyDiagram
+              variant="front"
+              selectedPart={selectedPart}
+              onBodyPartClick={handleBodyPartClick}
+              onMouseEnter={setSelectedPart}
+              onMouseLeave={() => setSelectedPart(null)}
+            />
           </div>
         </div>
 
@@ -358,7 +178,7 @@ const BodyPartsSelection = () => {
             <div
               key={part.id}
               className="bg-gray-800 p-6 rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 hover:shadow-lg"
-              onClick={() => handleBodyPartClick(part)}
+              onClick={() => handleBodyPartClick(part.id)}
             >
               <div className="flex flex-col items-center text-center">
                 <div 
