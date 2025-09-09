@@ -136,20 +136,6 @@ const PricingSection = () => {
               </CardHeader>
               <CardContent className="text-center relative">
                 <p className="text-stone-600 mb-8 leading-relaxed">{plan.description}</p>
-                <Button 
-                  className={`w-full text-base py-4 rounded-2xl font-medium transition-all duration-300 relative overflow-hidden ${
-                    plan.popular 
-                      ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl' 
-                      : 'bg-white border-2 border-amber-300 text-amber-700 hover:bg-amber-50 shadow-lg hover:shadow-xl'
-                  }`}
-                  onClick={() => window.location.href = '/venues'}
-                >
-                  {plan.popular && <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-2xl" />}
-                  <div className="flex items-center justify-center gap-2">
-                    <Leaf className="w-5 h-5" />
-                    {plan.cta}
-                  </div>
-                </Button>
               </CardContent>
             </Card>
           ))}

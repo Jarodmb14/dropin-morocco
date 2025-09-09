@@ -162,13 +162,6 @@ const MobileOptimized = () => {
                   </div>
                 </div>
                 
-                <Button 
-                  className="w-full" 
-                  variant="hero"
-                  onClick={() => window.location.href = '/venues'}
-                >
-                  🏋️ Start Finding Gyms
-                </Button>
               </CardContent>
             </Card>
           ) : (
@@ -182,14 +175,6 @@ const MobileOptimized = () => {
                   Download our native mobile app for the best experience
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button className="flex items-center gap-2" variant="outline">
-                    🤖 Download for Android
-                  </Button>
-                  <Button className="flex items-center gap-2" variant="outline">
-                    🍎 Download for iOS
-                  </Button>
-                </div>
                 
                 <div className="text-center">
                   <p className="text-xs text-muted-foreground">
