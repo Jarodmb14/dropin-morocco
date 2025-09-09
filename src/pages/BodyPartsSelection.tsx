@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
+import { MUSCLE_GROUPS, getExercisesByMuscleGroup } from '../data/exercises';
+import { Dumbbell, Target, Zap, Heart, Activity } from 'lucide-react';
 
 interface BodyPart {
   id: string;
   name: string;
-  exercises: string[];
+  icon: React.ReactNode;
+  description: string;
+  exerciseCount: number;
 }
 
 const BodyPartsSelection = () => {
@@ -13,23 +17,66 @@ const BodyPartsSelection = () => {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
   const bodyParts: BodyPart[] = [
-    { id: 'chest', name: 'Chest', exercises: ['Push-ups', 'Bench Press', 'Chest Fly', 'Dumbbell Press'] },
-    { id: 'shoulders', name: 'Shoulders', exercises: ['Shoulder Press', 'Lateral Raises', 'Front Raises', 'Rear Delt Fly'] },
-    { id: 'biceps', name: 'Biceps', exercises: ['Bicep Curls', 'Hammer Curls', 'Concentration Curls', 'Preacher Curls'] },
-    { id: 'triceps', name: 'Triceps', exercises: ['Tricep Dips', 'Close-Grip Press', 'Overhead Extension', 'Tricep Pushdowns'] },
-    { id: 'abs', name: 'Abs', exercises: ['Crunches', 'Plank', 'Russian Twists', 'Mountain Climbers'] },
-    { id: 'back', name: 'Back', exercises: ['Pull-ups', 'Rows', 'Deadlifts', 'Lat Pulldowns'] },
-    { id: 'legs', name: 'Legs', exercises: ['Squats', 'Lunges', 'Leg Press', 'Calf Raises'] },
-    { id: 'glutes', name: 'Glutes', exercises: ['Hip Thrusts', 'Glute Bridges', 'Bulgarian Split Squats', 'Romanian Deadlifts'] }
+    { 
+      id: MUSCLE_GROUPS.CHEST, 
+      name: 'Chest', 
+      icon: <Target className="w-6 h-6" />,
+      description: 'Build powerful pecs',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.CHEST).length
+    },
+    { 
+      id: MUSCLE_GROUPS.SHOULDERS, 
+      name: 'Shoulders', 
+      icon: <Zap className="w-6 h-6" />,
+      description: 'Strong deltoids',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.SHOULDERS).length
+    },
+    { 
+      id: MUSCLE_GROUPS.BICEPS, 
+      name: 'Biceps', 
+      icon: <Dumbbell className="w-6 h-6" />,
+      description: 'Arm strength',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.BICEPS).length
+    },
+    { 
+      id: MUSCLE_GROUPS.TRICEPS, 
+      name: 'Triceps', 
+      icon: <Activity className="w-6 h-6" />,
+      description: 'Arm definition',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.TRICEPS).length
+    },
+    { 
+      id: MUSCLE_GROUPS.ABS, 
+      name: 'Core', 
+      icon: <Heart className="w-6 h-6" />,
+      description: 'Core stability',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.ABS).length
+    },
+    { 
+      id: MUSCLE_GROUPS.BACK, 
+      name: 'Back', 
+      icon: <Target className="w-6 h-6" />,
+      description: 'Posture & strength',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.BACK).length
+    },
+    { 
+      id: MUSCLE_GROUPS.LEGS, 
+      name: 'Legs', 
+      icon: <Zap className="w-6 h-6" />,
+      description: 'Lower body power',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.LEGS).length
+    },
+    { 
+      id: MUSCLE_GROUPS.GLUTES, 
+      name: 'Glutes', 
+      icon: <Activity className="w-6 h-6" />,
+      description: 'Hip strength',
+      exerciseCount: getExercisesByMuscleGroup(MUSCLE_GROUPS.GLUTES).length
+    }
   ];
 
   const handleBodyPartClick = (bodyPart: BodyPart) => {
-    navigate(`/exercises/${bodyPart.id}`, { 
-      state: { 
-        bodyPart: bodyPart.name, 
-        exercises: bodyPart.exercises 
-      } 
-    });
+    navigate(`/exercises/${bodyPart.id}`);
   };
 
   return (
@@ -131,13 +178,19 @@ const BodyPartsSelection = () => {
           {bodyParts.map((part) => (
             <div
               key={part.id}
-              className="bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-200 border border-gray-600"
+              className="bg-gray-800 p-6 rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 hover:shadow-lg"
               onClick={() => handleBodyPartClick(part)}
             >
-              <h3 className="text-lg font-semibold text-center">{part.name}</h3>
-              <p className="text-gray-400 text-sm text-center mt-2">
-                {part.exercises.length} exercises
-              </p>
+              <div className="flex flex-col items-center text-center">
+                <div className="text-blue-400 mb-3">
+                  {part.icon}
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{part.name}</h3>
+                <p className="text-gray-400 text-sm mb-2">{part.description}</p>
+                <p className="text-blue-400 text-sm font-medium">
+                  {part.exerciseCount} exercises
+                </p>
+              </div>
             </div>
           ))}
         </div>
