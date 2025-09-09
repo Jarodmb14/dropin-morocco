@@ -20,13 +20,6 @@ const Header = () => {
           <Button 
             variant="ghost"
             className="bg-white text-gray-900 font-bold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-100"
-            onClick={() => navigate("/venues")}
-          >
-            💪 GYMS
-          </Button>
-          <Button 
-            variant="ghost"
-            className="bg-white text-gray-900 font-bold px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-100"
             onClick={() => navigate("/qr-scanner")}
           >
             📱 SCANNER
@@ -37,15 +30,6 @@ const Header = () => {
             onClick={() => navigate("/owner")}
           >
             🏛️ OWNER
-          </Button>
-          <Button 
-            className="font-bold text-white rounded-lg shadow transition-all bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 hover:opacity-95"
-            onClick={() => navigate("/venues")}
-          >
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              LET'S GO!
-            </div>
           </Button>
         </div>
 
