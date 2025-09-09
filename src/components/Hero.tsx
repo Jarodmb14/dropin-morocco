@@ -126,7 +126,7 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+          <div className="flex justify-center mb-12">
             <Button 
               className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white px-10 py-6 h-auto rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 text-lg font-medium relative overflow-hidden"
               onClick={() => navigate('/venues')}
@@ -134,18 +134,8 @@ const Hero = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-2xl" />
               <div className="flex items-center gap-3">
                 <Sparkles className="w-6 h-6" />
-                Discover Gyms
+                Start Now
                 <Wind className="w-6 h-6" />
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="border-2 border-amber-300 text-amber-700 hover:bg-amber-50 px-10 py-6 h-auto rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-medium"
-              onClick={() => navigate('/venues')}
-            >
-              <div className="flex items-center gap-3">
-                <Leaf className="w-6 h-6" />
-                Browse Venues
               </div>
             </Button>
           </div>
