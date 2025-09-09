@@ -81,11 +81,11 @@ export function BodyDiagram({
         strokeWidth="2"
       />
 
-      {/* Chest - more anatomical shape */}
+      {/* Chest - more defined pectoral shape */}
       <path
         id="chest"
         data-bodypart="chest"
-        d="M 230 125 Q 300 110 370 125 L 370 200 Q 300 190 230 200 Z"
+        d="M 240 130 Q 300 115 360 130 L 360 200 Q 300 185 240 200 Z"
         fill={getBodyPartColor('chest', selectedPart === 'chest')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -96,7 +96,7 @@ export function BodyDiagram({
       <path
         id="shoulders"
         data-bodypart="shoulders"
-        d="M 190 130 Q 300 115 410 130 L 410 180 Q 300 170 190 180 Z"
+        d="M 200 135 Q 300 120 400 135 L 400 185 Q 300 175 200 185 Z"
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -107,7 +107,7 @@ export function BodyDiagram({
       <path
         id="biceps"
         data-bodypart="biceps"
-        d="M 190 180 L 230 180 L 230 320 L 190 320 Z"
+        d="M 200 185 L 240 185 L 240 330 L 200 330 Z"
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -118,7 +118,7 @@ export function BodyDiagram({
       <path
         id="triceps"
         data-bodypart="triceps"
-        d="M 370 180 L 410 180 L 410 320 L 370 320 Z"
+        d="M 360 185 L 400 185 L 400 330 L 360 330 Z"
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -129,7 +129,7 @@ export function BodyDiagram({
       <path
         id="abs"
         data-bodypart="abs"
-        d="M 230 200 L 370 200 L 370 280 L 230 280 Z"
+        d="M 240 200 L 360 200 L 360 280 L 240 280 Z"
         fill={getBodyPartColor('abs', selectedPart === 'abs')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -140,7 +140,7 @@ export function BodyDiagram({
       <path
         id="glutes"
         data-bodypart="glutes"
-        d="M 230 280 L 370 280 L 370 320 L 230 320 Z"
+        d="M 240 280 L 360 280 L 360 320 L 240 320 Z"
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -151,7 +151,7 @@ export function BodyDiagram({
       <path
         id="legs"
         data-bodypart="legs"
-        d="M 250 320 L 350 320 L 350 600 L 250 600 Z"
+        d="M 260 320 L 340 320 L 340 600 L 260 600 Z"
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
         strokeWidth="3"
@@ -160,17 +160,17 @@ export function BodyDiagram({
       
       {/* Hands - darker grey */}
       <circle
-        cx="200"
-        cy="350"
-        r="15"
+        cx="210"
+        cy="360"
+        r="12"
         fill="#4a5568"
         stroke="#ffffff"
         strokeWidth="2"
       />
       <circle
-        cx="400"
-        cy="350"
-        r="15"
+        cx="390"
+        cy="360"
+        r="12"
         fill="#4a5568"
         stroke="#ffffff"
         strokeWidth="2"
@@ -288,17 +288,17 @@ export function BodyDiagram({
       
       {/* Hands - darker grey */}
       <circle
-        cx="200"
-        cy="350"
-        r="15"
+        cx="210"
+        cy="360"
+        r="12"
         fill="#4a5568"
         stroke="#ffffff"
         strokeWidth="2"
       />
       <circle
-        cx="400"
-        cy="350"
-        r="15"
+        cx="390"
+        cy="360"
+        r="12"
         fill="#4a5568"
         stroke="#ffffff"
         strokeWidth="2"
