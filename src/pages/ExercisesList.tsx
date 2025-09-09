@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
 import { ArrowLeft, Play, Clock, Target, Info, Shuffle, Star, Dumbbell, Zap, Loader2, AlertCircle } from 'lucide-react';
 import { useExerciseData } from '@/hooks/useExerciseDB';
+import { useExerciseDBByBodyPart } from '@/hooks/useExercisesByBodyPart';
 import { ExerciseDBExercise } from '@/lib/api/exercisedb';
 import { getExerciseDBBodyPart } from '@/lib/bodypart-map';
 import { Badge } from '@/components/ui/badge';
@@ -13,23 +14,10 @@ const ExercisesList = () => {
   const { bodyPart } = useParams<{ bodyPart: string }>();
   const navigate = useNavigate();
   const [showVideo, setShowVideo] = useState<string | null>(null);
-  const [exercises, setExercises] = useState<ExerciseDBExercise[]>([]);
-  const { loadExercisesByTarget, loading, error } = useExerciseData();
-
-  // Load exercises when component mounts or bodyPart changes
-  useEffect(() => {
-    const loadExercises = async () => {
-      if (bodyPart) {
-        // Use the mapping to get the correct ExerciseDB body part name
-        const exerciseDBBodyPart = getExerciseDBBodyPart(bodyPart);
-        const data = await loadExercisesByTarget(exerciseDBBodyPart);
-        if (data) {
-          setExercises(data);
-        }
-      }
-    };
-    loadExercises();
-  }, [bodyPart, loadExercisesByTarget]);
+  
+  // Use the new server-side hook for fetching exercises
+  const exerciseDBBodyPart = bodyPart ? getExerciseDBBodyPart(bodyPart) : '';
+  const { exercises, loading, error, refetch } = useExerciseDBByBodyPart(exerciseDBBodyPart, 50);
   
   const getDifficultyColor = (equipment: string) => {
     if (equipment.toLowerCase().includes('barbell') || equipment.toLowerCase().includes('dumbbell')) {
