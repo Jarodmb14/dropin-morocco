@@ -77,6 +77,19 @@ const FALLBACK_TARGETS: ExerciseDBTarget[] = [
   { name: 'glutes', count: 14 }
 ];
 
+const FALLBACK_EQUIPMENT = [
+  'body weight',
+  'dumbbell',
+  'barbell',
+  'kettlebell',
+  'resistance band',
+  'cable',
+  'machine',
+  'stability ball',
+  'medicine ball',
+  'pull-up bar'
+];
+
 class ExerciseDBService {
   private baseUrl = 'https://exercisedb.p.rapidapi.com';
   private cache = new Map<string, { data: any; timestamp: number }>();
@@ -152,6 +165,9 @@ class ExerciseDBService {
     if (endpoint.includes('/targetList')) {
       return FALLBACK_TARGETS;
     }
+    if (endpoint.includes('/equipmentList')) {
+      return FALLBACK_EQUIPMENT;
+    }
     if (endpoint.includes('/bodyPart/')) {
       return FALLBACK_EXERCISES;
     }
@@ -205,6 +221,17 @@ class ExerciseDBService {
       return data;
     } catch (error) {
       console.error('Error fetching body part list:', error);
+      throw error;
+    }
+  }
+
+  // Get all available equipment
+  async getEquipmentList(): Promise<string[]> {
+    try {
+      const data = await this.makeRequest('/exercises/equipmentList');
+      return data;
+    } catch (error) {
+      console.error('Error fetching equipment list:', error);
       throw error;
     }
   }
