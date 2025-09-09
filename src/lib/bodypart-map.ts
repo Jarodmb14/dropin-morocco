@@ -106,3 +106,11 @@ export function isValidSvgId(svgId: string): boolean {
 export function isValidInternalKey(internalKey: string): boolean {
   return Object.values(BODY_PART_MAP).includes(internalKey);
 }
+
+/**
+ * Resolve SVG ID to internal key
+ * Returns undefined if the SVG ID is not found
+ */
+export function resolveBodyKey(svgId: string): string | undefined {
+  return BODY_PART_MAP[svgId];
+}
