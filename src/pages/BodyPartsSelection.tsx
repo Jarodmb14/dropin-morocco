@@ -132,6 +132,13 @@ const BodyPartsSelection = () => {
           <p className="text-sm text-gray-500 mt-2">
             Powered by ExerciseDB • {bodyParts.length} muscle groups • {bodyParts.reduce((sum, part) => sum + part.exerciseCount, 0)} exercises
           </p>
+          {bodyParts.some(part => part.exerciseCount === 0) && (
+            <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg max-w-md mx-auto">
+              <p className="text-yellow-300 text-sm">
+                ⚠️ Some data may be limited due to API rate limits. Full data will be available shortly.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Interactive Body Diagram */}
