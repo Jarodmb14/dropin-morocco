@@ -107,6 +107,29 @@ const ExercisesList = () => {
     );
   }
 
+  if (!loading && exercises.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <SimpleHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="text-gray-400 text-6xl mb-4">🏋️‍♂️</div>
+            <h2 className="text-2xl font-semibold mb-2">No Exercises Found</h2>
+            <p className="text-gray-400 text-center mb-6">
+              No exercises were found for "{bodyPart}". This might be due to API limitations or the muscle group not being available.
+            </p>
+            <button
+              onClick={() => navigate('/body-parts')}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Choose Different Muscle Group
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <SimpleHeader />

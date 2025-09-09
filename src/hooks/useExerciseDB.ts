@@ -110,11 +110,19 @@ export const useExerciseData = () => {
   };
 
   const loadExercisesByTarget = async (target: string) => {
-    const data = await getExercisesByTarget(target);
-    if (data) {
-      setExercises(data);
+    try {
+      const data = await getExercisesByTarget(target);
+      if (data) {
+        setExercises(data);
+        return data;
+      }
+    } catch (error) {
+      console.error(`Failed to load exercises for target ${target}:`, error);
+      // Set empty array as fallback
+      setExercises([]);
+      return [];
     }
-    return data;
+    return [];
   };
 
   return {

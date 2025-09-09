@@ -84,7 +84,28 @@ class ExerciseDBService {
   // Get exercises by target muscle
   async getExercisesByTarget(target: string): Promise<ExerciseDBExercise[]> {
     try {
-      const data = await this.makeRequest(`/exercises/target/${target}`);
+      // Map our target names to body part names that the API recognizes
+      const targetToBodyPart: Record<string, string> = {
+        'back': 'back',
+        'chest': 'chest',
+        'shoulders': 'shoulders',
+        'biceps': 'upper arms',
+        'triceps': 'upper arms',
+        'abs': 'waist',
+        'legs': 'upper legs',
+        'glutes': 'upper legs',
+        'upper arms': 'upper arms',
+        'lower arms': 'lower arms',
+        'upper legs': 'upper legs',
+        'lower legs': 'lower legs',
+        'waist': 'waist',
+        'neck': 'neck'
+      };
+
+      const bodyPart = targetToBodyPart[target.toLowerCase()] || target.toLowerCase();
+      console.log(`Fetching exercises for target "${target}" using body part "${bodyPart}"`);
+      
+      const data = await this.makeRequest(`/exercises/bodyPart/${bodyPart}`);
       return data;
     } catch (error) {
       console.error(`Error fetching exercises for target ${target}:`, error);
