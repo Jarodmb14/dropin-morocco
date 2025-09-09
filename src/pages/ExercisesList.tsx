@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
-import { ArrowLeft, Play, Clock, Target, Info, Shuffle, Star, Dumbbell, Zap } from 'lucide-react';
-import { getExercisesByMuscleGroup, getPrimaryMuscle, getSecondaryMuscles, getEquipment, getExerciseTypes, getMechanicsType } from '../data/exercises';
+import { ArrowLeft, Play, Clock, Target, Info, Shuffle, Star, Dumbbell, Zap, Loader2, AlertCircle } from 'lucide-react';
+import { useExerciseData } from '@/hooks/useExerciseDB';
+import { ExerciseDBExercise } from '@/lib/api/exercisedb';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -11,38 +12,50 @@ const ExercisesList = () => {
   const { bodyPart } = useParams<{ bodyPart: string }>();
   const navigate = useNavigate();
   const [showVideo, setShowVideo] = useState<string | null>(null);
+  const [exercises, setExercises] = useState<ExerciseDBExercise[]>([]);
+  const { loadExercisesByTarget, loading, error } = useExerciseData();
+
+  // Load exercises when component mounts or bodyPart changes
+  useEffect(() => {
+    const loadExercises = async () => {
+      if (bodyPart) {
+        const data = await loadExercisesByTarget(bodyPart);
+        if (data) {
+          setExercises(data);
+        }
+      }
+    };
+    loadExercises();
+  }, [bodyPart, loadExercisesByTarget]);
   
-  // Get exercises for the selected body part
-  const exercises = getExercisesByMuscleGroup(bodyPart || 'chest');
-  
-  const getDifficultyColor = (exerciseTypes: string[]) => {
-    if (exerciseTypes.includes('PLYOMETRICS') || exerciseTypes.includes('CROSSFIT')) {
+  const getDifficultyColor = (equipment: string) => {
+    if (equipment.toLowerCase().includes('barbell') || equipment.toLowerCase().includes('dumbbell')) {
       return 'bg-red-500';
     }
-    if (exerciseTypes.includes('STRENGTH')) {
+    if (equipment.toLowerCase().includes('cable') || equipment.toLowerCase().includes('machine')) {
       return 'bg-yellow-500';
     }
     return 'bg-green-500';
   };
 
-  const getDifficultyText = (exerciseTypes: string[]) => {
-    if (exerciseTypes.includes('PLYOMETRICS') || exerciseTypes.includes('CROSSFIT')) {
+  const getDifficultyText = (equipment: string) => {
+    if (equipment.toLowerCase().includes('barbell') || equipment.toLowerCase().includes('dumbbell')) {
       return 'Advanced';
     }
-    if (exerciseTypes.includes('STRENGTH')) {
+    if (equipment.toLowerCase().includes('cable') || equipment.toLowerCase().includes('machine')) {
       return 'Intermediate';
     }
     return 'Beginner';
   };
 
-  const getEquipmentIcon = (equipment: string[]) => {
-    if (equipment.includes('BARBELL') || equipment.includes('BAR')) {
+  const getEquipmentIcon = (equipment: string) => {
+    if (equipment.toLowerCase().includes('barbell') || equipment.toLowerCase().includes('dumbbell')) {
       return <Dumbbell className="w-4 h-4" />;
     }
-    if (equipment.includes('BODYWEIGHT')) {
+    if (equipment.toLowerCase().includes('body weight') || equipment.toLowerCase().includes('bodyweight')) {
       return <Target className="w-4 h-4" />;
     }
-    if (equipment.includes('CABLE') || equipment.includes('ROPE')) {
+    if (equipment.toLowerCase().includes('cable') || equipment.toLowerCase().includes('rope')) {
       return <Zap className="w-4 h-4" />;
     }
     return <Dumbbell className="w-4 h-4" />;
@@ -53,9 +66,46 @@ const ExercisesList = () => {
   };
 
   const handleShuffleExercise = () => {
-    // Simple shuffle - just reload the page with a different random selection
-    window.location.reload();
+    // Shuffle the exercises array
+    const shuffled = [...exercises].sort(() => 0.5 - Math.random());
+    setExercises(shuffled);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <SimpleHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <Loader2 className="w-12 h-12 animate-spin text-blue-400 mb-4" />
+            <h2 className="text-2xl font-semibold mb-2">Loading Exercises</h2>
+            <p className="text-gray-400">Fetching exercises for {bodyPart}...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white">
+        <SimpleHeader />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <AlertCircle className="w-12 h-12 text-red-400 mb-4" />
+            <h2 className="text-2xl font-semibold mb-2 text-red-400">Error Loading Exercises</h2>
+            <p className="text-gray-400 text-center mb-6">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -95,13 +145,8 @@ const ExercisesList = () => {
         {/* Exercises Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {exercises.map((exercise) => {
-            const primaryMuscle = getPrimaryMuscle(exercise);
-            const secondaryMuscles = getSecondaryMuscles(exercise);
-            const equipment = getEquipment(exercise);
-            const exerciseTypes = getExerciseTypes(exercise);
-            const mechanicsType = getMechanicsType(exercise);
-            const difficulty = getDifficultyText(exerciseTypes);
-            const difficultyColor = getDifficultyColor(exerciseTypes);
+            const difficulty = getDifficultyText(exercise.equipment);
+            const difficultyColor = getDifficultyColor(exercise.equipment);
 
             return (
               <Card
@@ -109,15 +154,15 @@ const ExercisesList = () => {
                 className="group relative overflow-hidden bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/20"
               >
                 <CardHeader className="relative p-0">
-                  {/* Exercise Image/Video thumbnail */}
+                  {/* Exercise GIF */}
                   <div className="relative h-48 bg-gradient-to-br from-gray-700 to-gray-800">
-                    {exercise.fullVideoImageUrl ? (
+                    {exercise.gifUrl ? (
                       <>
                         <img
                           alt={exercise.name}
                           className="object-cover w-full h-full transition-transform group-hover:scale-105"
                           loading="lazy"
-                          src={exercise.fullVideoImageUrl}
+                          src={exercise.gifUrl}
                         />
                         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <Button 
@@ -126,7 +171,7 @@ const ExercisesList = () => {
                             size="sm"
                           >
                             <Play className="h-4 w-4 mr-2" />
-                            Watch Video
+                            Watch Demo
                           </Button>
                         </div>
                       </>
@@ -145,10 +190,10 @@ const ExercisesList = () => {
                       </Badge>
                     </div>
 
-                    {/* Exercise Type Badge */}
+                    {/* Target Muscle Badge */}
                     <div className="absolute top-3 right-3">
                       <Badge variant="outline" className="bg-blue-900/50 text-blue-300 border-blue-600">
-                        {mechanicsType[0] || 'COMPOUND'}
+                        {exercise.target}
                       </Badge>
                     </div>
                   </div>
@@ -166,41 +211,41 @@ const ExercisesList = () => {
                   </div>
 
                   {/* Exercise Description */}
-                  <div 
-                    className="text-gray-300 text-sm mb-4 line-clamp-3"
-                    dangerouslySetInnerHTML={{ 
-                      __html: exercise.introduction?.replace(/<[^>]*>/g, '') || exercise.description.replace(/<[^>]*>/g, '') 
-                    }}
-                  />
+                  <div className="text-gray-300 text-sm mb-4 line-clamp-3">
+                    {exercise.instructions && exercise.instructions.length > 0 
+                      ? exercise.instructions[0] 
+                      : `Target: ${exercise.target} • Equipment: ${exercise.equipment}`
+                    }
+                  </div>
 
                   {/* Equipment Tags */}
-                  {equipment.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {equipment.slice(0, 2).map((eq, index) => (
-                        <Badge key={index} variant="outline" className="text-xs px-2 py-0.5 text-gray-300 border-gray-600">
-                          {getEquipmentIcon([eq])}
-                          <span className="ml-1">{eq.replace("_", " ")}</span>
-                        </Badge>
-                      ))}
-                      {equipment.length > 2 && (
-                        <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-300 border-gray-600">
-                          +{equipment.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  )}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-300 border-gray-600">
+                      {getEquipmentIcon(exercise.equipment)}
+                      <span className="ml-1">{exercise.equipment}</span>
+                    </Badge>
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 text-gray-300 border-gray-600">
+                      <Target className="w-3 h-3 mr-1" />
+                      {exercise.target}
+                    </Badge>
+                  </div>
 
-                  {/* Exercise Types */}
-                  {exerciseTypes.length > 0 && (
+                  {/* Secondary Muscles */}
+                  {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-4">
-                      {exerciseTypes.slice(0, 2).map((type, index) => (
+                      {exercise.secondaryMuscles.slice(0, 2).map((muscle, index) => (
                         <Badge
                           key={index}
                           className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100"
                         >
-                          {type}
+                          {muscle}
                         </Badge>
                       ))}
+                      {exercise.secondaryMuscles.length > 2 && (
+                        <Badge className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100">
+                          +{exercise.secondaryMuscles.length - 2}
+                        </Badge>
+                      )}
                     </div>
                   )}
 
@@ -240,19 +285,19 @@ const ExercisesList = () => {
             </div>
             <div>
               <div className="text-3xl font-bold text-green-400">
-                {exercises.filter(ex => getExerciseTypes(ex).includes('STRENGTH')).length}
+                {exercises.filter(ex => ex.equipment.toLowerCase().includes('barbell') || ex.equipment.toLowerCase().includes('dumbbell')).length}
               </div>
-              <div className="text-gray-300">Strength</div>
+              <div className="text-gray-300">Weight Training</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-yellow-400">
-                {exercises.filter(ex => getExerciseTypes(ex).includes('CARDIO')).length}
+                {exercises.filter(ex => ex.equipment.toLowerCase().includes('cable') || ex.equipment.toLowerCase().includes('machine')).length}
               </div>
-              <div className="text-gray-300">Cardio</div>
+              <div className="text-gray-300">Machine/Cable</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-purple-400">
-                {exercises.filter(ex => getEquipment(ex).includes('BODYWEIGHT')).length}
+                {exercises.filter(ex => ex.equipment.toLowerCase().includes('body weight') || ex.equipment.toLowerCase().includes('bodyweight')).length}
               </div>
               <div className="text-gray-300">Bodyweight</div>
             </div>
@@ -276,12 +321,18 @@ const ExercisesList = () => {
                 </Button>
               </div>
               <div className="aspect-video">
-                <iframe
-                  src={exercises.find(ex => ex.id === showVideo)?.fullVideoUrl}
-                  className="w-full h-full rounded-lg"
-                  allowFullScreen
-                  title={exercises.find(ex => ex.id === showVideo)?.name}
+                <img
+                  src={exercises.find(ex => ex.id === showVideo)?.gifUrl}
+                  alt={exercises.find(ex => ex.id === showVideo)?.name}
+                  className="w-full h-full rounded-lg object-cover"
                 />
+              </div>
+              <div className="mt-4 text-gray-300">
+                <p><strong>Target:</strong> {exercises.find(ex => ex.id === showVideo)?.target}</p>
+                <p><strong>Equipment:</strong> {exercises.find(ex => ex.id === showVideo)?.equipment}</p>
+                {exercises.find(ex => ex.id === showVideo)?.secondaryMuscles && (
+                  <p><strong>Secondary Muscles:</strong> {exercises.find(ex => ex.id === showVideo)?.secondaryMuscles?.join(', ')}</p>
+                )}
               </div>
             </div>
           </div>
