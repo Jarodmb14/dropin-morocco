@@ -38,6 +38,7 @@ import BodyPartsSelection from "./pages/BodyPartsSelection";
 import ExercisesList from "./pages/ExercisesList";
 import Training from "./pages/Training";
 import BodyPickerPage from "./pages/BodyPickerPage";
+import { BodyDiagramDemo } from "./components/BodyDiagramDemo";
 import TestPage from "./pages/TestPage";
 import UltraSimple from "./pages/UltraSimple";
 import LocationTest from "./pages/LocationTest";
@@ -70,6 +71,7 @@ const App = () => (
           <Route path="/body-parts" element={<BodyPartsSelection />} />
           <Route path="/exercises/:bodyPart" element={<ExercisesList />} />
           <Route path="/body-picker" element={<BodyPickerPage />} />
+          <Route path="/body-demo" element={<BodyDiagramDemo />} />
           <Route path="/gym/:id" element={<GymDetail />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/payment-test" element={<PaymentTest />} />
