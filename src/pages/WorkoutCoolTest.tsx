@@ -11,6 +11,7 @@ const WorkoutCoolTest = () => {
   const navigate = useNavigate();
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [variant, setVariant] = useState<'front' | 'back'>('front');
+  const [debugMode, setDebugMode] = useState<boolean>(true); // Enable debug mode by default
 
   const handleBodyPartClick = (bodyPartId: string) => {
     setSelectedPart(bodyPartId);
@@ -67,7 +68,7 @@ const WorkoutCoolTest = () => {
             <CardContent>
               <div className="space-y-4">
                 {/* Controls */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button
                     onClick={handleToggleVariant}
                     variant="outline"
@@ -85,6 +86,14 @@ const WorkoutCoolTest = () => {
                     <RotateCcw className="w-4 h-4 mr-2" />
                     Reset Selection
                   </Button>
+                  
+                  <Button
+                    onClick={() => setDebugMode(!debugMode)}
+                    variant={debugMode ? "default" : "outline"}
+                    size="sm"
+                  >
+                    {debugMode ? 'Hide' : 'Show'} Debug
+                  </Button>
                 </div>
 
                 {/* Body Diagram */}
@@ -93,6 +102,7 @@ const WorkoutCoolTest = () => {
                     variant={variant}
                     selectedPart={selectedPart}
                     onBodyPartClick={handleBodyPartClick}
+                    debugMode={debugMode}
                   />
                 </div>
 
