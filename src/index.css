@@ -14,8 +14,8 @@
 
 /* Body Diagram Selected State */
 [data-bodypart].selected {
-  stroke-width: 2.5;
-  filter: drop-shadow(0 0 6px rgba(227,191,192,.9)); /* matches brand pink */
+  stroke-width: 4;
+  filter: drop-shadow(0 0 8px rgba(227,191,192,.9)); /* matches brand pink */
 }
 
 /* Custom Leaflet Popup Styles */

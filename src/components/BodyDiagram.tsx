@@ -42,188 +42,286 @@ export function BodyDiagram({
   };
 
   const getBodyPartColor = (bodyPartId: string, isSelected: boolean) => {
+    // Match the anatomical style from your images - light blue-grey base with white outlines
     const colorMap: Record<string, { normal: string; selected: string }> = {
-      'chest': { normal: '#ef4444', selected: '#f87171' },
-      'shoulders': { normal: '#3b82f6', selected: '#60a5fa' },
-      'biceps': { normal: '#10b981', selected: '#34d399' },
-      'triceps': { normal: '#8b5cf6', selected: '#a78bfa' },
-      'abs': { normal: '#f97316', selected: '#fb923c' },
-      'back': { normal: '#14b8a6', selected: '#5eead4' },
-      'glutes': { normal: '#ec4899', selected: '#f472b6' },
-      'legs': { normal: '#6366f1', selected: '#818cf8' },
+      'chest': { normal: '#a8b2d1', selected: '#8b9dd1' }, // Light blue-grey
+      'shoulders': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'biceps': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'triceps': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'abs': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'back': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'glutes': { normal: '#a8b2d1', selected: '#8b9dd1' },
+      'legs': { normal: '#4a90e2', selected: '#357abd' }, // Highlighted blue for legs like in your image
     };
     
-    const colors = colorMap[bodyPartId] || { normal: '#6b7280', selected: '#9ca3af' };
+    const colors = colorMap[bodyPartId] || { normal: '#a8b2d1', selected: '#8b9dd1' };
     return isSelected ? colors.selected : colors.normal;
   };
 
   const renderFrontView = () => (
     <g>
-      {/* Head */}
+      {/* Head - darker grey like in your image */}
       <circle
         cx="300"
-        cy="80"
-        r="40"
-        fill="#374151"
-        stroke="#6b7280"
+        cy="70"
+        r="35"
+        fill="#4a5568"
+        stroke="#ffffff"
         strokeWidth="3"
       />
       
       {/* Neck */}
       <rect
-        x="280"
-        y="120"
-        width="40"
-        height="25"
-        fill="#374151"
-        stroke="#6b7280"
+        x="285"
+        y="105"
+        width="30"
+        height="20"
+        fill="#4a5568"
+        stroke="#ffffff"
         strokeWidth="2"
       />
 
-      {/* Chest */}
+      {/* Chest - more anatomical shape */}
       <path
         id="chest"
         data-bodypart="chest"
-        d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
+        d="M 230 125 Q 300 110 370 125 L 370 200 Q 300 190 230 200 Z"
         fill={getBodyPartColor('chest', selectedPart === 'chest')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'chest' ? 'selected' : ''}`}
       />
       
-      {/* Shoulders */}
+      {/* Shoulders - deltoid shape */}
       <path
         id="shoulders"
         data-bodypart="shoulders"
-        d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
+        d="M 190 130 Q 300 115 410 130 L 410 180 Q 300 170 190 180 Z"
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'shoulders' ? 'selected' : ''}`}
       />
       
-      {/* Biceps */}
+      {/* Biceps - upper arm */}
       <path
         id="biceps"
         data-bodypart="biceps"
-        d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
+        d="M 190 180 L 230 180 L 230 320 L 190 320 Z"
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'biceps' ? 'selected' : ''}`}
       />
       
-      {/* Triceps */}
+      {/* Triceps - upper arm */}
       <path
         id="triceps"
         data-bodypart="triceps"
-        d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
+        d="M 370 180 L 410 180 L 410 320 L 370 320 Z"
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'triceps' ? 'selected' : ''}`}
       />
       
-      {/* Abs */}
+      {/* Abs - more defined six-pack shape */}
       <path
         id="abs"
         data-bodypart="abs"
-        d="M 220 250 L 380 250 L 380 350 L 220 350 Z"
+        d="M 230 200 L 370 200 L 370 280 L 230 280 Z"
         fill={getBodyPartColor('abs', selectedPart === 'abs')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'abs' ? 'selected' : ''}`}
       />
       
-      {/* Glutes */}
+      {/* Glutes - hip area */}
       <path
         id="glutes"
         data-bodypart="glutes"
-        d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
+        d="M 230 280 L 370 280 L 370 320 L 230 320 Z"
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'glutes' ? 'selected' : ''}`}
       />
       
-      {/* Legs */}
+      {/* Legs - highlighted blue like in your image */}
       <path
         id="legs"
         data-bodypart="legs"
-        d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
+        d="M 250 320 L 350 320 L 350 600 L 250 600 Z"
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'legs' ? 'selected' : ''}`}
+      />
+      
+      {/* Hands - darker grey */}
+      <circle
+        cx="200"
+        cy="350"
+        r="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      <circle
+        cx="400"
+        cy="350"
+        r="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      
+      {/* Feet - darker grey */}
+      <ellipse
+        cx="280"
+        cy="620"
+        rx="20"
+        ry="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      <ellipse
+        cx="320"
+        cy="620"
+        rx="20"
+        ry="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
       />
     </g>
   );
 
   const renderBackView = () => (
     <g>
-      {/* Back */}
+      {/* Head - darker grey */}
+      <circle
+        cx="300"
+        cy="70"
+        r="35"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="3"
+      />
+      
+      {/* Neck */}
+      <rect
+        x="285"
+        y="105"
+        width="30"
+        height="20"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+
+      {/* Back - large V-shaped back muscles */}
       <path
         id="back"
         data-bodypart="back"
-        d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
+        d="M 230 125 Q 300 110 370 125 L 370 200 Q 300 190 230 200 Z"
         fill={getBodyPartColor('back', selectedPart === 'back')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'back' ? 'selected' : ''}`}
       />
       
-      {/* Back Shoulders */}
+      {/* Back Shoulders - deltoids from behind */}
       <path
         id="shoulders-back"
         data-bodypart="shoulders"
-        d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
+        d="M 190 130 Q 300 115 410 130 L 410 180 Q 300 170 190 180 Z"
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'shoulders' ? 'selected' : ''}`}
       />
       
-      {/* Back Arms - Triceps */}
+      {/* Back Arms - triceps from behind */}
       <path
         id="triceps-back-left"
         data-bodypart="triceps"
-        d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
+        d="M 190 180 L 230 180 L 230 320 L 190 320 Z"
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'triceps' ? 'selected' : ''}`}
       />
       
       <path
-        id="biceps-back-right"
-        data-bodypart="biceps"
-        d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
-        fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
+        id="triceps-back-right"
+        data-bodypart="triceps"
+        d="M 370 180 L 410 180 L 410 320 L 370 320 Z"
+        fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
-        strokeWidth="4"
-        className={`transition-colors ${selectedPart === 'biceps' ? 'selected' : ''}`}
+        strokeWidth="3"
+        className={`transition-colors ${selectedPart === 'triceps' ? 'selected' : ''}`}
       />
       
-      {/* Back Glutes */}
+      {/* Back Glutes - more prominent from behind */}
       <path
         id="glutes-back"
         data-bodypart="glutes"
-        d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
+        d="M 230 280 L 370 280 L 370 320 L 230 320 Z"
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'glutes' ? 'selected' : ''}`}
       />
       
-      {/* Back Legs */}
+      {/* Back Legs - hamstrings, highlighted blue */}
       <path
         id="legs-back"
         data-bodypart="legs"
-        d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
+        d="M 250 320 L 350 320 L 350 600 L 250 600 Z"
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
-        strokeWidth="4"
+        strokeWidth="3"
         className={`transition-colors ${selectedPart === 'legs' ? 'selected' : ''}`}
+      />
+      
+      {/* Hands - darker grey */}
+      <circle
+        cx="200"
+        cy="350"
+        r="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      <circle
+        cx="400"
+        cy="350"
+        r="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      
+      {/* Feet - darker grey */}
+      <ellipse
+        cx="280"
+        cy="620"
+        rx="20"
+        ry="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
+      />
+      <ellipse
+        cx="320"
+        cy="620"
+        rx="20"
+        ry="15"
+        fill="#4a5568"
+        stroke="#ffffff"
+        strokeWidth="2"
       />
     </g>
   );
@@ -237,6 +335,7 @@ export function BodyDiagram({
       onClick={handleSvgClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      style={{ backgroundColor: '#2d3748' }} // Dark background like your images
     >
       {variant === "front" ? renderFrontView() : renderBackView()}
     </svg>
