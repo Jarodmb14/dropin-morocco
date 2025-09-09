@@ -1,13 +1,12 @@
-// ExerciseDB API service
-const RAPIDAPI_KEY = '7d47d18d37msh8a97d59d2102bfbp139a7cjsn19c44ad96a1b';
 const RAPIDAPI_HOST = 'exercisedb.p.rapidapi.com';
+const RAPIDAPI_KEY = '7d47d18d37msh8a97d59d2102bfbp139a7cjsn19c44ad96a1b';
 
 export interface ExerciseDBExercise {
+  id: string;
+  name: string;
   bodyPart: string;
   equipment: string;
   gifUrl: string;
-  id: string;
-  name: string;
   target: string;
   secondaryMuscles: string[];
   instructions: string[];
@@ -16,195 +15,6 @@ export interface ExerciseDBExercise {
 export interface ExerciseDBTarget {
   name: string;
   count: number;
-}
-
-class ExerciseDBService {
-  private baseUrl = 'https://exercisedb.p.rapidapi.com';
-  private cache = new Map<string, { data: any; timestamp: number }>();
-  private requestQueue: Array<() => Promise<any>> = [];
-  private isProcessingQueue = false;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  private readonly RATE_LIMIT_DELAY = 1000; // 1 second between requests
-  
-  private async makeRequest(endpoint: string) {
-    // Check cache first
-    const cached = this.cache.get(endpoint);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      console.log(`Using cached data for ${endpoint}`);
-      return cached.data;
-    }
-
-    // Add to queue to respect rate limits
-    return new Promise((resolve, reject) => {
-      this.requestQueue.push(async () => {
-        try {
-          const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'GET',
-            headers: {
-              'x-rapidapi-host': RAPIDAPI_HOST,
-              'x-rapidapi-key': RAPIDAPI_KEY,
-            },
-          });
-
-          if (response.status === 429) {
-            console.warn('Rate limit hit, waiting before retry...');
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
-            throw new Error('Rate limit exceeded. Please try again in a few minutes.');
-          }
-
-          if (!response.ok) {
-            throw new Error(`ExerciseDB API error: ${response.status} ${response.statusText}`);
-          }
-
-          const data = await response.json();
-          
-          // Cache the result
-          this.cache.set(endpoint, { data, timestamp: Date.now() });
-          
-          resolve(data);
-        } catch (error) {
-          reject(error);
-        }
-      });
-
-      this.processQueue();
-    });
-  }
-
-  private async processQueue() {
-    if (this.isProcessingQueue || this.requestQueue.length === 0) {
-      return;
-    }
-
-    this.isProcessingQueue = true;
-
-    while (this.requestQueue.length > 0) {
-      const request = this.requestQueue.shift();
-      if (request) {
-        try {
-          await request();
-        } catch (error) {
-          console.error('Request failed:', error);
-        }
-        
-        // Wait between requests to respect rate limits
-        if (this.requestQueue.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, this.RATE_LIMIT_DELAY));
-        }
-      }
-    }
-
-    this.isProcessingQueue = false;
-  }
-
-  // Get all available target muscle groups
-  async getTargetList(): Promise<ExerciseDBTarget[]> {
-    try {
-      const data = await this.makeRequest('/exercises/targetList');
-      return data;
-    } catch (error) {
-      console.error('Error fetching target list:', error);
-      throw error;
-    }
-  }
-
-  // Get all available body parts
-  async getBodyPartList(): Promise<string[]> {
-    try {
-      const data = await this.makeRequest('/exercises/bodyPartList');
-      return data;
-    } catch (error) {
-      console.error('Error fetching body part list:', error);
-      throw error;
-    }
-  }
-
-  // Get all available equipment
-  async getEquipmentList(): Promise<string[]> {
-    try {
-      const data = await this.makeRequest('/exercises/equipmentList');
-      return data;
-    } catch (error) {
-      console.error('Error fetching equipment list:', error);
-      throw error;
-    }
-  }
-
-  // Get exercises by body part
-  async getExercisesByBodyPart(bodyPart: string): Promise<ExerciseDBExercise[]> {
-    try {
-      const data = await this.makeRequest(`/exercises/bodyPart/${bodyPart}`);
-      return data;
-    } catch (error) {
-      console.error(`Error fetching exercises for body part ${bodyPart}:`, error);
-      throw error;
-    }
-  }
-
-  // Get exercises by target muscle
-  async getExercisesByTarget(target: string): Promise<ExerciseDBExercise[]> {
-    try {
-      // Map our target names to body part names that the API recognizes
-      const targetToBodyPart: Record<string, string> = {
-        'back': 'back',
-        'chest': 'chest',
-        'shoulders': 'shoulders',
-        'biceps': 'upper arms',
-        'triceps': 'upper arms',
-        'abs': 'waist',
-        'legs': 'upper legs',
-        'glutes': 'upper legs',
-        'upper arms': 'upper arms',
-        'lower arms': 'lower arms',
-        'upper legs': 'upper legs',
-        'lower legs': 'lower legs',
-        'waist': 'waist',
-        'neck': 'neck'
-      };
-
-      const bodyPart = targetToBodyPart[target.toLowerCase()] || target.toLowerCase();
-      console.log(`Fetching exercises for target "${target}" using body part "${bodyPart}"`);
-      
-      const data = await this.makeRequest(`/exercises/bodyPart/${bodyPart}`);
-      return data;
-    } catch (error) {
-      console.error(`Error fetching exercises for target ${target}:`, error);
-      throw error;
-    }
-  }
-
-  // Get exercises by equipment
-  async getExercisesByEquipment(equipment: string): Promise<ExerciseDBExercise[]> {
-    try {
-      const data = await this.makeRequest(`/exercises/equipment/${equipment}`);
-      return data;
-    } catch (error) {
-      console.error(`Error fetching exercises for equipment ${equipment}:`, error);
-      throw error;
-    }
-  }
-
-  // Get all exercises (be careful with this one - it's a lot of data)
-  async getAllExercises(): Promise<ExerciseDBExercise[]> {
-    try {
-      const data = await this.makeRequest('/exercises');
-      return data;
-    } catch (error) {
-      console.error('Error fetching all exercises:', error);
-      throw error;
-    }
-  }
-
-  // Search exercises by name
-  async searchExercises(query: string): Promise<ExerciseDBExercise[]> {
-    try {
-      const data = await this.makeRequest(`/exercises/name/${query}`);
-      return data;
-    } catch (error) {
-      console.error(`Error searching exercises for "${query}":`, error);
-      throw error;
-    }
-  }
 }
 
 // Fallback sample data for when API is rate limited
@@ -376,3 +186,104 @@ class ExerciseDBService {
 
     this.isProcessingQueue = false;
   }
+
+  // Get all available target muscle groups
+  async getTargetList(): Promise<ExerciseDBTarget[]> {
+    try {
+      const data = await this.makeRequest('/exercises/targetList');
+      return data;
+    } catch (error) {
+      console.error('Error fetching target list:', error);
+      throw error;
+    }
+  }
+
+  // Get all available body parts
+  async getBodyPartList(): Promise<string[]> {
+    try {
+      const data = await this.makeRequest('/exercises/bodyPartList');
+      return data;
+    } catch (error) {
+      console.error('Error fetching body part list:', error);
+      throw error;
+    }
+  }
+
+  // Get exercises by body part
+  async getExercisesByBodyPart(bodyPart: string): Promise<ExerciseDBExercise[]> {
+    try {
+      const data = await this.makeRequest(`/exercises/bodyPart/${bodyPart}`);
+      return data;
+    } catch (error) {
+      console.error(`Error fetching exercises for body part ${bodyPart}:`, error);
+      throw error;
+    }
+  }
+
+  // Get exercises by target muscle group
+  async getExercisesByTarget(target: string): Promise<ExerciseDBExercise[]> {
+    try {
+      // Map our target names to body part names that the API recognizes
+      const targetToBodyPart: Record<string, string> = {
+        'back': 'back',
+        'chest': 'chest',
+        'shoulders': 'shoulders',
+        'biceps': 'upper arms',
+        'triceps': 'upper arms',
+        'abs': 'waist',
+        'legs': 'upper legs',
+        'glutes': 'upper legs',
+        'upper arms': 'upper arms',
+        'lower arms': 'lower arms',
+        'upper legs': 'upper legs',
+        'lower legs': 'lower legs',
+        'waist': 'waist',
+        'neck': 'neck'
+      };
+
+      const bodyPart = targetToBodyPart[target.toLowerCase()] || target.toLowerCase();
+      console.log(`Fetching exercises for target "${target}" using body part "${bodyPart}"`);
+
+      const data = await this.makeRequest(`/exercises/bodyPart/${bodyPart}`);
+      return data;
+    } catch (error) {
+      console.error(`Error fetching exercises for target ${target}:`, error);
+      throw error;
+    }
+  }
+
+  // Get exercises by equipment
+  async getExercisesByEquipment(equipment: string): Promise<ExerciseDBExercise[]> {
+    try {
+      const data = await this.makeRequest(`/exercises/equipment/${equipment}`);
+      return data;
+    } catch (error) {
+      console.error(`Error fetching exercises for equipment ${equipment}:`, error);
+      throw error;
+    }
+  }
+
+  // Get all exercises
+  async getAllExercises(): Promise<ExerciseDBExercise[]> {
+    try {
+      const data = await this.makeRequest('/exercises');
+      return data;
+    } catch (error) {
+      console.error('Error fetching all exercises:', error);
+      throw error;
+    }
+  }
+
+  // Search exercises by name
+  async searchExercises(query: string): Promise<ExerciseDBExercise[]> {
+    try {
+      const data = await this.makeRequest(`/exercises?name=${encodeURIComponent(query)}`);
+      return data;
+    } catch (error) {
+      console.error(`Error searching exercises for "${query}":`, error);
+      throw error;
+    }
+  }
+}
+
+export const exerciseDBService = new ExerciseDBService();
