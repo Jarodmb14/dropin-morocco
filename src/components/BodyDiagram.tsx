@@ -88,7 +88,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('chest', selectedPart === 'chest')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'chest' ? 'selected' : ''}`}
       />
       
       {/* Shoulders */}
@@ -99,7 +99,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'shoulders' ? 'selected' : ''}`}
       />
       
       {/* Biceps */}
@@ -110,7 +110,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'biceps' ? 'selected' : ''}`}
       />
       
       {/* Triceps */}
@@ -121,7 +121,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'triceps' ? 'selected' : ''}`}
       />
       
       {/* Abs */}
@@ -132,7 +132,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('abs', selectedPart === 'abs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'abs' ? 'selected' : ''}`}
       />
       
       {/* Glutes */}
@@ -143,7 +143,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'glutes' ? 'selected' : ''}`}
       />
       
       {/* Legs */}
@@ -154,7 +154,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'legs' ? 'selected' : ''}`}
       />
     </g>
   );
@@ -169,7 +169,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('back', selectedPart === 'back')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'back' ? 'selected' : ''}`}
       />
       
       {/* Back Shoulders */}
@@ -180,7 +180,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'shoulders' ? 'selected' : ''}`}
       />
       
       {/* Back Arms - Triceps */}
@@ -191,7 +191,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'triceps' ? 'selected' : ''}`}
       />
       
       <path
@@ -201,7 +201,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'biceps' ? 'selected' : ''}`}
       />
       
       {/* Back Glutes */}
@@ -212,7 +212,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'glutes' ? 'selected' : ''}`}
       />
       
       {/* Back Legs */}
@@ -223,7 +223,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors"
+        className={`transition-colors ${selectedPart === 'legs' ? 'selected' : ''}`}
       />
     </g>
   );

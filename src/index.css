@@ -12,6 +12,12 @@
   cursor: pointer;
 }
 
+/* Body Diagram Selected State */
+[data-bodypart].selected {
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px rgba(227,191,192,.9)); /* matches brand pink */
+}
+
 /* Custom Leaflet Popup Styles */
 .custom-popup .leaflet-popup-content-wrapper {
   background: white;
