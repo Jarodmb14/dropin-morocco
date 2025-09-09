@@ -69,32 +69,6 @@ const MobileOptimized = () => {
                 <p className="text-center text-red-600 text-sm">❌ {error}</p>
               )}
               
-              <div className="grid grid-cols-2 gap-2">
-                <TouchOptimizedButton 
-                  onClick={handleFindNearbyGyms} 
-                  className="w-full"
-                  disabled={loading}
-                >
-                  📍 Locate Me
-                </TouchOptimizedButton>
-                {!isWatching ? (
-                  <TouchOptimizedButton 
-                    onClick={() => startWatching().catch(() => {})} 
-                    className="w-full"
-                    variant="outline"
-                  >
-                    ▶️ Live Track
-                  </TouchOptimizedButton>
-                ) : (
-                  <TouchOptimizedButton 
-                    onClick={() => stopWatching().catch(() => {})} 
-                    className="w-full"
-                    variant="destructive"
-                  >
-                    ⏹ Stop
-                  </TouchOptimizedButton>
-                )}
-              </div>
             </CardContent>
           </Card>
 
@@ -119,24 +93,6 @@ const MobileOptimized = () => {
                 </div>
               )}
               
-              <Dialog open={showQRScanner} onOpenChange={setShowQRScanner}>
-                <DialogTrigger asChild>
-                  <TouchOptimizedButton 
-                    className="w-full h-12 text-base"
-                    variant="outline"
-                  >
-                    <Camera className="h-5 w-5 mr-2" />
-                    {isNativeApp ? 'Open Camera Scanner' : 'Scan QR Code'}
-                  </TouchOptimizedButton>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md p-0 border-0">
-                  <QRScanner 
-                    onScanResult={handleQRScanResult}
-                    onClose={() => setShowQRScanner(false)}
-                    title="Scan Membership QR"
-                  />
-                </DialogContent>
-              </Dialog>
             </CardContent>
           </Card>
 
