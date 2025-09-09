@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { WorkoutCoolBodyDiagram } from './WorkoutCoolBodyDiagram';
+// Removed WorkoutCoolBodyDiagram import - using button-based muscle selection instead
 import { useExerciseData } from '@/hooks/useExerciseDB';
+import { FULL_EXERCISE_DATABASE, getFullExercisesByMuscleGroup, getEquipment } from '@/data/full-exercise-database';
+import { EnhancedExerciseCard } from '@/components/EnhancedExerciseCard';
 import { Loader2, Dumbbell, Target, Play, RotateCcw, CheckCircle } from 'lucide-react';
 
 interface Equipment {
@@ -52,10 +54,13 @@ const BODY_PARTS: BodyPart[] = [
   { id: 'legs', name: 'Legs', selected: false },
 ];
 
+// Removed muscle group mapping - using simple body part selection
+
 export function WorkoutCool() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = useState<BodyPart[]>(BODY_PARTS);
+  // Removed selectedMuscles state - using selectedBodyParts instead
   const [generatedExercises, setGeneratedExercises] = useState<Exercise[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [workoutStarted, setWorkoutStarted] = useState(false);
@@ -84,6 +89,8 @@ export function WorkoutCool() {
     );
   };
 
+  // Removed handleMuscleToggle - using handleBodyPartToggle instead
+
   const handleBodyPartClick = (bodyPartId: string) => {
     handleBodyPartToggle(bodyPartId);
   };
@@ -95,32 +102,38 @@ export function WorkoutCool() {
       const selectedParts = selectedBodyParts.filter(part => part.selected);
       const exercises: Exercise[] = [];
 
-      // Generate exercises for each selected body part
+      // Generate exercises for each selected body part using enhanced database
       for (const bodyPart of selectedParts) {
-        // Load exercises for this body part
-        await loadExercisesByTarget(bodyPart.id);
+        // Get exercises from full database
+        const fullExercises = getFullExercisesByMuscleGroup(bodyPart.id);
         
         // Filter exercises by selected equipment
-        const filteredExercises = exercises.filter(exercise => 
-          selectedEquipment.length === 0 || 
-          selectedEquipment.some(eq => 
-            exercise.equipment?.toLowerCase().includes(eq.toLowerCase()) ||
-            eq === 'bodyweight' && (!exercise.equipment || exercise.equipment.toLowerCase().includes('body'))
-          )
-        );
+        const filteredExercises = fullExercises.filter(compExercise => {
+          const equipment = compExercise.attributes
+            .filter(attr => attr.attributeName === 'EQUIPMENT')
+            .map(attr => attr.attributeValue.toLowerCase());
+          
+          return selectedEquipment.length === 0 || 
+            selectedEquipment.some(eq => 
+              equipment.some(e => e.includes(eq.toLowerCase())) ||
+              eq === 'bodyweight' && equipment.some(e => e.includes('body'))
+            );
+        });
 
         // Add 2-3 exercises per body part
-        const exercisesForPart = filteredExercises.slice(0, 3).map(exercise => ({
-          id: `${bodyPart.id}-${exercise.id}`,
-          name: exercise.name,
+        const exercisesForPart = filteredExercises.slice(0, 3).map(compExercise => ({
+          id: `${bodyPart.id}-${compExercise.id}`,
+          name: compExercise.nameEn,
           bodyPart: bodyPart.name,
-          equipment: exercise.equipment || 'Bodyweight',
-          gifUrl: exercise.gifUrl,
-          instructions: exercise.instructions,
+          equipment: compExercise.attributes
+            .filter(attr => attr.attributeName === 'EQUIPMENT')
+            .map(attr => attr.attributeValue)[0] || 'Bodyweight',
+          gifUrl: compExercise.fullVideoImageUrl,
+          instructions: compExercise.descriptionEn.replace(/<[^>]*>/g, '').split('.').filter(s => s.trim()),
           sets: 3,
           reps: 12
         }));
-
+        
         exercises.push(...exercisesForPart);
       }
 
@@ -337,57 +350,58 @@ export function WorkoutCool() {
 
         {/* Step 2: Body Part Selection */}
         {currentStep === 2 && (
-          <div className="grid lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Target className="w-5 h-5 mr-2" />
-                  Step 2: Select Body Parts
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {selectedBodyParts.map((bodyPart) => (
-                    <Button
-                      key={bodyPart.id}
-                      variant={bodyPart.selected ? "default" : "outline"}
-                      className="w-full justify-start"
-                      onClick={() => handleBodyPartToggle(bodyPart.id)}
-                    >
-                      {bodyPart.selected && <CheckCircle className="w-4 h-4 mr-2" />}
-                      {bodyPart.name}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Interactive Body Diagram</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-center">
-                  <WorkoutCoolBodyDiagram
-                    variant="front"
-                    selectedPart={selectedBodyParts.find(p => p.selected)?.id || null}
-                    onBodyPartClick={handleBodyPartClick}
-                  />
-                </div>
-                <div className="mt-4 text-center">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Target className="w-5 h-5 mr-2" />
+                Step 2: Select Body Parts to Target
+              </CardTitle>
+              <p className="text-sm text-gray-600 mt-2">
+                Choose the muscle groups you want to focus on in your workout. You can select multiple areas.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {selectedBodyParts.map((bodyPart) => (
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedBodyParts(prev => 
-                      prev.map(p => ({ ...p, selected: false }))
-                    )}
+                    key={bodyPart.id}
+                    variant={bodyPart.selected ? "default" : "outline"}
+                    className="h-20 flex flex-col items-center justify-center space-y-2 relative"
+                    onClick={() => handleBodyPartToggle(bodyPart.id)}
                   >
-                    Clear Selection
+                    {bodyPart.selected && (
+                      <CheckCircle className="w-5 h-5 absolute top-2 right-2 text-white" />
+                    )}
+                    <span className="text-lg font-semibold">{bodyPart.name}</span>
+                    <span className="text-xs text-gray-500">
+                      {bodyPart.id === 'chest' && 'Pectorals'}
+                      {bodyPart.id === 'shoulders' && 'Deltoids'}
+                      {bodyPart.id === 'biceps' && 'Brachialis'}
+                      {bodyPart.id === 'triceps' && 'Triceps Brachii'}
+                      {bodyPart.id === 'abs' && 'Abdominals'}
+                      {bodyPart.id === 'back' && 'Latissimus Dorsi'}
+                      {bodyPart.id === 'glutes' && 'Gluteus Maximus'}
+                      {bodyPart.id === 'legs' && 'Quadriceps & Hamstrings'}
+                    </span>
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 text-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedBodyParts(prev => 
+                      prev.map(p => ({ ...p, selected: false }))
+                    );
+                  }}
+                >
+                  Clear All Selections
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Step 3: Generated Workout */}
@@ -406,25 +420,33 @@ export function WorkoutCool() {
                   <span>Generating your workout...</span>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="grid gap-4">
-                    {generatedExercises.map((exercise, index) => (
-                      <div key={exercise.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-medium">{exercise.name}</div>
-                            <div className="text-sm text-gray-600">{exercise.bodyPart} • {exercise.equipment}</div>
-                          </div>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {exercise.sets} sets × {exercise.reps} reps
-                        </div>
-                      </div>
-                    ))}
+                <div className="space-y-6">
+                  <div className="text-center text-gray-600 mb-6">
+                    Complete workout with detailed tutorials and explanations
                   </div>
+                  {generatedExercises.map((exercise, index) => {
+                    // Find the full exercise data
+                    const fullExercise = FULL_EXERCISE_DATABASE.find(e => e.id === exercise.id.split('-')[1]);
+                    if (!fullExercise) return null;
+                    
+                    return (
+                      <div key={exercise.id} className="mb-8">
+                        <div className="text-center mb-4">
+                          <h4 className="text-lg font-semibold text-gray-700">
+                            Exercise {index + 1} of {generatedExercises.length}
+                          </h4>
+                        </div>
+                        <EnhancedExerciseCard 
+                          exercise={fullExercise}
+                          onPlayVideo={() => {
+                            if (fullExercise.fullVideoUrl) {
+                              window.open(fullExercise.fullVideoUrl, '_blank');
+                            }
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

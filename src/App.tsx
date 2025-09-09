@@ -41,6 +41,12 @@ import BodyPickerPage from "./pages/BodyPickerPage";
 import { BodyDiagramDemo } from "./components/BodyDiagramDemo";
 import ExerciseTaxonomyDebug from "./pages/ExerciseTaxonomyDebug";
 import WorkoutCoolTest from "./pages/WorkoutCoolTest";
+import WorkoutCoolTestSimple from "./pages/WorkoutCoolTestSimple";
+import ExerciseDatabaseTest from "./pages/ExerciseDatabaseTest";
+import EnhancedExerciseTest from "./pages/EnhancedExerciseTest";
+import BodyTest from "./pages/BodyTest";
+import SimpleBodyTest from "./pages/SimpleBodyTest";
+import UltraSimpleBodyTest from "./pages/UltraSimpleBodyTest";
 import TestPage from "./pages/TestPage";
 import UltraSimple from "./pages/UltraSimple";
 import LocationTest from "./pages/LocationTest";
@@ -75,7 +81,13 @@ const App = () => (
           <Route path="/body-picker" element={<BodyPickerPage />} />
           <Route path="/body-demo" element={<BodyDiagramDemo />} />
           <Route path="/debug/exercises" element={<ExerciseTaxonomyDebug />} />
-          <Route path="/workout-cool-test" element={<WorkoutCoolTest />} />
+            <Route path="/workout-cool-test" element={<WorkoutCoolTest />} />
+            <Route path="/workout-cool-simple" element={<WorkoutCoolTestSimple />} />
+            <Route path="/exercise-database-test" element={<ExerciseDatabaseTest />} />
+            <Route path="/enhanced-exercise-test" element={<EnhancedExerciseTest />} />
+            <Route path="/body-test" element={<BodyTest />} />
+            <Route path="/simple-body-test" element={<SimpleBodyTest />} />
+            <Route path="/ultra-simple-body-test" element={<UltraSimpleBodyTest />} />
           <Route path="/gym/:id" element={<GymDetail />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/payment-test" element={<PaymentTest />} />

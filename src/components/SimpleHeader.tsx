@@ -56,29 +56,6 @@ const SimpleHeader = () => {
             Browse Gyms
           </Link>
           
-          <Link 
-            to="/body-picker" 
-            className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            Body Picker
-          </Link>
-          
-          <Link 
-            to="/debug/exercises" 
-            className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            Debug
-          </Link>
-          
-          <Link 
-            to="/workout-cool-test" 
-            className="text-gray-800 hover:text-gray-900 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            Workout-Cool
-          </Link>
           
                            {user ? (
                    // Authenticated user menu

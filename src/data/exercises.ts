@@ -564,6 +564,50 @@ export const SAMPLE_EXERCISES: ExerciseWithAttributes[] = [
       { attributeName: 'EQUIPMENT', attributeValue: 'CABLE' },
       { attributeName: 'MECHANICS_TYPE', attributeValue: 'ISOLATION' }
     ]
+  },
+  // ADDITIONAL CHEST EXERCISES
+  {
+    id: '189',
+    name: 'Développé incliné haltères',
+    nameEn: 'Incline Dumbbell Press',
+    description: '<p>Réglez un banc à 30-45 degrés d\'inclinaison.</p><p>Allongez-vous avec un haltère dans chaque main.</p><p>Descendez les haltères de manière contrôlée jusqu\'à ce qu\'ils touchent votre poitrine.</p><p>Poussez les haltères vers le haut jusqu\'à l\'extension complète.</p>',
+    descriptionEn: '<p>Set a bench to 30-45 degree incline.</p><p>Lie back with a dumbbell in each hand.</p><p>Lower the dumbbells in a controlled manner until they touch your chest.</p><p>Push the dumbbells up to full extension.</p>',
+    introduction: '<p>Le <strong>développé incliné haltères</strong> cible le <strong>haut des pectoraux</strong> et les <strong>épaules</strong>.</p>',
+    introductionEn: '<p>The <strong>incline dumbbell press</strong> targets the <strong>upper chest</strong> and <strong>shoulders</strong>.</p>',
+    fullVideoUrl: 'https://www.youtube.com/embed/8iPEnov-lmU?autoplay=1',
+    fullVideoImageUrl: 'https://img.youtube.com/vi/8iPEnov-lmU/hqdefault.jpg',
+    slug: 'developpe-incline-halteres',
+    slugEn: 'incline-dumbbell-press',
+    attributes: [
+      { attributeName: 'TYPE', attributeValue: 'STRENGTH' },
+      { attributeName: 'PRIMARY_MUSCLE', attributeValue: 'CHEST' },
+      { attributeName: 'SECONDARY_MUSCLE', attributeValue: 'SHOULDERS' },
+      { attributeName: 'SECONDARY_MUSCLE', attributeValue: 'TRICEPS' },
+      { attributeName: 'EQUIPMENT', attributeValue: 'DUMBBELL' },
+      { attributeName: 'EQUIPMENT', attributeValue: 'BENCH' },
+      { attributeName: 'MECHANICS_TYPE', attributeValue: 'COMPOUND' }
+    ]
+  },
+  {
+    id: '190',
+    name: 'Dips aux barres parallèles',
+    nameEn: 'Parallel Bar Dips',
+    description: '<p>Accrochez-vous aux barres parallèles avec les bras tendus.</p><p>Descendez votre corps en pliant les coudes.</p><p>Poussez vers le haut jusqu\'à la position de départ.</p>',
+    descriptionEn: '<p>Hang from parallel bars with arms extended.</p><p>Lower your body by bending your elbows.</p><p>Push up to the starting position.</p>',
+    introduction: '<p>Les <strong>dips aux barres parallèles</strong> développent la <strong>force des triceps</strong> et des <strong>épaules</strong>.</p>',
+    introductionEn: '<p><strong>Parallel bar dips</strong> develop <strong>tricep strength</strong> and <strong>shoulders</strong>.</p>',
+    fullVideoUrl: 'https://www.youtube.com/embed/2z8JmcrW-As?autoplay=1',
+    fullVideoImageUrl: 'https://img.youtube.com/vi/2z8JmcrW-As/hqdefault.jpg',
+    slug: 'dips-barres-paralleles',
+    slugEn: 'parallel-bar-dips',
+    attributes: [
+      { attributeName: 'TYPE', attributeValue: 'STRENGTH' },
+      { attributeName: 'PRIMARY_MUSCLE', attributeValue: 'TRICEPS' },
+      { attributeName: 'SECONDARY_MUSCLE', attributeValue: 'SHOULDERS' },
+      { attributeName: 'SECONDARY_MUSCLE', attributeValue: 'CHEST' },
+      { attributeName: 'EQUIPMENT', attributeValue: 'DIP_BAR' },
+      { attributeName: 'MECHANICS_TYPE', attributeValue: 'COMPOUND' }
+    ]
   }
 ];
 

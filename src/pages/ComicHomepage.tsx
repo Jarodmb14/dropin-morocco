@@ -119,7 +119,7 @@ const ComicHomepage = () => {
                 fontFamily: 'Space Grotesk, sans-serif',
                 backgroundColor: '#E3BFC0'
               }}
-              onClick={() => navigate('/body-parts')}
+              onClick={() => navigate('/venues')}
             >
               START NOW
             </button>

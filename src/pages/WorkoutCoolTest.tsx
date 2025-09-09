@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import SimpleHeader from '@/components/SimpleHeader';
-import { WorkoutCoolBodyDiagram } from '@/components/WorkoutCoolBodyDiagram';
+import { WorkoutCoolBodyDiagram, MuscleGroup } from '@/components/WorkoutCoolBodyDiagram';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,21 +9,26 @@ import { useNavigate } from 'react-router-dom';
 
 const WorkoutCoolTest = () => {
   const navigate = useNavigate();
-  const [selectedPart, setSelectedPart] = useState<string | null>(null);
+  const [selectedMuscles, setSelectedMuscles] = useState<MuscleGroup[]>([]);
   const [variant, setVariant] = useState<'front' | 'back'>('front');
   const [debugMode, setDebugMode] = useState<boolean>(true); // Enable debug mode by default
 
-  const handleBodyPartClick = (bodyPartId: string) => {
-    setSelectedPart(bodyPartId);
+  const handleMuscleToggle = (muscle: MuscleGroup) => {
+    setSelectedMuscles(prev => 
+      prev.includes(muscle) 
+        ? prev.filter(m => m !== muscle)
+        : [...prev, muscle]
+    );
+    console.log('Toggled muscle:', muscle);
   };
 
   const handleReset = () => {
-    setSelectedPart(null);
+    setSelectedMuscles([]);
   };
 
   const handleToggleVariant = () => {
     setVariant(prev => prev === 'front' ? 'back' : 'front');
-    setSelectedPart(null);
+    setSelectedMuscles([]);
   };
 
   return (
@@ -100,18 +105,22 @@ const WorkoutCoolTest = () => {
                 <div className="flex justify-center">
                   <WorkoutCoolBodyDiagram
                     variant={variant}
-                    selectedPart={selectedPart}
-                    onBodyPartClick={handleBodyPartClick}
+                    selectedMuscles={selectedMuscles}
+                    onMuscleToggle={handleMuscleToggle}
                     debugMode={debugMode}
                   />
                 </div>
 
                 {/* Selection Status */}
-                {selectedPart && (
+                {selectedMuscles.length > 0 && (
                   <div className="text-center">
-                    <Badge variant="default" className="bg-pink-500">
-                      Selected: {selectedPart}
-                    </Badge>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {selectedMuscles.map(muscle => (
+                        <Badge key={muscle} variant="default" className="bg-blue-500">
+                          {muscle}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -175,10 +184,11 @@ const WorkoutCoolTest = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>• <strong>Click on body parts</strong> to select them (coordinate-based detection)</p>
+              <p>• <strong>Click on muscle groups</strong> to select/deselect them (SVG-based detection)</p>
               <p>• <strong>Switch views</strong> to see front and back body diagrams</p>
-              <p>• <strong>Reset selection</strong> to clear the current selection</p>
-              <p>• <strong>Fallback mode</strong> will show if images can't be loaded from the repository</p>
+              <p>• <strong>Reset selection</strong> to clear all selected muscles</p>
+              <p>• <strong>Debug mode</strong> shows clickable areas in red/green overlays</p>
+              <p>• <strong>Multiple selection</strong> - click multiple muscles to select them all</p>
             </div>
           </CardContent>
         </Card>
