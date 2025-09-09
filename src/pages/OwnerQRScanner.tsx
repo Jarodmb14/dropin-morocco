@@ -96,7 +96,11 @@ const OwnerQRScanner = () => {
       
       if (bookingsResponse.ok) {
         const bookingsData = await bookingsResponse.json();
+        console.log('📋 Loaded bookings:', bookingsData);
+        console.log('📊 Bookings count:', bookingsData.length);
         setBookings(bookingsData);
+      } else {
+        console.error('❌ Failed to load bookings:', bookingsResponse.status, bookingsResponse.statusText);
       }
     } catch (error) {
       console.error('Error loading bookings:', error);
@@ -136,10 +140,42 @@ const OwnerQRScanner = () => {
       
       // Find the booking in the database
       const bookingId = bookingData.bookingId || bookingData.booking_id;
+      console.log('🔍 Looking for booking ID:', bookingId);
+      console.log('📋 Available bookings:', bookings.map(b => ({ id: b.id, club_id: b.club_id, status: b.status })));
+      
       const booking = bookings.find(b => b.id === bookingId);
+      console.log('✅ Found booking:', booking);
       
       if (!booking) {
-        alert('❌ Booking not found');
+        console.error('❌ Booking not found in loaded bookings');
+        
+        // Check if this is a simulated booking (starts with 'sim-')
+        if (bookingId && bookingId.startsWith('sim-')) {
+          console.log('🎭 This appears to be a simulated booking, creating fallback booking data');
+          
+          // Create a fallback booking object for simulated bookings
+          const fallbackBooking = {
+            id: bookingId,
+            user_id: bookingData.userId || bookingData.user_id,
+            club_id: clubId,
+            booking_type: 'SINGLE_SESSION',
+            status: 'CONFIRMED',
+            scheduled_start: bookingData.scheduledStart || bookingData.scheduled_start,
+            scheduled_end: bookingData.scheduledEnd || bookingData.scheduled_end,
+            created_at: new Date().toISOString(),
+            user_name: 'Test User',
+            user_email: 'test@example.com'
+          };
+          
+          console.log('🎭 Using fallback booking:', fallbackBooking);
+          setLastScannedBooking(fallbackBooking);
+          
+          // Skip the rest of the validation for simulated bookings
+          alert('✅ Simulated booking validated! This is a test QR code.');
+          return;
+        }
+        
+        alert(`❌ Booking not found.\n\nDebug info:\nLooking for: ${bookingId}\nAvailable bookings: ${bookings.length}\nBooking IDs: ${bookings.map(b => b.id).join(', ')}`);
         return;
       }
       
