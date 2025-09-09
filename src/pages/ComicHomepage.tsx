@@ -119,12 +119,6 @@ const ComicHomepage = () => {
             >
               START NOW
             </button>
-            <button 
-              className="border-2 border-gray-800 text-gray-800 bg-white px-12 py-6 text-2xl font-bold hover:bg-gray-50 transition-all duration-200 uppercase tracking-wide"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-            >
-              FIND GYMS
-            </button>
           </div>
 
           {/* Stats */}
