@@ -20,6 +20,14 @@ const BodyPartsSelection = () => {
 
   // Map API targets to our body parts with icons and descriptions
   const getBodyPartInfo = (targetName: string) => {
+    if (!targetName) {
+      return { 
+        icon: <Dumbbell className="w-6 h-6" />, 
+        description: 'Muscle training', 
+        color: '#6b7280' 
+      };
+    }
+
     const targetMap: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
       'chest': { icon: <Target className="w-6 h-6" />, description: 'Build powerful pecs', color: '#ef4444' },
       'shoulders': { icon: <Zap className="w-6 h-6" />, description: 'Strong deltoids', color: '#3b82f6' },
@@ -44,17 +52,34 @@ const BodyPartsSelection = () => {
     };
   };
 
-  const bodyParts: BodyPart[] = targets.map(target => {
-    const info = getBodyPartInfo(target.name);
-    return {
-      id: target.name.toLowerCase(),
-      name: target.name.charAt(0).toUpperCase() + target.name.slice(1),
-      icon: info.icon,
-      description: info.description,
-      exerciseCount: target.count,
-      color: info.color
-    };
-  });
+  // Fallback body parts if API data is not loaded yet
+  const fallbackBodyParts: BodyPart[] = [
+    { id: 'chest', name: 'Chest', icon: <Target className="w-6 h-6" />, description: 'Build powerful pecs', exerciseCount: 0, color: '#ef4444' },
+    { id: 'shoulders', name: 'Shoulders', icon: <Zap className="w-6 h-6" />, description: 'Strong deltoids', exerciseCount: 0, color: '#3b82f6' },
+    { id: 'biceps', name: 'Biceps', icon: <Dumbbell className="w-6 h-6" />, description: 'Arm strength', exerciseCount: 0, color: '#10b981' },
+    { id: 'triceps', name: 'Triceps', icon: <Activity className="w-6 h-6" />, description: 'Arm definition', exerciseCount: 0, color: '#8b5cf6' },
+    { id: 'abs', name: 'Core', icon: <Heart className="w-6 h-6" />, description: 'Core stability', exerciseCount: 0, color: '#f97316' },
+    { id: 'back', name: 'Back', icon: <Target className="w-6 h-6" />, description: 'Posture & strength', exerciseCount: 0, color: '#14b8a6' },
+    { id: 'legs', name: 'Legs', icon: <Zap className="w-6 h-6" />, description: 'Lower body power', exerciseCount: 0, color: '#6366f1' },
+    { id: 'glutes', name: 'Glutes', icon: <Activity className="w-6 h-6" />, description: 'Hip strength', exerciseCount: 0, color: '#ec4899' }
+  ];
+
+  const bodyParts: BodyPart[] = (targets && targets.length > 0) 
+    ? targets.map(target => {
+        if (!target || !target.name) {
+          return fallbackBodyParts[0]; // Return first fallback if target is invalid
+        }
+        const info = getBodyPartInfo(target.name);
+        return {
+          id: target.name.toLowerCase(),
+          name: target.name.charAt(0).toUpperCase() + target.name.slice(1),
+          icon: info.icon,
+          description: info.description,
+          exerciseCount: target.count || 0,
+          color: info.color
+        };
+      })
+    : fallbackBodyParts;
 
   const handleBodyPartClick = (bodyPart: BodyPart) => {
     navigate(`/exercises/${bodyPart.id}`);
