@@ -34,6 +34,8 @@ import AdminTest from "./pages/AdminTest";
 import AdminDebug from "./pages/AdminDebug";
 import SimpleAdminDebug from "./pages/SimpleAdminDebug";
 import ReviewsTest from "./pages/ReviewsTest";
+import BodyPartsSelection from "./pages/BodyPartsSelection";
+import ExercisesList from "./pages/ExercisesList";
 import LocationTest from "./pages/LocationTest";
 import UsersTest from "./pages/UsersTest";
 import BookingsTest from "./pages/BookingsTest";
@@ -61,6 +63,8 @@ const App = () => (
           {/* Customer app entry */}
           <Route path="/" element={<ComicHomepage />} />
           <Route path="/venues" element={<ComicVenues />} />
+          <Route path="/body-parts" element={<BodyPartsSelection />} />
+          <Route path="/exercises/:bodyPart" element={<ExercisesList />} />
           <Route path="/gym/:id" element={<GymDetail />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/payment-test" element={<PaymentTest />} />
