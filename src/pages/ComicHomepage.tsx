@@ -1,7 +1,10 @@
 import SimpleHeader from "@/components/SimpleHeader";
 import zellige from "@/assets/stickers-zellige-marocain-sans-soudure.jpg.jpg";
+import { useNavigate } from "react-router-dom";
 
 const ComicHomepage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen relative" style={{ backgroundColor: '#F2E4E5' }}>
       <SimpleHeader />
@@ -116,6 +119,7 @@ const ComicHomepage = () => {
                 fontFamily: 'Space Grotesk, sans-serif',
                 backgroundColor: '#E3BFC0'
               }}
+              onClick={() => navigate('/venues')}
             >
               START NOW
             </button>
