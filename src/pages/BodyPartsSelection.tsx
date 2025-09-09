@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
 import { useExerciseData } from '@/hooks/useExerciseDB';
+import { BODY_PART_MAP, getExerciseDBBodyPart } from '@/lib/bodypart-map';
 import { Dumbbell, Target, Zap, Heart, Activity, Loader2 } from 'lucide-react';
 
 interface BodyPart {
@@ -82,7 +83,9 @@ const BodyPartsSelection = () => {
     : fallbackBodyParts;
 
   const handleBodyPartClick = (bodyPart: BodyPart) => {
-    navigate(`/exercises/${bodyPart.id}`);
+    // Use the mapping to get the correct internal key for navigation
+    const internalKey = BODY_PART_MAP[bodyPart.id] || bodyPart.id;
+    navigate(`/exercises/${internalKey}`);
   };
 
   if (loading) {

@@ -4,6 +4,7 @@ import SimpleHeader from '@/components/SimpleHeader';
 import { ArrowLeft, Play, Clock, Target, Info, Shuffle, Star, Dumbbell, Zap, Loader2, AlertCircle } from 'lucide-react';
 import { useExerciseData } from '@/hooks/useExerciseDB';
 import { ExerciseDBExercise } from '@/lib/api/exercisedb';
+import { getExerciseDBBodyPart } from '@/lib/bodypart-map';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -19,7 +20,9 @@ const ExercisesList = () => {
   useEffect(() => {
     const loadExercises = async () => {
       if (bodyPart) {
-        const data = await loadExercisesByTarget(bodyPart);
+        // Use the mapping to get the correct ExerciseDB body part name
+        const exerciseDBBodyPart = getExerciseDBBodyPart(bodyPart);
+        const data = await loadExercisesByTarget(exerciseDBBodyPart);
         if (data) {
           setExercises(data);
         }
