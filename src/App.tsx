@@ -40,6 +40,7 @@ import Training from "./pages/Training";
 import BodyPickerPage from "./pages/BodyPickerPage";
 import { BodyDiagramDemo } from "./components/BodyDiagramDemo";
 import ExerciseTaxonomyDebug from "./pages/ExerciseTaxonomyDebug";
+import WorkoutCoolTest from "./pages/WorkoutCoolTest";
 import TestPage from "./pages/TestPage";
 import UltraSimple from "./pages/UltraSimple";
 import LocationTest from "./pages/LocationTest";
@@ -74,6 +75,7 @@ const App = () => (
           <Route path="/body-picker" element={<BodyPickerPage />} />
           <Route path="/body-demo" element={<BodyDiagramDemo />} />
           <Route path="/debug/exercises" element={<ExerciseTaxonomyDebug />} />
+          <Route path="/workout-cool-test" element={<WorkoutCoolTest />} />
           <Route path="/gym/:id" element={<GymDetail />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/payment-test" element={<PaymentTest />} />
