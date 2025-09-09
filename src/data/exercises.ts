@@ -1,5 +1,8 @@
 import { Exercise, ExerciseWithAttributes, MUSCLE_GROUPS, EXERCISE_TYPES, EQUIPMENT_TYPES, MECHANICS_TYPES } from '../types/exercise';
 
+// Re-export the types for other components to use
+export { MUSCLE_GROUPS, EXERCISE_TYPES, EQUIPMENT_TYPES, MECHANICS_TYPES };
+
 // Sample exercise data based on workout-cool structure
 export const SAMPLE_EXERCISES: ExerciseWithAttributes[] = [
   {
