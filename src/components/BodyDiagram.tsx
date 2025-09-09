@@ -88,7 +88,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('chest', selectedPart === 'chest')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Shoulders */}
@@ -99,7 +99,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Biceps */}
@@ -110,7 +110,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Triceps */}
@@ -121,7 +121,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Abs */}
@@ -132,7 +132,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('abs', selectedPart === 'abs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Glutes */}
@@ -143,7 +143,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Legs */}
@@ -154,7 +154,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
     </g>
   );
@@ -169,7 +169,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('back', selectedPart === 'back')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Back Shoulders */}
@@ -180,7 +180,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Back Arms - Triceps */}
@@ -191,7 +191,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       <path
@@ -201,7 +201,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Back Glutes */}
@@ -212,7 +212,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
       
       {/* Back Legs */}
@@ -223,7 +223,7 @@ export function BodyDiagram({
         fill={getBodyPartColor('legs', selectedPart === 'legs')}
         stroke="#ffffff"
         strokeWidth="4"
-        className="transition-colors cursor-pointer hover:opacity-80"
+        className="transition-colors"
       />
     </g>
   );

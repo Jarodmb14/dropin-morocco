@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Body Diagram Interactive Styles */
+[data-bodypart] {
+  transition: opacity 0.15s ease;
+}
+
+[data-bodypart]:hover {
+  opacity: 0.85;
+  cursor: pointer;
+}
+
 /* Custom Leaflet Popup Styles */
 .custom-popup .leaflet-popup-content-wrapper {
   background: white;
