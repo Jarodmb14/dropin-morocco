@@ -119,20 +119,24 @@ const OwnerQRScanner = () => {
       console.log('🔍 Debugging QR validation:');
       console.log('📱 QR bookingData:', bookingData);
       console.log('🏋️ Owner gyms:', gyms);
-      console.log('🆔 Booking club_id:', bookingData.club_id);
+      
+      // Handle both clubId (camelCase) and club_id (snake_case) formats
+      const clubId = bookingData.clubId || bookingData.club_id;
+      console.log('🆔 Booking club ID (both formats):', { clubId: bookingData.clubId, club_id: bookingData.club_id, resolved: clubId });
       console.log('🆔 Gym IDs:', gyms.map(gym => gym.id));
       
-      const isOwnerBooking = gyms.some(gym => gym.id === bookingData.club_id);
+      const isOwnerBooking = gyms.some(gym => gym.id === clubId);
       console.log('✅ Is owner booking:', isOwnerBooking);
       
       if (!isOwnerBooking) {
         console.error('❌ QR validation failed - not owner booking');
-        alert(`❌ This QR code is not for your gym.\n\nDebug info:\nQR Club ID: ${bookingData.club_id}\nYour Gym IDs: ${gyms.map(gym => gym.id).join(', ')}`);
+        alert(`❌ This QR code is not for your gym.\n\nDebug info:\nQR Club ID: ${clubId}\nYour Gym IDs: ${gyms.map(gym => gym.id).join(', ')}`);
         return;
       }
       
       // Find the booking in the database
-      const booking = bookings.find(b => b.id === bookingData.booking_id);
+      const bookingId = bookingData.bookingId || bookingData.booking_id;
+      const booking = bookings.find(b => b.id === bookingId);
       
       if (!booking) {
         alert('❌ Booking not found');
