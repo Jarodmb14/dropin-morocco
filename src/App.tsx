@@ -36,7 +36,7 @@ import SimpleAdminDebug from "./pages/SimpleAdminDebug";
 import ReviewsTest from "./pages/ReviewsTest";
 import BodyPartsSelection from "./pages/BodyPartsSelection";
 import ExercisesList from "./pages/ExercisesList";
-import Training from "./pages/TrainingSimple";
+import Training from "./pages/Training";
 import TestPage from "./pages/TestPage";
 import UltraSimple from "./pages/UltraSimple";
 import LocationTest from "./pages/LocationTest";
