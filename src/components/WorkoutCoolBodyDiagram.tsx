@@ -16,145 +16,312 @@ export function WorkoutCoolBodyDiagram({
   onMouseEnter, 
   onMouseLeave 
 }: WorkoutCoolBodyDiagramProps) {
-  const [imageError, setImageError] = useState(false);
-
-  // Base URL for workout-cool repository images
-  const baseUrl = 'https://raw.githubusercontent.com/Snouzy/workout-cool/main';
-  
-  // Common paths where body part images might be stored
-  const possiblePaths = [
-    '/public/images/body',
-    '/src/assets/images/body',
-    '/assets/images/body',
-    '/public/assets/body',
-    '/src/assets/body',
-    '/assets/body'
-  ];
-
-  // Try to construct the image URL
-  const getImageUrl = () => {
-    const imageName = variant === 'front' ? 'body-front.png' : 'body-back.png';
-    
-    // Try different possible paths
-    for (const path of possiblePaths) {
-      return `${baseUrl}${path}/${imageName}`;
+  // Workout-cool style body diagram - simplified and abstract
+  const getBodyPartColor = (bodyPart: string, isSelected: boolean) => {
+    if (isSelected) {
+      return '#3b82f6'; // Blue when selected
     }
     
-    // Fallback to a generic path
-    return `${baseUrl}/public/images/${imageName}`;
+    // Different colors for different body parts in workout-cool style
+    const colors = {
+      chest: '#e5e7eb',
+      shoulders: '#e5e7eb', 
+      biceps: '#e5e7eb',
+      triceps: '#e5e7eb',
+      abs: '#e5e7eb',
+      back: '#e5e7eb',
+      glutes: '#e5e7eb',
+      legs: '#3b82f6', // Blue for legs like in workout-cool
+    };
+    
+    return colors[bodyPart as keyof typeof colors] || '#e5e7eb';
   };
 
-  const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
-    // This would need to be implemented based on the actual image structure
-    // For now, we'll use a simple coordinate-based approach
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Convert click coordinates to body part (this is a simplified approach)
-    const bodyPart = getBodyPartFromCoordinates(x, y, variant);
-    if (bodyPart && onBodyPartClick) {
+  const handleBodyPartClick = (bodyPart: string) => {
+    if (onBodyPartClick) {
       onBodyPartClick(bodyPart);
     }
   };
 
-  const getBodyPartFromCoordinates = (x: number, y: number, variant: string): string | null => {
-    // This is a simplified coordinate-based mapping
-    // In a real implementation, you'd need to know the exact image dimensions
-    // and create proper clickable areas
-    
-    const width = 400; // Assuming image width
-    const height = 600; // Assuming image height
-    
-    const normalizedX = x / width;
-    const normalizedY = y / height;
-    
-    if (variant === 'front') {
-      // Front view body part mapping based on coordinates
-      if (normalizedY > 0.2 && normalizedY < 0.4 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'chest';
-      }
-      if (normalizedY > 0.15 && normalizedY < 0.3 && normalizedX > 0.2 && normalizedX < 0.8) {
-        return 'shoulders';
-      }
-      if (normalizedY > 0.3 && normalizedY < 0.6 && normalizedX > 0.1 && normalizedX < 0.3) {
-        return 'biceps';
-      }
-      if (normalizedY > 0.3 && normalizedY < 0.6 && normalizedX > 0.7 && normalizedX < 0.9) {
-        return 'triceps';
-      }
-      if (normalizedY > 0.4 && normalizedY < 0.6 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'abs';
-      }
-      if (normalizedY > 0.6 && normalizedY < 0.8 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'glutes';
-      }
-      if (normalizedY > 0.7 && normalizedY < 0.95 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'legs';
-      }
-    } else {
-      // Back view body part mapping
-      if (normalizedY > 0.2 && normalizedY < 0.4 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'back';
-      }
-      if (normalizedY > 0.15 && normalizedY < 0.3 && normalizedX > 0.2 && normalizedX < 0.8) {
-        return 'shoulders';
-      }
-      if (normalizedY > 0.3 && normalizedY < 0.6 && normalizedX > 0.1 && normalizedX < 0.3) {
-        return 'triceps';
-      }
-      if (normalizedY > 0.3 && normalizedY < 0.6 && normalizedX > 0.7 && normalizedX < 0.9) {
-        return 'triceps';
-      }
-      if (normalizedY > 0.6 && normalizedY < 0.8 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'glutes';
-      }
-      if (normalizedY > 0.7 && normalizedY < 0.95 && normalizedX > 0.3 && normalizedX < 0.7) {
-        return 'legs';
-      }
+  const handleMouseEnter = (bodyPart: string) => {
+    if (onMouseEnter) {
+      onMouseEnter(bodyPart);
     }
-    
-    return null;
   };
 
-  if (imageError) {
-    // Fallback to our custom SVG if the image fails to load
+  const handleMouseLeave = () => {
+    if (onMouseLeave) {
+      onMouseLeave();
+    }
+  };
+
+  if (variant === 'front') {
     return (
-      <div className="text-center p-8 bg-gray-100 rounded-lg">
-        <p className="text-gray-600 mb-4">
-          Unable to load body diagram from workout-cool repository
-        </p>
-        <p className="text-sm text-gray-500">
-          Using fallback diagram instead
-        </p>
+      <div className="flex justify-center">
+        <svg
+          width="300"
+          height="500"
+          viewBox="0 0 300 500"
+          className="cursor-pointer"
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Head */}
+          <circle
+            cx="150"
+            cy="50"
+            r="25"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+          
+          {/* Neck */}
+          <rect
+            x="140"
+            y="70"
+            width="20"
+            height="20"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+          
+          {/* Chest */}
+          <ellipse
+            cx="150"
+            cy="140"
+            rx="60"
+            ry="40"
+            fill={getBodyPartColor('chest', selectedPart === 'chest')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('chest')}
+            onMouseEnter={() => handleMouseEnter('chest')}
+          />
+          
+          {/* Shoulders */}
+          <ellipse
+            cx="150"
+            cy="120"
+            rx="80"
+            ry="25"
+            fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('shoulders')}
+            onMouseEnter={() => handleMouseEnter('shoulders')}
+          />
+          
+          {/* Arms */}
+          <ellipse
+            cx="90"
+            cy="180"
+            rx="20"
+            ry="60"
+            fill={getBodyPartColor('biceps', selectedPart === 'biceps')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('biceps')}
+            onMouseEnter={() => handleMouseEnter('biceps')}
+          />
+          
+          <ellipse
+            cx="210"
+            cy="180"
+            rx="20"
+            ry="60"
+            fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('triceps')}
+            onMouseEnter={() => handleMouseEnter('triceps')}
+          />
+          
+          {/* Abs */}
+          <rect
+            x="120"
+            y="180"
+            width="60"
+            height="40"
+            fill={getBodyPartColor('abs', selectedPart === 'abs')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('abs')}
+            onMouseEnter={() => handleMouseEnter('abs')}
+          />
+          
+          {/* Glutes */}
+          <ellipse
+            cx="150"
+            cy="250"
+            rx="50"
+            ry="30"
+            fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('glutes')}
+            onMouseEnter={() => handleMouseEnter('glutes')}
+          />
+          
+          {/* Legs */}
+          <rect
+            x="130"
+            y="280"
+            width="40"
+            height="120"
+            fill={getBodyPartColor('legs', selectedPart === 'legs')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('legs')}
+            onMouseEnter={() => handleMouseEnter('legs')}
+          />
+          
+          {/* Feet */}
+          <ellipse
+            cx="150"
+            cy="420"
+            rx="30"
+            ry="15"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex justify-center">
+        <svg
+          width="300"
+          height="500"
+          viewBox="0 0 300 500"
+          className="cursor-pointer"
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Head */}
+          <circle
+            cx="150"
+            cy="50"
+            r="25"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+          
+          {/* Neck */}
+          <rect
+            x="140"
+            y="70"
+            width="20"
+            height="20"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+          
+          {/* Back */}
+          <ellipse
+            cx="150"
+            cy="140"
+            rx="60"
+            ry="40"
+            fill={getBodyPartColor('back', selectedPart === 'back')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('back')}
+            onMouseEnter={() => handleMouseEnter('back')}
+          />
+          
+          {/* Shoulders */}
+          <ellipse
+            cx="150"
+            cy="120"
+            rx="80"
+            ry="25"
+            fill={getBodyPartColor('shoulders', selectedPart === 'shoulders')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('shoulders')}
+            onMouseEnter={() => handleMouseEnter('shoulders')}
+          />
+          
+          {/* Arms */}
+          <ellipse
+            cx="90"
+            cy="180"
+            rx="20"
+            ry="60"
+            fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('triceps')}
+            onMouseEnter={() => handleMouseEnter('triceps')}
+          />
+          
+          <ellipse
+            cx="210"
+            cy="180"
+            rx="20"
+            ry="60"
+            fill={getBodyPartColor('triceps', selectedPart === 'triceps')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('triceps')}
+            onMouseEnter={() => handleMouseEnter('triceps')}
+          />
+          
+          {/* Glutes */}
+          <ellipse
+            cx="150"
+            cy="250"
+            rx="50"
+            ry="30"
+            fill={getBodyPartColor('glutes', selectedPart === 'glutes')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('glutes')}
+            onMouseEnter={() => handleMouseEnter('glutes')}
+          />
+          
+          {/* Legs */}
+          <rect
+            x="130"
+            y="280"
+            width="40"
+            height="120"
+            fill={getBodyPartColor('legs', selectedPart === 'legs')}
+            stroke="#374151"
+            strokeWidth="2"
+            className="hover:opacity-80 transition-opacity cursor-pointer"
+            onClick={() => handleBodyPartClick('legs')}
+            onMouseEnter={() => handleMouseEnter('legs')}
+          />
+          
+          {/* Feet */}
+          <ellipse
+            cx="150"
+            cy="420"
+            rx="30"
+            ry="15"
+            fill="#6b7280"
+            stroke="#374151"
+            strokeWidth="2"
+          />
+        </svg>
       </div>
     );
   }
-
-  return (
-    <div className="relative">
-      <img
-        src={getImageUrl()}
-        alt={`Human body ${variant} view`}
-        className="w-full h-auto cursor-pointer"
-        onClick={handleImageClick}
-        onError={() => setImageError(true)}
-        onMouseEnter={() => onMouseEnter?.(null)}
-        onMouseLeave={() => onMouseLeave?.()}
-        style={{ maxWidth: '400px', maxHeight: '600px' }}
-      />
-      
-      {/* Overlay for selection feedback */}
-      {selectedPart && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="w-full h-full border-4 border-pink-400 rounded-lg shadow-lg" 
-               style={{ 
-                 boxShadow: '0 0 20px rgba(227, 191, 192, 0.8)',
-                 borderRadius: '8px'
-               }}>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }
