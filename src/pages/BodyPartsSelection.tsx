@@ -91,87 +91,211 @@ const BodyPartsSelection = () => {
 
         {/* Interactive Body Diagram */}
         <div className="flex justify-center mb-12">
-          <div className="relative w-96 h-[600px] bg-gray-800 rounded-lg p-8">
-            {/* Human Body Silhouette */}
-            <div className="relative w-full h-full">
-              {/* Head */}
-              <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-gray-600 rounded-full"></div>
-              
-              {/* Chest */}
-              <div 
-                className={`absolute top-20 left-1/2 transform -translate-x-1/2 w-24 h-32 rounded-lg cursor-pointer transition-all duration-200 ${
-                  selectedPart === 'chest' ? 'bg-blue-500' : 'bg-blue-400 hover:bg-blue-500'
-                }`}
-                onClick={() => handleBodyPartClick(bodyParts[0])}
-                title="Chest"
-              ></div>
-              
-              {/* Shoulders */}
-              <div 
-                className={`absolute top-24 left-8 w-12 h-16 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[1])}
-                title="Left Shoulder"
-              ></div>
-              <div 
-                className={`absolute top-24 right-8 w-12 h-16 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[1])}
-                title="Right Shoulder"
-              ></div>
-              
-              {/* Arms */}
-              <div 
-                className={`absolute top-32 left-4 w-8 h-24 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[2])}
-                title="Left Bicep"
-              ></div>
-              <div 
-                className={`absolute top-32 right-4 w-8 h-24 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[2])}
-                title="Right Bicep"
-              ></div>
-              
-              {/* Triceps */}
-              <div 
-                className={`absolute top-40 left-2 w-6 h-20 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[3])}
-                title="Left Tricep"
-              ></div>
-              <div 
-                className={`absolute top-40 right-2 w-6 h-20 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[3])}
-                title="Right Tricep"
-              ></div>
-              
-              {/* Abs */}
-              <div 
-                className={`absolute top-52 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[4])}
-                title="Abs"
-              ></div>
-              
-              {/* Back */}
-              <div 
-                className={`absolute top-20 left-1/2 transform -translate-x-1/2 w-24 h-32 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg opacity-50`}
-                onClick={() => handleBodyPartClick(bodyParts[5])}
-                title="Back"
-              ></div>
-              
-              {/* Legs */}
-              <div 
-                className={`absolute top-72 left-1/2 transform -translate-x-1/2 w-16 h-32 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[6])}
-                title="Legs"
-              ></div>
-              
-              {/* Glutes */}
-              <div 
-                className={`absolute top-64 left-1/2 transform -translate-x-1/2 w-20 h-16 bg-blue-400 hover:bg-blue-500 cursor-pointer transition-all duration-200 rounded-lg`}
-                onClick={() => handleBodyPartClick(bodyParts[7])}
-                title="Glutes"
-              ></div>
-            </div>
+          <div className="relative">
+            <svg
+              width="600"
+              height="800"
+              viewBox="0 0 600 800"
+              className="cursor-pointer"
+            >
+              {/* Front View Body */}
+              <g>
+                {/* Head */}
+                <circle
+                  cx="300"
+                  cy="80"
+                  r="40"
+                  fill="#374151"
+                  stroke="#6b7280"
+                  strokeWidth="3"
+                />
+                
+                {/* Neck */}
+                <rect
+                  x="280"
+                  y="120"
+                  width="40"
+                  height="25"
+                  fill="#374151"
+                  stroke="#6b7280"
+                  strokeWidth="2"
+                />
+
+                {/* Chest */}
+                <path
+                  d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.CHEST ? "#f87171" : "#ef4444"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[0])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.CHEST)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Shoulders */}
+                <path
+                  d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.SHOULDERS ? "#60a5fa" : "#3b82f6"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[1])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.SHOULDERS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Biceps */}
+                <path
+                  d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.BICEPS ? "#34d399" : "#10b981"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[2])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.BICEPS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Triceps */}
+                <path
+                  d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.TRICEPS ? "#a78bfa" : "#8b5cf6"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[3])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.TRICEPS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Abs */}
+                <path
+                  d="M 220 250 L 380 250 L 380 350 L 220 350 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.ABS ? "#fb923c" : "#f97316"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[4])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.ABS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Glutes */}
+                <path
+                  d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.GLUTES ? "#f472b6" : "#ec4899"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[7])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.GLUTES)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Legs */}
+                <path
+                  d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.LEGS ? "#818cf8" : "#6366f1"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[6])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.LEGS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+              </g>
+
+              {/* Back View Body */}
+              <g transform="translate(0, 0)">
+                {/* Back */}
+                <path
+                  d="M 220 145 Q 300 125 380 145 L 380 250 Q 300 240 220 250 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.BACK ? "#5eead4" : "#14b8a6"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[5])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.BACK)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Back Shoulders */}
+                <path
+                  d="M 180 150 Q 300 130 420 150 L 420 200 Q 300 190 180 200 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.SHOULDERS ? "#60a5fa" : "#3b82f6"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[1])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.SHOULDERS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Back Arms */}
+                <path
+                  d="M 180 200 L 220 200 L 220 350 L 180 350 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.TRICEPS ? "#a78bfa" : "#8b5cf6"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[3])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.TRICEPS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                <path
+                  d="M 380 200 L 420 200 L 420 350 L 380 350 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.BICEPS ? "#34d399" : "#10b981"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[2])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.BICEPS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Back Glutes */}
+                <path
+                  d="M 220 350 L 380 350 L 380 400 L 220 400 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.GLUTES ? "#f472b6" : "#ec4899"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[7])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.GLUTES)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+                
+                {/* Back Legs */}
+                <path
+                  d="M 240 400 L 360 400 L 360 650 L 240 650 Z"
+                  fill={selectedPart === MUSCLE_GROUPS.LEGS ? "#818cf8" : "#6366f1"}
+                  stroke="#ffffff"
+                  strokeWidth="4"
+                  className="transition-colors cursor-pointer hover:opacity-80"
+                  onClick={() => handleBodyPartClick(bodyParts[6])}
+                  onMouseEnter={() => setSelectedPart(MUSCLE_GROUPS.LEGS)}
+                  onMouseLeave={() => setSelectedPart(null)}
+                />
+              </g>
+            </svg>
           </div>
         </div>
+
+        {/* Hover Info */}
+        {selectedPart && (
+          <div className="text-center mb-8">
+            <div className="inline-block bg-gray-800 rounded-lg p-4 border border-gray-600">
+              <h3 className="text-xl font-semibold text-white">
+                {bodyParts.find(part => part.id === selectedPart)?.name}
+              </h3>
+              <p className="text-gray-300">
+                {bodyParts.find(part => part.id === selectedPart)?.exerciseCount} exercises available
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Body Parts List */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
@@ -195,8 +319,24 @@ const BodyPartsSelection = () => {
           ))}
         </div>
 
+        {/* Navigation Buttons */}
+        <div className="flex justify-center space-x-4 mt-8">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            ← Back to Home
+          </button>
+          <button
+            onClick={() => navigate('/training')}
+            className="flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          >
+            Training Center →
+          </button>
+        </div>
+
         {/* Instructions */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-6">
           <p className="text-gray-400">
             💡 Click on any body part above or in the diagram to see exercises
           </p>
