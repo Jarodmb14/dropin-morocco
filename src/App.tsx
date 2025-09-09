@@ -36,6 +36,7 @@ import SimpleAdminDebug from "./pages/SimpleAdminDebug";
 import ReviewsTest from "./pages/ReviewsTest";
 import BodyPartsSelection from "./pages/BodyPartsSelection";
 import ExercisesList from "./pages/ExercisesList";
+import Training from "./pages/Training";
 import LocationTest from "./pages/LocationTest";
 import UsersTest from "./pages/UsersTest";
 import BookingsTest from "./pages/BookingsTest";
@@ -132,6 +133,13 @@ const App = () => (
           <Route path="/profile" element={
             <ProtectedRoute>
               <UserProfile />
+            </ProtectedRoute>
+          } />
+
+          {/* Training - Protected for logged-in users only */}
+          <Route path="/training" element={
+            <ProtectedRoute>
+              <Training />
             </ProtectedRoute>
           } />
 
