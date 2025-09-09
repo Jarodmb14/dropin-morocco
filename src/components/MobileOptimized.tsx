@@ -162,7 +162,11 @@ const MobileOptimized = () => {
                   </div>
                 </div>
                 
-                <Button className="w-full" variant="hero">
+                <Button 
+                  className="w-full" 
+                  variant="hero"
+                  onClick={() => window.location.href = '/venues'}
+                >
                   🏋️ Start Finding Gyms
                 </Button>
               </CardContent>

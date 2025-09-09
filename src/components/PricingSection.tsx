@@ -142,6 +142,7 @@ const PricingSection = () => {
                       ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:via-orange-600 hover:to-rose-600 text-white shadow-lg hover:shadow-xl' 
                       : 'bg-white border-2 border-amber-300 text-amber-700 hover:bg-amber-50 shadow-lg hover:shadow-xl'
                   }`}
+                  onClick={() => window.location.href = '/venues'}
                 >
                   {plan.popular && <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-2xl" />}
                   <div className="flex items-center justify-center gap-2">
