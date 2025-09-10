@@ -7,7 +7,11 @@ import { Progress } from '@/components/ui/progress';
 import { useExerciseData } from '@/hooks/useExerciseDB';
 import { FULL_EXERCISE_DATABASE, getFullExercisesByMuscleGroup, getEquipment } from '@/data/full-exercise-database';
 import { EnhancedExerciseCard } from '@/components/EnhancedExerciseCard';
-import { Loader2, Dumbbell, Target, Play, RotateCcw, CheckCircle } from 'lucide-react';
+import { TrainingPrograms } from '@/components/TrainingPrograms';
+import { ProgressDashboard } from '@/components/ProgressDashboard';
+import { ProgressTracker, WorkoutSession, WorkoutExercise } from '@/data/progress-tracking';
+import { useAuth } from '@/contexts/AuthContext';
+import { Loader2, Dumbbell, Target, Play, RotateCcw, CheckCircle, BookOpen, BarChart3, Timer } from 'lucide-react';
 
 interface BodyPart {
   id: string;
@@ -46,7 +50,12 @@ export function WorkoutCool() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
+  const [currentView, setCurrentView] = useState<'custom' | 'programs' | 'progress'>('custom');
+  const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
+  const [restTimer, setRestTimer] = useState<number | null>(null);
+  const [restInterval, setRestInterval] = useState<NodeJS.Timeout | null>(null);
 
+  const { user } = useAuth();
   const { loadExercisesByTarget, exercises, loading, error } = useExerciseData();
 
   const totalSteps = 2;
@@ -105,8 +114,7 @@ export function WorkoutCool() {
   };
 
   const startWorkout = () => {
-    setWorkoutStarted(true);
-    setCurrentExerciseIndex(0);
+    startWorkoutSession();
   };
 
   const nextExercise = () => {
@@ -126,6 +134,84 @@ export function WorkoutCool() {
     setSelectedBodyParts(BODY_PARTS);
     setGeneratedExercises([]);
     setWorkoutStarted(false);
+    setCurrentExerciseIndex(0);
+    setWorkoutSession(null);
+    if (restInterval) {
+      clearInterval(restInterval);
+      setRestInterval(null);
+    }
+    setRestTimer(null);
+  };
+
+  // Start rest timer
+  const startRestTimer = (seconds: number) => {
+    if (restInterval) {
+      clearInterval(restInterval);
+    }
+    
+    setRestTimer(seconds);
+    const interval = setInterval(() => {
+      setRestTimer(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval);
+          setRestInterval(null);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    setRestInterval(interval);
+  };
+
+  // Save workout session
+  const saveWorkoutSession = async () => {
+    if (!user || !workoutSession) return;
+
+    try {
+      const exercises: WorkoutExercise[] = generatedExercises.map(exercise => ({
+        exerciseId: exercise.id,
+        exerciseName: exercise.name,
+        sets: Array(exercise.sets || 3).fill(0).map((_, index) => ({
+          setNumber: index + 1,
+          reps: exercise.reps || 12,
+          weight: 0, // TODO: Add weight input
+          completed: true,
+          notes: ''
+        })),
+        notes: ''
+      }));
+
+      const sessionData = {
+        ...workoutSession,
+        exercises,
+        duration: Math.round((Date.now() - Number(workoutSession.createdAt)) / 60000) // Calculate duration
+      };
+
+      await ProgressTracker.saveWorkoutSession(sessionData);
+      await ProgressTracker.updatePersonalRecords(user.id, exercises, workoutSession.id);
+      
+      console.log('Workout session saved successfully');
+    } catch (error) {
+      console.error('Error saving workout session:', error);
+    }
+  };
+
+  // Start workout session
+  const startWorkoutSession = () => {
+    if (!user) return;
+    
+    const session: WorkoutSession = {
+      id: `workout-${Date.now()}`,
+      userId: user.id,
+      date: new Date().toISOString().split('T')[0],
+      duration: 0,
+      exercises: [],
+      createdAt: Date.now().toString()
+    };
+    
+    setWorkoutSession(session);
+    setWorkoutStarted(true);
     setCurrentExerciseIndex(0);
   };
 
@@ -221,6 +307,22 @@ export function WorkoutCool() {
                       </ul>
                     </div>
                   )}
+
+                  {/* Rest Timer */}
+                  {restTimer !== null && (
+                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="text-center">
+                        <h4 className="font-semibold text-blue-800 mb-2 flex items-center justify-center">
+                          <Timer className="w-4 h-4 mr-2" />
+                          Rest Timer
+                        </h4>
+                        <div className="text-3xl font-bold text-blue-600 mb-2">
+                          {Math.floor(restTimer / 60)}:{(restTimer % 60).toString().padStart(2, '0')}
+                        </div>
+                        <p className="text-sm text-blue-600">Take a break before your next set</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -242,8 +344,42 @@ export function WorkoutCool() {
                 Reset
               </Button>
               
+              {/* Rest Timer Buttons */}
+              <div className="flex gap-1">
+                <Button 
+                  onClick={() => startRestTimer(60)} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={restTimer !== null}
+                >
+                  1m
+                </Button>
+                <Button 
+                  onClick={() => startRestTimer(90)} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={restTimer !== null}
+                >
+                  1.5m
+                </Button>
+                <Button 
+                  onClick={() => startRestTimer(120)} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={restTimer !== null}
+                >
+                  2m
+                </Button>
+              </div>
+              
               {currentExerciseIndex === generatedExercises.length - 1 ? (
-                <Button onClick={resetWorkout} className="bg-green-500 hover:bg-green-600">
+                <Button 
+                  onClick={() => {
+                    saveWorkoutSession();
+                    resetWorkout();
+                  }} 
+                  className="bg-green-500 hover:bg-green-600"
+                >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Complete Workout
                 </Button>
@@ -254,6 +390,59 @@ export function WorkoutCool() {
               )}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Render different views
+  if (currentView === 'programs') {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Training Programs
+            </h1>
+            <Button variant="outline" onClick={() => setCurrentView('custom')}>
+              ← Back to Custom Workout
+            </Button>
+          </div>
+          <TrainingPrograms 
+            onSelectProgram={(program) => {
+              console.log('Selected program:', program);
+              // TODO: Implement program selection logic
+            }}
+            onStartWorkout={(workout) => {
+              console.log('Starting workout:', workout);
+              // TODO: Implement program workout start logic
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === 'progress') {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Progress Dashboard
+            </h1>
+            <Button variant="outline" onClick={() => setCurrentView('custom')}>
+              ← Back to Custom Workout
+            </Button>
+          </div>
+          <ProgressDashboard 
+            onViewHistory={() => {
+              // TODO: Implement history view
+            }}
+            onViewRecords={() => {
+              // TODO: Implement records view
+            }}
+          />
         </div>
       </div>
     );
@@ -272,6 +461,34 @@ export function WorkoutCool() {
             <div className="flex items-center space-x-4">
               <Progress value={progress} className="flex-1" />
               <span className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</span>
+            </div>
+            
+            {/* Navigation Tabs */}
+            <div className="flex justify-center mt-4 space-x-4">
+              <Button 
+                variant={currentView === 'custom' ? 'default' : 'outline'}
+                onClick={() => setCurrentView('custom')}
+                className="flex items-center"
+              >
+                <Dumbbell className="w-4 h-4 mr-2" />
+                Custom Workout
+              </Button>
+              <Button 
+                variant={currentView === 'programs' ? 'default' : 'outline'}
+                onClick={() => setCurrentView('programs')}
+                className="flex items-center"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Programs
+              </Button>
+              <Button 
+                variant={currentView === 'progress' ? 'default' : 'outline'}
+                onClick={() => setCurrentView('progress')}
+                className="flex items-center"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Progress
+              </Button>
             </div>
           </CardHeader>
         </Card>
@@ -375,6 +592,9 @@ export function WorkoutCool() {
                       </div>
                     );
                   })}
+
+
+                  
                 </div>
               )}
             </CardContent>
