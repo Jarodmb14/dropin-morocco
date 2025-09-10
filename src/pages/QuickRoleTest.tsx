@@ -9,12 +9,30 @@ export default function QuickRoleTest() {
 
   const testRoleQuery = async () => {
     setLoading(true);
+    setResult(null);
+    
     try {
+      console.log('Starting role test...');
+      
       // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      console.log('User fetch result:', { user, userError });
+      
+      if (userError) {
+        setResult({ 
+          step: 'getUser',
+          error: 'Failed to get user: ' + userError.message,
+          userError 
+        });
+        return;
+      }
       
       if (!user) {
-        setResult({ error: 'No user found' });
+        setResult({ 
+          step: 'getUser',
+          error: 'No user found - not authenticated' 
+        });
         return;
       }
 
@@ -30,17 +48,23 @@ export default function QuickRoleTest() {
       console.log('Role test result:', { data, error });
 
       setResult({
+        step: 'profileQuery',
         userId: user.id,
         email: user.email,
         profileData: data,
         error: error,
         userRole: data?.user_role,
-        isAdmin: data?.user_role === 'ADMIN'
+        isAdmin: data?.user_role === 'ADMIN',
+        timestamp: new Date().toISOString()
       });
 
     } catch (err) {
       console.error('Role test error:', err);
-      setResult({ error: err });
+      setResult({ 
+        step: 'exception',
+        error: 'Exception: ' + err,
+        stack: err instanceof Error ? err.stack : 'No stack trace'
+      });
     } finally {
       setLoading(false);
     }
@@ -86,12 +110,22 @@ export default function QuickRoleTest() {
             <CardTitle>Quick Role Test</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <Button onClick={testRoleQuery} disabled={loading}>
                 {loading ? 'Testing...' : 'Test Role Query'}
               </Button>
               <Button onClick={forceAdminRole} disabled={loading} className="bg-red-500 hover:bg-red-600">
                 {loading ? 'Updating...' : 'Force ADMIN Role'}
+              </Button>
+              <Button 
+                onClick={() => {
+                  console.log('Current URL:', window.location.href);
+                  console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+                  console.log('Supabase Key:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Present' : 'Missing');
+                }} 
+                variant="outline"
+              >
+                Check Config
               </Button>
             </div>
 
