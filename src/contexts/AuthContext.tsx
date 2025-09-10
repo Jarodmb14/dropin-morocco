@@ -96,15 +96,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('🔐 AuthContext: Fetching user role for:', userId);
       
-      // Temporarily disable profiles table query due to recursive trigger issues
-      // Use user metadata as fallback
-      const metadataRole = currentUser?.user_metadata?.role;
-      if (metadataRole) {
-        console.log('🔐 AuthContext: Using metadata role:', metadataRole);
-        setUserRole(metadataRole as UserRole);
+      // Try to get role from profiles table first
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('user_role')
+        .eq('id', userId)
+        .single();
+
+      if (!profileError && profileData?.user_role) {
+        console.log('🔐 AuthContext: Using database role:', profileData.user_role);
+        setUserRole(profileData.user_role as UserRole);
       } else {
-        console.log('🔐 AuthContext: No role found, defaulting to CUSTOMER');
-        setUserRole('CUSTOMER');
+        // Fallback to user metadata
+        const metadataRole = currentUser?.user_metadata?.role;
+        if (metadataRole) {
+          console.log('🔐 AuthContext: Using metadata role:', metadataRole);
+          setUserRole(metadataRole as UserRole);
+        } else {
+          console.log('🔐 AuthContext: No role found, defaulting to CUSTOMER');
+          setUserRole('CUSTOMER');
+        }
       }
     } catch (error) {
       console.error('🔐 AuthContext: Exception fetching role:', error);

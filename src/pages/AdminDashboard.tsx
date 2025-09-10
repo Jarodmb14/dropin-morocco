@@ -52,8 +52,42 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
-  // Check if user is admin
-  const isAdmin = user?.email === 'admin@dropinmorocco.com' || user?.email === 'bachirelhattab@gmail.com';
+  // Check if user is admin - check user role from database
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminCheckLoading, setAdminCheckLoading] = useState(true);
+
+  // Check admin role from database
+  const checkAdminRole = async () => {
+    if (!user) {
+      setIsAdmin(false);
+      setAdminCheckLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('user_role')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error checking admin role:', error);
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(data?.user_role === 'ADMIN');
+      }
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+      setIsAdmin(false);
+    } finally {
+      setAdminCheckLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAdminRole();
+  }, [user]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -164,6 +198,24 @@ export default function AdminDashboard() {
                 Access Denied
               </h2>
               <p className="text-gray-600">Please log in to access the admin dashboard.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (adminCheckLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-white/70 backdrop-blur-sm border-blue-200">
+            <CardContent className="p-8 text-center">
+              <Shield className="w-16 h-16 text-blue-500 mx-auto mb-4 animate-pulse" />
+              <h2 className="text-2xl font-bold text-gray-800 mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Checking Admin Access...
+              </h2>
+              <p className="text-gray-600">Verifying your permissions...</p>
             </CardContent>
           </Card>
         </div>
