@@ -22,9 +22,10 @@ import {
 interface ProgressDashboardProps {
   onViewHistory?: () => void;
   onViewRecords?: () => void;
+  onStartWorkout?: () => void;
 }
 
-export function ProgressDashboard({ onViewHistory, onViewRecords }: ProgressDashboardProps) {
+export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout }: ProgressDashboardProps) {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<ProgressMetrics | null>(null);
   const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSession[]>([]);
@@ -105,7 +106,7 @@ export function ProgressDashboard({ onViewHistory, onViewRecords }: ProgressDash
             <p className="text-gray-600 mb-4">
               Start your first workout to begin tracking your progress!
             </p>
-            <Button onClick={onViewHistory}>
+            <Button onClick={onStartWorkout}>
               Start Your First Workout
             </Button>
           </CardContent>

@@ -492,6 +492,10 @@ export function WorkoutCool() {
             onViewRecords={() => {
               // TODO: Implement records view
             }}
+            onStartWorkout={() => {
+              // Switch to custom workout view to start a workout
+              setCurrentView('custom');
+            }}
           />
         </div>
       </div>
@@ -554,6 +558,13 @@ export function WorkoutCool() {
               <p className="text-sm text-gray-600 mt-2">
                 Choose the muscle groups you want to focus on in your workout. You can select multiple areas.
               </p>
+              {!selectedBodyParts.some(part => part.selected) && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Tip:</strong> Select one or more body parts above, then click "Generate Workout" to create your personalized workout!
+                  </p>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
