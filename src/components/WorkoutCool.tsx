@@ -756,6 +756,5 @@ export function WorkoutCool() {
         </div>
       </div>
     </div>
-    </div>
   );
 }
