@@ -105,12 +105,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
 
       console.log('🔐 AuthContext: Profile query result:', { profileData, profileError });
+      console.log('🔐 AuthContext: Profile data user_role:', profileData?.user_role);
+      console.log('🔐 AuthContext: Profile error details:', profileError);
 
       if (!profileError && profileData?.user_role) {
-        console.log('🔐 AuthContext: Using database role:', profileData.user_role);
+        console.log('🔐 AuthContext: ✅ Using database role:', profileData.user_role);
         setUserRole(profileData.user_role as UserRole);
       } else {
-        console.log('🔐 AuthContext: Database query failed or no role found, trying metadata...');
+        console.log('🔐 AuthContext: ❌ Database query failed or no role found');
+        console.log('🔐 AuthContext: Error details:', profileError);
+        console.log('🔐 AuthContext: Profile data:', profileData);
+        console.log('🔐 AuthContext: Trying metadata fallback...');
+        
         // Fallback to user metadata
         const metadataRole = currentUser?.user_metadata?.role;
         console.log('🔐 AuthContext: Metadata role:', metadataRole);

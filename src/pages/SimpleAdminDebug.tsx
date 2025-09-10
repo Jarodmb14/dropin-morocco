@@ -9,13 +9,14 @@ export default function SimpleAdminDebug() {
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [allProfiles, setAllProfiles] = useState<any[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (user) {
       checkProfile();
       loadAllProfiles();
     }
-  }, [user]);
+  }, [user, refreshKey]);
 
   const checkProfile = async () => {
     if (!user) return;
@@ -148,6 +149,9 @@ export default function SimpleAdminDebug() {
               </Button>
               <Button onClick={loadAllProfiles} variant="outline">
                 Load All Profiles
+              </Button>
+              <Button onClick={() => setRefreshKey(prev => prev + 1)} variant="outline" className="bg-blue-500 hover:bg-blue-600 text-white">
+                Refresh AuthContext
               </Button>
               <Button onClick={updateUserRole} className="bg-red-500 hover:bg-red-600">
                 Set Role to ADMIN
