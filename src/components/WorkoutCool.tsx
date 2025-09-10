@@ -261,6 +261,62 @@ export function WorkoutCool() {
     setCurrentView('custom');
   };
 
+  // Generate a quick full-body workout for new users
+  const generateQuickWorkout = async () => {
+    if (!user) return;
+    
+    setIsGenerating(true);
+    
+    try {
+      // Create a balanced full-body workout with 6 exercises
+      const bodyParts = ['chest', 'back', 'legs', 'shoulders', 'biceps', 'triceps'];
+      const exercises: Exercise[] = [];
+      
+      for (const bodyPart of bodyParts) {
+        const fullExercises = getFullExercisesByMuscleGroup(bodyPart);
+        if (fullExercises.length > 0) {
+          const exercise = fullExercises[0]; // Take the first exercise for each body part
+          exercises.push({
+            id: `quick-${bodyPart}-${exercise.id}`,
+            name: exercise.nameEn,
+            bodyPart: bodyPart.charAt(0).toUpperCase() + bodyPart.slice(1),
+            equipment: exercise.attributes
+              .filter(attr => attr.attributeName === 'EQUIPMENT')
+              .map(attr => attr.attributeValue)[0] || 'Bodyweight',
+            gifUrl: exercise.fullVideoImageUrl,
+            instructions: exercise.descriptionEn.replace(/<[^>]*>/g, '').split('.').filter(s => s.trim()),
+            sets: 3,
+            reps: 12
+          });
+        }
+      }
+      
+      setGeneratedExercises(exercises);
+      
+      // Create workout session
+      const session: WorkoutSession = {
+        id: `quick-workout-${Date.now()}`,
+        userId: user.id,
+        date: new Date().toISOString().split('T')[0],
+        duration: 0,
+        exercises: [],
+        createdAt: Date.now().toString()
+      };
+      
+      setWorkoutSession(session);
+      setWorkoutStarted(true);
+      setCurrentExerciseIndex(0);
+      
+      // Switch to custom view to show the workout
+      setCurrentView('custom');
+      
+    } catch (error) {
+      console.error('Error generating quick workout:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const canProceed = () => {
     switch (currentStep) {
       case 1:
@@ -493,8 +549,8 @@ export function WorkoutCool() {
               // TODO: Implement records view
             }}
             onStartWorkout={() => {
-              // Switch to custom workout view to start a workout
-              setCurrentView('custom');
+              // Generate a quick full-body workout for new users
+              generateQuickWorkout();
             }}
           />
         </div>

@@ -16,7 +16,8 @@ import {
   BarChart3,
   Flame,
   Star,
-  Zap
+  Zap,
+  Play
 } from 'lucide-react';
 
 interface ProgressDashboardProps {
@@ -104,9 +105,10 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
             <Trophy className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Progress Data Yet</h3>
             <p className="text-gray-600 mb-4">
-              Start your first workout to begin tracking your progress!
+              Start your first workout to begin tracking your progress! We'll create a balanced full-body workout for you.
             </p>
-            <Button onClick={onStartWorkout}>
+            <Button onClick={onStartWorkout} className="bg-blue-500 hover:bg-blue-600">
+              <Play className="w-4 h-4 mr-2" />
               Start Your First Workout
             </Button>
           </CardContent>
