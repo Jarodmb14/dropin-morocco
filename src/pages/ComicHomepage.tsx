@@ -125,6 +125,35 @@ const ComicHomepage = () => {
             </button>
           </div>
 
+          {/* Debug Section - Only visible in development or for testing */}
+          <div className="mt-8 flex justify-center">
+            <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
+              <p className="text-sm text-gray-600 mb-2 text-center" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Admin Debug Tools
+              </p>
+              <div className="flex gap-2 justify-center">
+                <button 
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                  onClick={() => navigate('/simple-admin-debug')}
+                >
+                  Admin Debug
+                </button>
+                <button 
+                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                  onClick={() => navigate('/admin-dashboard')}
+                >
+                  Admin Dashboard
+                </button>
+                <button 
+                  className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                  onClick={() => navigate('/training')}
+                >
+                  Training
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-16">
             <div className="bg-white px-8 py-6 shadow-lg border border-gray-200">
