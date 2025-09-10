@@ -4,14 +4,14 @@ import { ExerciseWithAttributes } from '../types/exercise';
 // Exercise data for each body part
 const exerciseData = {
   chest: [
-    { name: 'Développé couché', nameEn: 'Bench Press', difficulty: 'INTERMEDIATE' },
-    { name: 'Développé couché haltères', nameEn: 'Dumbbell Bench Press', difficulty: 'INTERMEDIATE' },
-    { name: 'Pompes', nameEn: 'Push-ups', difficulty: 'BEGINNER' },
-    { name: 'Développé incliné haltères', nameEn: 'Incline Dumbbell Press', difficulty: 'INTERMEDIATE' },
-    { name: 'Développé décliné haltères', nameEn: 'Decline Dumbbell Press', difficulty: 'INTERMEDIATE' },
-    { name: 'Écarté couché haltères', nameEn: 'Dumbbell Flyes', difficulty: 'INTERMEDIATE' },
-    { name: 'Dips aux barres parallèles', nameEn: 'Parallel Bar Dips', difficulty: 'INTERMEDIATE' },
-    { name: 'Pompes inclinées', nameEn: 'Incline Push-ups', difficulty: 'BEGINNER' },
+    { name: 'Développé couché', nameEn: 'Bench Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg' },
+    { name: 'Développé couché haltères', nameEn: 'Dumbbell Bench Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=8iPEnov-lmU' },
+    { name: 'Pompes', nameEn: 'Push-ups', difficulty: 'BEGINNER', videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4' },
+    { name: 'Développé incliné haltères', nameEn: 'Incline Dumbbell Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=8iPEnov-lmU' },
+    { name: 'Développé décliné haltères', nameEn: 'Decline Dumbbell Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=8iPEnov-lmU' },
+    { name: 'Écarté couché haltères', nameEn: 'Dumbbell Flyes', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=eozdVDA78K0' },
+    { name: 'Dips aux barres parallèles', nameEn: 'Parallel Bar Dips', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=2z8JmcrW-As' },
+    { name: 'Pompes inclinées', nameEn: 'Incline Push-ups', difficulty: 'BEGINNER', videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4' },
     { name: 'Pompes déclinées', nameEn: 'Decline Push-ups', difficulty: 'INTERMEDIATE' },
     { name: 'Développé couché prise serrée', nameEn: 'Close-Grip Bench Press', difficulty: 'INTERMEDIATE' },
     { name: 'Développé couché machine', nameEn: 'Machine Chest Press', difficulty: 'BEGINNER' },
@@ -160,8 +160,8 @@ export function generateAllExercises(): ExerciseWithAttributes[] {
         descriptionEn: `<p>Description of ${exercise.nameEn} exercise.</p>`,
         introduction: `<p>L'exercice <strong>${exercise.name}</strong> cible les <strong>${primaryMuscle}</strong>.</p>`,
         introductionEn: `<p>The <strong>${exercise.nameEn}</strong> exercise targets the <strong>${primaryMuscle}</strong>.</p>`,
-        fullVideoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1',
-        fullVideoImageUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+        fullVideoUrl: exercise.videoUrl || 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1',
+        fullVideoImageUrl: exercise.videoUrl ? `https://img.youtube.com/vi/${exercise.videoUrl.split('v=')[1]}/hqdefault.jpg` : 'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
         slug: exercise.name.toLowerCase().replace(/\s+/g, '-'),
         slugEn: exercise.nameEn.toLowerCase().replace(/\s+/g, '-'),
         attributes: [

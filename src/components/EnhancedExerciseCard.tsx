@@ -27,6 +27,7 @@ import {
   getDifficulty,
   getEquipment 
 } from '@/data/enhanced-exercises';
+import { ExerciseVideo } from './ExerciseVideo';
 
 interface EnhancedExerciseCardProps {
   exercise: ExerciseWithAttributes;
@@ -102,6 +103,18 @@ export function EnhancedExerciseCard({ exercise, onPlayVideo }: EnhancedExercise
         <div className="prose prose-sm max-w-none">
           <div dangerouslySetInnerHTML={{ __html: exercise.descriptionEn }} />
         </div>
+
+        {/* Exercise Video */}
+        {exercise.fullVideoUrl && (
+          <div className="mt-4">
+            <ExerciseVideo
+              videoUrl={exercise.fullVideoUrl}
+              thumbnailUrl={exercise.fullVideoImageUrl}
+              exerciseName={exercise.nameEn}
+              className="w-full"
+            />
+          </div>
+        )}
 
         {/* Tutorial Section */}
         {tutorial && (
