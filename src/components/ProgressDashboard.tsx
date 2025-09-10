@@ -119,17 +119,38 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl font-bold mb-2">Your Progress Dashboard</h2>
-        <p className="text-gray-600">
-          Track your fitness journey and celebrate your achievements
-        </p>
+    <div className="min-h-screen relative" style={{ backgroundColor: '#F2E4E5' }}>
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-300 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-1/4 w-12 h-12 bg-purple-300 rounded-full opacity-20 animate-pulse delay-2000"></div>
+        <div className="absolute top-60 left-1/3 w-8 h-8 bg-pink-300 rounded-full opacity-20 animate-pulse delay-500"></div>
+        
+        {/* Comic-style action lines */}
+        <div className="absolute top-32 left-1/2 w-32 h-1 bg-gradient-to-r from-orange-400 to-transparent transform rotate-12 opacity-30"></div>
+        <div className="absolute bottom-32 right-1/3 w-24 h-1 bg-gradient-to-r from-blue-400 to-transparent transform -rotate-12 opacity-30"></div>
       </div>
 
-      {/* Database Setup Check */}
-      <DatabaseSetup />
+      <div className="relative z-10 p-6 space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="mb-8 flex items-center justify-center">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-3 rounded-full font-black text-lg border-4 border-green-600 transform rotate-1 shadow-lg">
+              📊 PROGRESS DASHBOARD 📊
+            </div>
+          </div>
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            Your Progress Dashboard
+          </h2>
+          <p className="text-gray-700 text-lg">
+            Track your fitness journey and celebrate your achievements
+          </p>
+        </div>
+
+        {/* Database Setup Check */}
+        <DatabaseSetup />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

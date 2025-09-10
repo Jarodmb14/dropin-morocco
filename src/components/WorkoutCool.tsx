@@ -559,15 +559,36 @@ export function WorkoutCool() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Target className="w-6 h-6 mr-2 text-blue-500" />
-              Workout Cool - Build Your Perfect Workout
-            </CardTitle>
+    <div className="min-h-screen relative" style={{ backgroundColor: '#F2E4E5' }}>
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-300 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-1/4 w-12 h-12 bg-purple-300 rounded-full opacity-20 animate-pulse delay-2000"></div>
+        <div className="absolute top-60 left-1/3 w-8 h-8 bg-pink-300 rounded-full opacity-20 animate-pulse delay-500"></div>
+        
+        {/* Comic-style action lines */}
+        <div className="absolute top-32 left-1/2 w-32 h-1 bg-gradient-to-r from-orange-400 to-transparent transform rotate-12 opacity-30"></div>
+        <div className="absolute bottom-32 right-1/3 w-24 h-1 bg-gradient-to-r from-blue-400 to-transparent transform -rotate-12 opacity-30"></div>
+      </div>
+
+      <div className="relative z-10 p-6">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <Card className="mb-6 border-4 border-gray-300 shadow-xl">
+            <CardHeader>
+              <div className="text-center mb-4">
+                <div className="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-8 py-3 rounded-full font-black text-lg border-4 border-red-600 transform rotate-1 shadow-lg inline-block">
+                  💪 WORKOUT COOL 💪
+                </div>
+              </div>
+              <CardTitle className="flex items-center justify-center text-2xl">
+                <Target className="w-6 h-6 mr-2 text-blue-500" />
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Build Your Perfect Workout
+                </span>
+              </CardTitle>
             <div className="flex items-center space-x-4">
               <Progress value={progress} className="flex-1" />
               <span className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</span>
@@ -605,11 +626,13 @@ export function WorkoutCool() {
 
         {/* Step 1: Body Part Selection */}
         {currentStep === 1 && (
-          <Card>
+          <Card className="border-4 border-gray-300 shadow-xl">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Target className="w-5 h-5 mr-2" />
-                Step 1: Select Body Parts to Target
+              <CardTitle className="flex items-center text-xl">
+                <Target className="w-5 h-5 mr-2 text-blue-500" />
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Step 1: Select Body Parts to Target
+                </span>
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
                 Choose the muscle groups you want to focus on in your workout. You can select multiple areas.
@@ -628,7 +651,11 @@ export function WorkoutCool() {
                   <Button
                     key={bodyPart.id}
                     variant={bodyPart.selected ? "default" : "outline"}
-                    className="h-20 flex flex-col items-center justify-center space-y-2 relative"
+                    className={`h-20 flex flex-col items-center justify-center space-y-2 relative border-4 transition-all duration-200 ${
+                      bodyPart.selected 
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-xl transform scale-105 border-blue-600' 
+                        : 'hover:bg-gray-50 hover:shadow-lg border-gray-300 hover:border-blue-400 transform hover:rotate-1'
+                    }`}
                     onClick={() => handleBodyPartToggle(bodyPart.id)}
                   >
                     {bodyPart.selected && (
@@ -732,7 +759,7 @@ export function WorkoutCool() {
           <Button
             onClick={nextStep}
             disabled={!canProceed() || isGenerating}
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold text-lg px-8 py-4 border-4 border-blue-600 shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             {isGenerating ? (
               <>

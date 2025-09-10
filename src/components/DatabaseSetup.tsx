@@ -84,11 +84,13 @@ export function DatabaseSetup() {
   };
 
   return (
-    <Card>
+    <Card className="border-4 border-gray-300 shadow-xl">
       <CardHeader>
-        <CardTitle className="flex items-center">
-          <Database className="w-5 h-5 mr-2" />
-          Progress Tracking Database Setup
+        <CardTitle className="flex items-center text-xl">
+          <Database className="w-6 h-6 mr-2 text-blue-500" />
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Progress Tracking Database Setup
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

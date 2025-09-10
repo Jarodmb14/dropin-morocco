@@ -273,21 +273,42 @@ export function TrainingPrograms({ onSelectProgram, onStartWorkout }: TrainingPr
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center">
-        <h2 className="text-3xl font-bold mb-4">Pre-Designed Training Programs</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Choose from our structured programs designed by fitness experts. Each program is tailored to specific goals and experience levels.
-        </p>
+    <div className="min-h-screen relative" style={{ backgroundColor: '#F2E4E5' }}>
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-300 rounded-full opacity-20 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-blue-300 rounded-full opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-40 left-1/4 w-12 h-12 bg-purple-300 rounded-full opacity-20 animate-pulse delay-2000"></div>
+        <div className="absolute top-60 left-1/3 w-8 h-8 bg-pink-300 rounded-full opacity-20 animate-pulse delay-500"></div>
+        
+        {/* Comic-style action lines */}
+        <div className="absolute top-32 left-1/2 w-32 h-1 bg-gradient-to-r from-orange-400 to-transparent transform rotate-12 opacity-30"></div>
+        <div className="absolute bottom-32 right-1/3 w-24 h-1 bg-gradient-to-r from-blue-400 to-transparent transform -rotate-12 opacity-30"></div>
       </div>
+
+      <div className="relative z-10 p-6 space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <div className="mb-8 flex items-center justify-center">
+            <div className="bg-gradient-to-r from-red-500 to-yellow-500 text-white px-8 py-3 rounded-full font-black text-lg border-4 border-red-600 transform rotate-1 shadow-lg">
+              💪 TRAINING PROGRAMS 💪
+            </div>
+          </div>
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Pre-Designed Training Programs
+          </h2>
+          <p className="text-gray-700 max-w-2xl mx-auto text-lg">
+            Choose from our structured programs designed by fitness experts. Each program is tailored to specific goals and experience levels.
+          </p>
+        </div>
 
       {/* Programs Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {TRAINING_PROGRAMS.map((program) => (
           <Card 
             key={program.id} 
-            className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-4 border-gray-300 hover:border-blue-400 transform hover:rotate-1 shadow-xl"
             onClick={() => setSelectedProgram(program)}
           >
             <CardHeader>
