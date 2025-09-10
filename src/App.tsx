@@ -34,6 +34,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminTest from "./pages/AdminTest";
 import AdminDebug from "./pages/AdminDebug";
 import SimpleAdminDebug from "./pages/SimpleAdminDebug";
+import TestDebug from "./pages/TestDebug";
 import ReviewsTest from "./pages/ReviewsTest";
 import BodyPartsSelection from "./pages/BodyPartsSelection";
 import ExercisesList from "./pages/ExercisesList";
@@ -175,6 +176,7 @@ const App = () => (
           <Route path="/admin-test" element={<AdminTest />} />
           <Route path="/admin-debug" element={<AdminDebug />} />
           <Route path="/simple-admin-debug" element={<SimpleAdminDebug />} />
+          <Route path="/test-debug" element={<TestDebug />} />
           <Route path="/reviews-test" element={<ReviewsTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="*" element={<NotFound />} />
