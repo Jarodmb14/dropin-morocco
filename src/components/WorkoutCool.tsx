@@ -9,12 +9,6 @@ import { FULL_EXERCISE_DATABASE, getFullExercisesByMuscleGroup, getEquipment } f
 import { EnhancedExerciseCard } from '@/components/EnhancedExerciseCard';
 import { Loader2, Dumbbell, Target, Play, RotateCcw, CheckCircle } from 'lucide-react';
 
-interface Equipment {
-  id: string;
-  name: string;
-  icon: string;
-}
-
 interface BodyPart {
   id: string;
   name: string;
@@ -32,17 +26,6 @@ interface Exercise {
   reps?: number;
 }
 
-const EQUIPMENT_OPTIONS: Equipment[] = [
-  { id: 'bodyweight', name: 'Bodyweight', icon: '🏃' },
-  { id: 'dumbbells', name: 'Dumbbells', icon: '🏋️' },
-  { id: 'barbell', name: 'Barbell', icon: '🏋️‍♂️' },
-  { id: 'kettlebell', name: 'Kettlebell', icon: '⚡' },
-  { id: 'resistance-bands', name: 'Resistance Bands', icon: '🎯' },
-  { id: 'cables', name: 'Cable Machine', icon: '🔗' },
-  { id: 'machines', name: 'Machines', icon: '🏭' },
-  { id: 'cardio', name: 'Cardio', icon: '❤️' },
-];
-
 const BODY_PARTS: BodyPart[] = [
   { id: 'chest', name: 'Chest', selected: false },
   { id: 'shoulders', name: 'Shoulders', selected: false },
@@ -58,9 +41,7 @@ const BODY_PARTS: BodyPart[] = [
 
 export function WorkoutCool() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [selectedBodyParts, setSelectedBodyParts] = useState<BodyPart[]>(BODY_PARTS);
-  // Removed selectedMuscles state - using selectedBodyParts instead
   const [generatedExercises, setGeneratedExercises] = useState<Exercise[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [workoutStarted, setWorkoutStarted] = useState(false);
@@ -68,16 +49,8 @@ export function WorkoutCool() {
 
   const { loadExercisesByTarget, exercises, loading, error } = useExerciseData();
 
-  const totalSteps = 3;
+  const totalSteps = 2;
   const progress = (currentStep / totalSteps) * 100;
-
-  const handleEquipmentToggle = (equipmentId: string) => {
-    setSelectedEquipment(prev => 
-      prev.includes(equipmentId) 
-        ? prev.filter(id => id !== equipmentId)
-        : [...prev, equipmentId]
-    );
-  };
 
   const handleBodyPartToggle = (bodyPartId: string) => {
     setSelectedBodyParts(prev => 
@@ -88,8 +61,6 @@ export function WorkoutCool() {
       )
     );
   };
-
-  // Removed handleMuscleToggle - using handleBodyPartToggle instead
 
   const handleBodyPartClick = (bodyPartId: string) => {
     handleBodyPartToggle(bodyPartId);
@@ -102,26 +73,13 @@ export function WorkoutCool() {
       const selectedParts = selectedBodyParts.filter(part => part.selected);
       const exercises: Exercise[] = [];
 
-      // Generate exercises for each selected body part using enhanced database
+      // Generate exercises for each selected body part using full database
       for (const bodyPart of selectedParts) {
-        // Get exercises from full database
+        // Get exercises from full database (no equipment filtering)
         const fullExercises = getFullExercisesByMuscleGroup(bodyPart.id);
-        
-        // Filter exercises by selected equipment
-        const filteredExercises = fullExercises.filter(compExercise => {
-          const equipment = compExercise.attributes
-            .filter(attr => attr.attributeName === 'EQUIPMENT')
-            .map(attr => attr.attributeValue.toLowerCase());
-          
-          return selectedEquipment.length === 0 || 
-            selectedEquipment.some(eq => 
-              equipment.some(e => e.includes(eq.toLowerCase())) ||
-              eq === 'bodyweight' && equipment.some(e => e.includes('body'))
-            );
-        });
 
-        // Add 2-3 exercises per body part
-        const exercisesForPart = filteredExercises.slice(0, 3).map(compExercise => ({
+        // Add 2-3 exercises per body part (mix of different equipment types)
+        const exercisesForPart = fullExercises.slice(0, 3).map(compExercise => ({
           id: `${bodyPart.id}-${compExercise.id}`,
           name: compExercise.nameEn,
           bodyPart: bodyPart.name,
@@ -138,7 +96,7 @@ export function WorkoutCool() {
       }
 
       setGeneratedExercises(exercises);
-      setCurrentStep(3);
+      setCurrentStep(2);
     } catch (error) {
       console.error('Error generating workout:', error);
     } finally {
@@ -165,7 +123,6 @@ export function WorkoutCool() {
 
   const resetWorkout = () => {
     setCurrentStep(1);
-    setSelectedEquipment([]);
     setSelectedBodyParts(BODY_PARTS);
     setGeneratedExercises([]);
     setWorkoutStarted(false);
@@ -175,8 +132,6 @@ export function WorkoutCool() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return selectedEquipment.length > 0;
-      case 2:
         return selectedBodyParts.some(part => part.selected);
       default:
         return true;
@@ -184,7 +139,7 @@ export function WorkoutCool() {
   };
 
   const nextStep = () => {
-    if (currentStep === 2) {
+    if (currentStep === 1) {
       generateWorkout();
     } else {
       setCurrentStep(prev => prev + 1);
@@ -321,40 +276,13 @@ export function WorkoutCool() {
           </CardHeader>
         </Card>
 
-        {/* Step 1: Equipment Selection */}
+        {/* Step 1: Body Part Selection */}
         {currentStep === 1 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Dumbbell className="w-5 h-5 mr-2" />
-                Step 1: Choose Your Equipment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {EQUIPMENT_OPTIONS.map((equipment) => (
-                  <Button
-                    key={equipment.id}
-                    variant={selectedEquipment.includes(equipment.id) ? "default" : "outline"}
-                    className="h-20 flex flex-col items-center justify-center space-y-2"
-                    onClick={() => handleEquipmentToggle(equipment.id)}
-                  >
-                    <span className="text-2xl">{equipment.icon}</span>
-                    <span className="text-sm">{equipment.name}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 2: Body Part Selection */}
-        {currentStep === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
                 <Target className="w-5 h-5 mr-2" />
-                Step 2: Select Body Parts to Target
+                Step 1: Select Body Parts to Target
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
                 Choose the muscle groups you want to focus on in your workout. You can select multiple areas.
@@ -404,8 +332,8 @@ export function WorkoutCool() {
           </Card>
         )}
 
-        {/* Step 3: Generated Workout */}
-        {currentStep === 3 && (
+        {/* Step 2: Generated Workout */}
+        {currentStep === 2 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -473,13 +401,13 @@ export function WorkoutCool() {
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Generating...
               </>
-            ) : currentStep === 3 ? (
+            ) : currentStep === 2 ? (
               <>
                 <Play className="w-4 h-4 mr-2" />
                 Start Workout
               </>
             ) : (
-              'Next'
+              'Generate Workout'
             )}
           </Button>
         </div>
