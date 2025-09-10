@@ -18,6 +18,7 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // Convert YouTube watch URL to embed URL
   const getEmbedUrl = (url: string) => {
@@ -46,6 +47,7 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
+    setHasError(false);
   };
 
   const handleMuteToggle = () => {
@@ -64,7 +66,7 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
   return (
     <div className={`relative bg-black rounded-lg overflow-hidden ${className}`}>
       <div className="relative h-48">
-        {isPlaying ? (
+        {isPlaying && !hasError ? (
           <iframe
             className="w-full h-full"
             src={getEmbedUrl(videoUrl)}
@@ -72,6 +74,7 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            onError={() => setHasError(true)}
           />
         ) : (
           <div 
@@ -85,7 +88,9 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
               <div className="text-center text-white">
                 <Play className="w-16 h-16 mx-auto mb-2 opacity-90" />
                 <p className="text-lg font-semibold">{exerciseName}</p>
-                <p className="text-sm opacity-80">Click to play</p>
+                <p className="text-sm opacity-80">
+                  {hasError ? 'Video unavailable - Click to retry' : 'Click to play'}
+                </p>
               </div>
             </div>
           </div>

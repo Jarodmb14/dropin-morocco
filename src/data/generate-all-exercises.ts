@@ -4,7 +4,7 @@ import { ExerciseWithAttributes } from '../types/exercise';
 // Exercise data for each body part
 const exerciseData = {
   chest: [
-    { name: 'Développé couché', nameEn: 'Bench Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg' },
+    { name: 'Développé couché', nameEn: 'Bench Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=vcBig73ojpE' },
     { name: 'Développé couché haltères', nameEn: 'Dumbbell Bench Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=8iPEnov-lmU' },
     { name: 'Pompes', nameEn: 'Push-ups', difficulty: 'BEGINNER', videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4' },
     { name: 'Développé incliné haltères', nameEn: 'Incline Dumbbell Press', difficulty: 'INTERMEDIATE', videoUrl: 'https://www.youtube.com/watch?v=8iPEnov-lmU' },
