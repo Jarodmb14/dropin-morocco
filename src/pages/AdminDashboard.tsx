@@ -65,18 +65,18 @@ export default function AdminDashboard() {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('user_role')
-        .eq('id', user.id)
-        .single();
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
 
-      if (error) {
-        console.error('Error checking admin role:', error);
-        setIsAdmin(false);
-      } else {
-        setIsAdmin(data?.user_role === 'ADMIN');
-      }
+        if (error) {
+          console.error('Error checking admin role:', error);
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(data?.role === 'ADMIN');
+        }
     } catch (error) {
       console.error('Error checking admin role:', error);
       setIsAdmin(false);

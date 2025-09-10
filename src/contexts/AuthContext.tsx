@@ -101,17 +101,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('🔐 AuthContext: Querying profiles table for user_id:', userId);
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('user_role')
+        .select('role')
         .eq('id', userId)
         .single();
 
       console.log('🔐 AuthContext: Profile query result:', { profileData, profileError });
-      console.log('🔐 AuthContext: Profile data user_role:', profileData?.user_role);
+      console.log('🔐 AuthContext: Profile data role:', profileData?.role);
       console.log('🔐 AuthContext: Profile error details:', profileError);
 
-      if (!profileError && profileData?.user_role) {
-        console.log('🔐 AuthContext: ✅ Using database role:', profileData.user_role);
-        setUserRole(profileData.user_role as UserRole);
+      if (!profileError && profileData?.role) {
+        console.log('🔐 AuthContext: ✅ Using database role:', profileData.role);
+        setUserRole(profileData.role as UserRole);
       } else {
         console.log('🔐 AuthContext: ❌ Database query failed or no role found');
         console.log('🔐 AuthContext: Error details:', profileError);
