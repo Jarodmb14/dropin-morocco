@@ -10,7 +10,7 @@ export interface WorkoutSession {
   exercises: WorkoutExercise[];
   notes?: string;
   rating?: number; // 1-5
-  createdAt: string | number;
+  createdAt: string;
 }
 
 export interface WorkoutExercise {

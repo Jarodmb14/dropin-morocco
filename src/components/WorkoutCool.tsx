@@ -186,7 +186,7 @@ export function WorkoutCool() {
       const sessionData = {
         ...workoutSession,
         exercises,
-        duration: Math.round((Date.now() - Number(workoutSession.createdAt)) / 60000) // Calculate duration
+        duration: Math.round((Date.now() - new Date(workoutSession.createdAt).getTime()) / 60000) // Calculate duration
       };
 
       await ProgressTracker.saveWorkoutSession(sessionData);
@@ -208,7 +208,7 @@ export function WorkoutCool() {
       date: new Date().toISOString().split('T')[0],
       duration: 0,
       exercises: [],
-      createdAt: Date.now().toString()
+      createdAt: new Date().toISOString()
     };
     
     setWorkoutSession(session);
@@ -250,7 +250,7 @@ export function WorkoutCool() {
       date: new Date().toISOString().split('T')[0],
       duration: 0,
       exercises: [],
-      createdAt: Date.now().toString()
+      createdAt: new Date().toISOString()
     };
     
     setWorkoutSession(session);
@@ -300,7 +300,7 @@ export function WorkoutCool() {
         date: new Date().toISOString().split('T')[0],
         duration: 0,
         exercises: [],
-        createdAt: Date.now().toString()
+        createdAt: new Date().toISOString()
       };
       
       setWorkoutSession(session);

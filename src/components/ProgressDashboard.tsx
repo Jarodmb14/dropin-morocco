@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ProgressTracker, ProgressMetrics, WorkoutSession, PersonalRecord } from '@/data/progress-tracking';
 import { useAuth } from '@/contexts/AuthContext';
+import { DatabaseSetup } from './DatabaseSetup';
 import { 
   TrendingUp, 
   Calendar, 
@@ -126,6 +127,9 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
           Track your fitness journey and celebrate your achievements
         </p>
       </div>
+
+      {/* Database Setup Check */}
+      <DatabaseSetup />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
