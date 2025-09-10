@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 export default function SimpleAdminDebug() {
-  const { user, userRole, isAdmin } = useAuth();
+  const { user, userRole, isAdmin, refreshUserRole } = useAuth();
   const [profileData, setProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [allProfiles, setAllProfiles] = useState<any[]>([]);
@@ -107,6 +107,25 @@ export default function SimpleAdminDebug() {
     }
   };
 
+  const directQuery = async () => {
+    if (!user) return;
+    
+    try {
+      console.log('Direct query for user ID:', user.id);
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id);
+
+      console.log('Direct query result:', { data, error });
+      alert('Check console for direct query result');
+    } catch (err) {
+      console.error('Direct query error:', err);
+      alert('Error: ' + err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -150,7 +169,7 @@ export default function SimpleAdminDebug() {
               <Button onClick={loadAllProfiles} variant="outline">
                 Load All Profiles
               </Button>
-              <Button onClick={() => setRefreshKey(prev => prev + 1)} variant="outline" className="bg-blue-500 hover:bg-blue-600 text-white">
+              <Button onClick={refreshUserRole} variant="outline" className="bg-blue-500 hover:bg-blue-600 text-white">
                 Refresh AuthContext
               </Button>
               <Button onClick={updateUserRole} className="bg-red-500 hover:bg-red-600">
@@ -158,6 +177,9 @@ export default function SimpleAdminDebug() {
               </Button>
               <Button onClick={createProfile} className="bg-green-500 hover:bg-green-600">
                 Create Profile
+              </Button>
+              <Button onClick={directQuery} className="bg-orange-500 hover:bg-orange-600">
+                Direct Query
               </Button>
             </div>
           </CardContent>

@@ -24,6 +24,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isEmailVerified: boolean;
   userRole: UserRole | null;
+  refreshUserRole: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -266,6 +267,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refreshUserRole = async () => {
+    if (user) {
+      console.log('🔐 AuthContext: Manual role refresh triggered');
+      await fetchUserRole(user.id, user);
+    }
+  };
+
   // Role checking using the fetched role from profiles table
   const isOwner = userRole === 'CLUB_OWNER';
   const isCustomer = userRole === 'CUSTOMER';
@@ -287,6 +295,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin,
     isEmailVerified,
     userRole, // Expose the role for debugging
+    refreshUserRole, // Expose manual refresh function
   };
 
   return (
