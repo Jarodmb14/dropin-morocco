@@ -273,14 +273,14 @@ export function TrainingPrograms({ onSelectProgram, onStartWorkout }: TrainingPr
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Training Programs
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-700 text-lg max-w-2xl mx-auto">
             Choose from our structured programs designed by fitness experts. Each program is tailored to specific goals and experience levels.
           </p>
         </div>
@@ -290,7 +290,7 @@ export function TrainingPrograms({ onSelectProgram, onStartWorkout }: TrainingPr
         {TRAINING_PROGRAMS.map((program) => (
           <Card 
             key={program.id} 
-            className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white/70 backdrop-blur-sm border-pink-200 hover:border-purple-300"
             onClick={() => setSelectedProgram(program)}
           >
             <CardHeader>

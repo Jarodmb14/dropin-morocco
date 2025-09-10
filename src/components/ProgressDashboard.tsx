@@ -119,14 +119,14 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-6">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Progress Dashboard
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-700 text-lg">
             Track your fitness journey and celebrate your achievements
           </p>
         </div>
@@ -136,19 +136,19 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-white/70 backdrop-blur-sm border-green-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Workouts</p>
                 <p className="text-2xl font-bold">{metrics.totalWorkouts}</p>
               </div>
-              <Calendar className="w-8 h-8 text-blue-500" />
+              <Calendar className="w-8 h-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/70 backdrop-blur-sm border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -157,19 +157,19 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
                   {metrics.currentStreak} {getStreakEmoji(metrics.currentStreak)}
                 </p>
               </div>
-              <Flame className="w-8 h-8 text-orange-500" />
+              <Flame className="w-8 h-8 text-orange-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/70 backdrop-blur-sm border-green-200">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Time</p>
                 <p className="text-2xl font-bold">{Math.round(metrics.totalDuration / 60)}h</p>
               </div>
-              <Clock className="w-8 h-8 text-green-500" />
+              <Clock className="w-8 h-8 text-green-400" />
             </div>
           </CardContent>
         </Card>

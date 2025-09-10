@@ -84,10 +84,10 @@ export function DatabaseSetup() {
   };
 
   return (
-    <Card>
+    <Card className="bg-white/70 backdrop-blur-sm border-purple-200">
       <CardHeader>
         <CardTitle className="flex items-center text-xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          <Database className="w-6 h-6 mr-2 text-gray-600" />
+          <Database className="w-6 h-6 mr-2 text-purple-400" />
           Progress Tracking Database Setup
         </CardTitle>
       </CardHeader>

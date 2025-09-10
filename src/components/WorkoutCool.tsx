@@ -559,13 +559,13 @@ export function WorkoutCool() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <Card className="mb-6">
+        <Card className="mb-6 bg-white/70 backdrop-blur-sm border-blue-200">
           <CardHeader>
             <CardTitle className="flex items-center justify-center text-2xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              <Target className="w-6 h-6 mr-2 text-gray-600" />
+              <Target className="w-6 h-6 mr-2 text-blue-400" />
               Build Your Perfect Workout
             </CardTitle>
             <div className="flex items-center space-x-4">
@@ -605,18 +605,18 @@ export function WorkoutCool() {
 
         {/* Step 1: Body Part Selection */}
         {currentStep === 1 && (
-          <Card>
+          <Card className="bg-white/70 backdrop-blur-sm border-purple-200">
             <CardHeader>
               <CardTitle className="flex items-center text-xl" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                <Target className="w-5 h-5 mr-2 text-gray-600" />
+                <Target className="w-5 h-5 mr-2 text-purple-400" />
                 Step 1: Select Body Parts to Target
               </CardTitle>
               <p className="text-sm text-gray-600 mt-2">
                 Choose the muscle groups you want to focus on in your workout. You can select multiple areas.
               </p>
               {!selectedBodyParts.some(part => part.selected) && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800">
+                <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <p className="text-sm text-purple-800">
                     💡 <strong>Tip:</strong> Select one or more body parts above, then click "Generate Workout" to create your personalized workout!
                   </p>
                 </div>
@@ -630,8 +630,8 @@ export function WorkoutCool() {
                     variant={bodyPart.selected ? "default" : "outline"}
                     className={`h-20 flex flex-col items-center justify-center space-y-2 relative transition-all duration-200 ${
                       bodyPart.selected 
-                        ? 'bg-gray-900 hover:bg-gray-800 text-white shadow-lg' 
-                        : 'hover:bg-gray-50 hover:shadow-md'
+                        ? 'bg-gradient-to-br from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg' 
+                        : 'hover:bg-purple-50 hover:shadow-md border-purple-200'
                     }`}
                     onClick={() => handleBodyPartToggle(bodyPart.id)}
                   >
@@ -736,7 +736,7 @@ export function WorkoutCool() {
           <Button
             onClick={nextStep}
             disabled={!canProceed() || isGenerating}
-            className="bg-gray-900 hover:bg-gray-800 text-white font-semibold text-lg px-8 py-4 shadow-lg transition-all duration-200"
+            className="bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 text-white font-semibold text-lg px-8 py-4 shadow-lg transition-all duration-200"
             style={{ fontFamily: 'Space Grotesk, sans-serif' }}
           >
             {isGenerating ? (
