@@ -346,5 +346,6 @@ export function TrainingPrograms({ onSelectProgram, onStartWorkout }: TrainingPr
         ))}
       </div>
     </div>
+    </div>
   );
 }
