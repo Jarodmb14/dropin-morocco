@@ -10,6 +10,7 @@ import { EnhancedExerciseCard } from '@/components/EnhancedExerciseCard';
 import { TrainingPrograms } from '@/components/TrainingPrograms';
 import { ProgressDashboard } from '@/components/ProgressDashboard';
 import { ProgressTracker, WorkoutSession, WorkoutExercise } from '@/data/progress-tracking';
+import { getProgramExerciseDetails } from '@/data/training-programs';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, Dumbbell, Target, Play, RotateCcw, CheckCircle, BookOpen, BarChart3, Timer } from 'lucide-react';
 
@@ -215,6 +216,51 @@ export function WorkoutCool() {
     setCurrentExerciseIndex(0);
   };
 
+  // Start program workout
+  const startProgramWorkout = (workout: any, program?: any) => {
+    if (!user) return;
+    
+    // Convert program workout to our exercise format
+    const exercises: Exercise[] = workout.exercises.map((programExercise: any) => {
+      const exerciseDetails = getProgramExerciseDetails(programExercise.exerciseId);
+      return {
+        id: `${workout.id}-${programExercise.exerciseId}`,
+        name: exerciseDetails?.nameEn || 'Unknown Exercise',
+        bodyPart: workout.focus,
+        equipment: exerciseDetails?.attributes?.find((attr: any) => attr.attributeName === 'EQUIPMENT')?.attributeValue || 'Bodyweight',
+        gifUrl: exerciseDetails?.fullVideoImageUrl,
+        instructions: exerciseDetails?.descriptionEn ? 
+          exerciseDetails.descriptionEn.replace(/<[^>]*>/g, '').split('.').filter((s: string) => s.trim()) : 
+          [],
+        sets: programExercise.sets,
+        reps: programExercise.reps,
+        restTime: programExercise.restTime
+      };
+    });
+
+    // Set the generated exercises and start the workout
+    setGeneratedExercises(exercises);
+    
+    // Create workout session
+    const session: WorkoutSession = {
+      id: `program-workout-${Date.now()}`,
+      userId: user.id,
+      programId: program?.id,
+      workoutId: workout.id,
+      date: new Date().toISOString().split('T')[0],
+      duration: 0,
+      exercises: [],
+      createdAt: Date.now().toString()
+    };
+    
+    setWorkoutSession(session);
+    setWorkoutStarted(true);
+    setCurrentExerciseIndex(0);
+    
+    // Switch back to custom view to show the workout
+    setCurrentView('custom');
+  };
+
   const canProceed = () => {
     switch (currentStep) {
       case 1:
@@ -411,11 +457,15 @@ export function WorkoutCool() {
           <TrainingPrograms 
             onSelectProgram={(program) => {
               console.log('Selected program:', program);
-              // TODO: Implement program selection logic
+              // Start the first workout of the first week
+              if (program.weeks.length > 0 && program.weeks[0].workouts.length > 0) {
+                const firstWorkout = program.weeks[0].workouts[0];
+                startProgramWorkout(firstWorkout, program);
+              }
             }}
             onStartWorkout={(workout) => {
               console.log('Starting workout:', workout);
-              // TODO: Implement program workout start logic
+              startProgramWorkout(workout);
             }}
           />
         </div>
@@ -594,6 +644,7 @@ export function WorkoutCool() {
                   })}
 
 
+                  
                   
                 </div>
               )}
