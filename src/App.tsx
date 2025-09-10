@@ -30,6 +30,7 @@ import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import SimpleAdmin from "./pages/SimpleAdmin";
+import AdminDashboard from "./pages/AdminDashboard";
 import AdminTest from "./pages/AdminTest";
 import AdminDebug from "./pages/AdminDebug";
 import SimpleAdminDebug from "./pages/SimpleAdminDebug";
@@ -169,6 +170,7 @@ const App = () => (
           <Route path="/gym-booking" element={<GymBooking />} />
           <Route path="/qr-scanner" element={<QRScanner />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           <Route path="/admin-test" element={<AdminTest />} />
           <Route path="/admin-debug" element={<AdminDebug />} />

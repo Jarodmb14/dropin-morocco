@@ -85,11 +85,11 @@ const SimpleHeader = () => {
                      )}
                      {isAdmin && (
                        <Link 
-                         to="/simple-admin" 
+                         to="/admin-dashboard" 
                          className="bg-red-600 text-white hover:bg-red-700 font-semibold px-4 py-2 text-sm transition-all duration-200 uppercase tracking-wide rounded"
                          style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                        >
-                         Admin Panel
+                         Admin Dashboard
                        </Link>
                      )}
                      <div className="flex items-center space-x-4">
