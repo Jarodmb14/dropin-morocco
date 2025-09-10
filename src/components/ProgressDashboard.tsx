@@ -358,5 +358,6 @@ export function ProgressDashboard({ onViewHistory, onViewRecords, onStartWorkout
         </CardContent>
       </Card>
     </div>
+    </div>
   );
 }
