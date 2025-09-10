@@ -19,6 +19,19 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Convert YouTube watch URL to embed URL
+  const getEmbedUrl = (url: string) => {
+    if (url.includes('youtube.com/watch?v=')) {
+      const videoId = url.split('v=')[1]?.split('&')[0];
+      const muteParam = isMuted ? '&mute=1' : '&mute=0';
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1${muteParam}`;
+    }
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    return url;
+  };
+
   if (!videoUrl) {
     return (
       <div className={`bg-gray-100 rounded-lg flex items-center justify-center h-48 ${className}`}>
@@ -37,6 +50,11 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
 
   const handleMuteToggle = () => {
     setIsMuted(!isMuted);
+    // For YouTube embeds, we'll need to reload the iframe with mute parameter
+    if (isPlaying) {
+      setIsPlaying(false);
+      setTimeout(() => setIsPlaying(true), 100);
+    }
   };
 
   const handleFullscreen = () => {
@@ -47,16 +65,14 @@ export const ExerciseVideo: React.FC<ExerciseVideoProps> = ({
     <div className={`relative bg-black rounded-lg overflow-hidden ${className}`}>
       <div className="relative h-48">
         {isPlaying ? (
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            muted={isMuted}
-            loop
-            playsInline
-          >
-            <source src={videoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <iframe
+            className="w-full h-full"
+            src={getEmbedUrl(videoUrl)}
+            title={exerciseName}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
         ) : (
           <div 
             className="w-full h-full bg-cover bg-center cursor-pointer relative"
