@@ -33,6 +33,7 @@ import SimpleAdmin from "./pages/SimpleAdmin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminTest from "./pages/AdminTest";
 import AdminDebug from "./pages/AdminDebug";
+import AdminDebugNew from "./pages/AdminDebug";
 import SimpleAdminDebug from "./pages/SimpleAdminDebug";
 import ReviewsTest from "./pages/ReviewsTest";
 import BodyPartsSelection from "./pages/BodyPartsSelection";
@@ -174,6 +175,7 @@ const App = () => (
           <Route path="/simple-admin" element={<SimpleAdmin />} />
           <Route path="/admin-test" element={<AdminTest />} />
           <Route path="/admin-debug" element={<AdminDebug />} />
+          <Route path="/admin-debug-new" element={<AdminDebugNew />} />
           <Route path="/simple-admin-debug" element={<SimpleAdminDebug />} />
           <Route path="/reviews-test" element={<ReviewsTest />} />
           <Route path="/auth-test" element={<AuthTest />} />

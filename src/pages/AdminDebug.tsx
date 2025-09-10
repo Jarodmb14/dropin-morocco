@@ -1,255 +1,104 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
 
-const AdminDebug = () => {
-  const [user, setUser] = useState<any>(null);
-  const [session, setSession] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<any>({});
-  const [localStorageData, setLocalStorageData] = useState<any>({});
+export default function AdminDebug() {
+  const { user, userRole, isAdmin } = useAuth();
+  const [profileData, setProfileData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuthStatus();
-    loadLocalStorageData();
-  }, []);
+    if (user) {
+      checkProfile();
+    }
+  }, [user]);
 
-  const checkAuthStatus = async () => {
+  const checkProfile = async () => {
+    if (!user) return;
+    
+    setLoading(true);
     try {
-      // Get current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      console.log('User check result:', { user, userError });
-      
-      // Get current session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      console.log('Session check result:', { session, sessionError });
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-      setUser(user);
-      setSession(session);
-
-      // Check admin status
-      if (user) {
-        const adminEmails = [
-          'admin@dropin.ma',
-          'admin@example.com',
-          'admin@gmail.com',
-          'elhattab.bachir@gmail.com',
-          'test@admin.com',
-          'admin@test.com'
-        ];
-        
-        let adminStatus = false;
-        let adminMethod = '';
-
-        // Method 1: Email whitelist
-        if (user.email && adminEmails.includes(user.email)) {
-          adminStatus = true;
-          adminMethod = 'Email whitelist';
-        }
-
-        // Method 2: User metadata role
-        if (!adminStatus && user.user_metadata?.role === 'ADMIN') {
-          adminStatus = true;
-          adminMethod = 'User metadata role';
-        }
-
-        // Method 3: Profiles table
-        if (!adminStatus) {
-          try {
-            const { data: profile, error: profileError } = await supabase
-              .from('profiles')
-              .select('role')
-              .eq('id', user.id)
-              .single();
-            
-            if (!profileError && profile?.role === 'ADMIN') {
-              adminStatus = true;
-              adminMethod = 'Profiles table';
-            }
-          } catch (profileError) {
-            console.log('Profiles table check failed:', profileError);
-          }
-        }
-
-        setIsAdmin(adminStatus);
-        setDebugInfo({
-          userEmail: user.email,
-          userId: user.id,
-          userMetadata: user.user_metadata,
-          adminMethod,
-          adminEmails,
-          sessionExists: !!session,
-          sessionUser: session?.user?.email
-        });
-      } else {
-        setIsAdmin(false);
-        setDebugInfo({
-          error: 'No user found',
-          userError: userError?.message,
-          sessionError: sessionError?.message
-        });
-      }
-    } catch (error) {
-      console.error('Auth check error:', error);
-      setDebugInfo({ error: error.message });
+      console.log('Profile query result:', { data, error });
+      setProfileData({ data, error });
+    } catch (err) {
+      console.error('Profile check error:', err);
+      setProfileData({ error: err });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const loadLocalStorageData = () => {
-    const keys = Object.keys(localStorage);
-    const data: any = {};
+  const updateUserRole = async () => {
+    if (!user) return;
     
-    keys.forEach(key => {
-      if (key.includes('supabase') || key.includes('sb-')) {
-        try {
-          data[key] = JSON.parse(localStorage.getItem(key) || '{}');
-        } catch {
-          data[key] = localStorage.getItem(key);
-        }
-      }
-    });
-    
-    setLocalStorageData(data);
-  };
-
-  const signInAsTestAdmin = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'admin@test.com',
-        password: 'password123' // You'll need to set this password
-      });
-      
-      if (error) {
-        alert(`Sign in failed: ${error.message}`);
-      } else {
-        alert('Signed in successfully!');
-        checkAuthStatus();
-      }
-    } catch (error) {
-      alert(`Sign in error: ${error}`);
-    }
-  };
+      const { error } = await supabase
+        .from('profiles')
+        .update({ user_role: 'ADMIN' })
+        .eq('id', user.id);
 
-  const createTestAdmin = async () => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: 'admin@test.com',
-        password: 'password123',
-        options: {
-          data: {
-            role: 'ADMIN'
-          }
-        }
-      });
-      
       if (error) {
-        alert(`Sign up failed: ${error.message}`);
+        console.error('Error updating role:', error);
+        alert('Error updating role: ' + error.message);
       } else {
-        alert('Test admin user created! Check your email for confirmation.');
+        alert('Role updated successfully! Please refresh the page.');
+        window.location.reload();
       }
-    } catch (error) {
-      alert(`Sign up error: ${error}`);
+    } catch (err) {
+      console.error('Update error:', err);
+      alert('Error: ' + err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Debug Page</h1>
-          <p className="text-lg text-gray-600">Debug admin authentication issues</p>
-        </div>
-
-        {/* Current Status */}
-        <Card className="mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card className="bg-white/70 backdrop-blur-sm border-blue-200">
           <CardHeader>
-            <CardTitle>Current Status</CardTitle>
+            <CardTitle>Admin Debug Information</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p><strong>User:</strong> {user ? user.email : 'Not logged in'}</p>
-              <p><strong>Session:</strong> {session ? 'Active' : 'No session'}</p>
-              <Badge variant={isAdmin ? "default" : "destructive"}>
-                {isAdmin ? '✅ Admin Access' : '❌ No Admin Access'}
-              </Badge>
-              {debugInfo.adminMethod && (
-                <p><strong>Admin Method:</strong> {debugInfo.adminMethod}</p>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-semibold">User Information:</h3>
+              <p><strong>Email:</strong> {user?.email}</p>
+              <p><strong>User ID:</strong> {user?.id}</p>
+              <p><strong>AuthContext Role:</strong> {userRole}</p>
+              <p><strong>Is Admin:</strong> {isAdmin ? 'YES' : 'NO'}</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold">Database Profile:</h3>
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <div>
+                  <p><strong>Profile Data:</strong></p>
+                  <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">
+                    {JSON.stringify(profileData, null, 2)}
+                  </pre>
+                </div>
               )}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Debug Information */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Debug Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
-              {JSON.stringify(debugInfo, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-
-        {/* Local Storage Data */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Local Storage Data</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto max-h-64">
-              {JSON.stringify(localStorageData, null, 2)}
-            </pre>
-          </CardContent>
-        </Card>
-
-        {/* Actions */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-x-4">
-              <Button onClick={checkAuthStatus} variant="outline">
-                Refresh Status
+            <div className="flex gap-4">
+              <Button onClick={checkProfile} variant="outline">
+                Refresh Profile Data
               </Button>
-              <Button onClick={loadLocalStorageData} variant="outline">
-                Refresh Local Storage
-              </Button>
-              <Button onClick={createTestAdmin} variant="outline">
-                Create Test Admin
-              </Button>
-              <Button onClick={signInAsTestAdmin} variant="outline">
-                Sign In as Test Admin
+              <Button onClick={updateUserRole} className="bg-red-500 hover:bg-red-600">
+                Set Role to ADMIN
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Admin Emails */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Admin Email Whitelist</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc list-inside space-y-1">
-              <li>admin@dropin.ma</li>
-              <li>admin@example.com</li>
-              <li>admin@gmail.com</li>
-              <li>elhattab.bachir@gmail.com</li>
-              <li>test@admin.com</li>
-              <li>admin@test.com</li>
-            </ul>
-            <p className="text-sm text-gray-600 mt-4">
-              If you're logged in with any of these emails, you should have admin access.
-            </p>
           </CardContent>
         </Card>
       </div>
     </div>
   );
-};
-
-export default AdminDebug;
+}
