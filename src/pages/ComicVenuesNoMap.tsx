@@ -86,6 +86,20 @@ const ComicVenuesNoMap = () => {
   const [bookings, setBookings] = useState<any[]>([]);
   const [qrCodeData, setQrCodeData] = useState<any>(null);
 
+  // Handle ESC key to close QR modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && qrCodeData) {
+        setQrCodeData(null);
+      }
+    };
+
+    if (qrCodeData) {
+      document.addEventListener('keydown', handleEscKey);
+      return () => document.removeEventListener('keydown', handleEscKey);
+    }
+  }, [qrCodeData]);
+
   // Load user session on component mount
   useEffect(() => {
     console.log('🎯 ComicVenuesNoMap component mounted');
@@ -451,11 +465,27 @@ const ComicVenuesNoMap = () => {
 
       {/* QR Code Display Modal */}
       {qrCodeData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setQrCodeData(null);
+            }
+          }}
+        >
           <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
-            <h3 className="text-2xl font-black mb-4 text-center text-gray-800">
-              🎯 Your Booking QR Code
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-2xl font-black text-gray-800">
+                🎯 Your Booking QR Code
+              </h3>
+              <button
+                onClick={() => setQrCodeData(null)}
+                className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
+                aria-label="Close modal"
+              >
+                ×
+              </button>
+            </div>
             
             <QRCodeDisplay booking={qrCodeData} />
             

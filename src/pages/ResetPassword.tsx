@@ -51,9 +51,9 @@ const ResetPassword = () => {
       if (error) {
         setError(error.message);
       } else {
-        setMessage("Password updated successfully! You can now log in with your new password.");
+        setMessage("Password updated successfully! Redirecting to homepage...");
         setTimeout(() => {
-          navigate("/auth/login");
+          navigate("/");
         }, 2000);
       }
     } catch (err) {

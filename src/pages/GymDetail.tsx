@@ -75,6 +75,20 @@ const GymDetail = () => {
   const [selectedPass, setSelectedPass] = useState('SINGLE_SESSION');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
+
+  // Handle ESC key to close QR modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showQRModal) {
+        setShowQRModal(false);
+      }
+    };
+
+    if (showQRModal) {
+      document.addEventListener('keydown', handleEscKey);
+      return () => document.removeEventListener('keydown', handleEscKey);
+    }
+  }, [showQRModal]);
   const [showQRScanner, setShowQRScanner] = useState(false);
   const [bookingData, setBookingData] = useState<any>(null);
   const [isCreatingBooking, setIsCreatingBooking] = useState(false);
@@ -1437,7 +1451,14 @@ const GymDetail = () => {
 
       {/* QR Code Modal */}
       {showQRModal && bookingData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowQRModal(false);
+            }
+          }}
+        >
           <div className="bg-white rounded-lg shadow-lg max-w-lg w-full border border-gray-200">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -1447,7 +1468,8 @@ const GymDetail = () => {
                 </h3>
                 <button
                   onClick={() => setShowQRModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
+                  aria-label="Close modal"
                 >
                   ×
                 </button>
