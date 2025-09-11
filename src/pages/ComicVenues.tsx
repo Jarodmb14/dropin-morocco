@@ -28,10 +28,25 @@ const ComicVenues = () => {
 
         if (error) {
           console.error('❌ Error fetching gyms:', error);
+          console.error('❌ Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          });
+          setLoading(false);
           return;
         }
 
         console.log('✅ Fetched gyms:', data?.length || 0);
+        
+        if (!data || data.length === 0) {
+          console.warn('⚠️ No gyms found in database');
+          setAllVenues([]);
+          setFilteredGyms([]);
+          setLoading(false);
+          return;
+        }
         
         // Transform the data to match our venue structure
         const transformedGyms = data?.map((club: any) => ({
@@ -56,6 +71,9 @@ const ComicVenues = () => {
         
       } catch (error) {
         console.error('❌ Exception fetching gyms:', error);
+        console.error('❌ Exception details:', error);
+        setAllVenues([]);
+        setFilteredGyms([]);
       } finally {
         setLoading(false);
       }
@@ -328,10 +346,27 @@ const ComicVenues = () => {
                         </div>
                       </div>
                     ) : viewMode === 'map' ? (
-                      <MapView 
-                        gyms={filteredGyms || []}
-                        userLocation={currentLocation ? [currentLocation.lat, currentLocation.lng] : undefined}
-                      />
+                      filteredGyms.length === 0 ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 backdrop-blur-sm rounded-lg">
+                          <div className="text-center">
+                            <div className="text-4xl mb-4">🏋️‍♂️</div>
+                            <h3 className="text-lg font-space-grotesk font-semibold text-gray-900 mb-2">
+                              {allVenues.length === 0 ? 'No gyms available' : 'No gyms in this area'}
+                            </h3>
+                            <p className="text-gray-600 font-space-grotesk">
+                              {allVenues.length === 0 
+                                ? 'There are no gyms in the database. Please contact an administrator.'
+                                : 'Try adjusting your search radius or location'
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <MapView 
+                          gyms={filteredGyms || []}
+                          userLocation={currentLocation ? [currentLocation.lat, currentLocation.lng] : undefined}
+                        />
+                      )
                     ) : (
                       <div className="h-full overflow-y-auto p-4">
                         <div className="space-y-4">
@@ -339,10 +374,13 @@ const ComicVenues = () => {
                             <div className="text-center py-12">
                               <div className="text-4xl mb-4">🏋️‍♂️</div>
                               <h3 className="text-lg font-space-grotesk font-semibold text-gray-900 mb-2">
-                                No gyms found
+                                {allVenues.length === 0 ? 'No gyms available' : 'No gyms found'}
                               </h3>
                               <p className="text-gray-600 font-space-grotesk">
-                                Try adjusting your search radius or location
+                                {allVenues.length === 0 
+                                  ? 'There are no gyms in the database. Please contact an administrator.'
+                                  : 'Try adjusting your search radius or location'
+                                }
                               </p>
                             </div>
                           ) : (

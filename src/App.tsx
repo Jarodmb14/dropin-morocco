@@ -8,6 +8,7 @@ import ComicVenues from "./pages/ComicVenues";
 import ComicVenuesNoMap from "./pages/ComicVenuesNoMap";
 import VenuesTest from "./pages/VenuesTest";
 import ComicVenuesMinimal from "./pages/ComicVenuesMinimal";
+import DebugVenues from "./pages/DebugVenues";
 import GymDetail from "./pages/GymDetail";
 import AuthTest from "./pages/AuthTest";
 import PaymentTest from "./pages/PaymentTest";
@@ -80,6 +81,7 @@ const App = () => (
           {/* Customer app entry */}
           <Route path="/" element={<ComicHomepage />} />
           <Route path="/venues" element={<ComicVenues />} />
+          <Route path="/debug-venues" element={<DebugVenues />} />
           <Route path="/body-parts" element={<BodyPartsSelection />} />
           <Route path="/exercises/:bodyPart" element={<ExercisesList />} />
           <Route path="/body-picker" element={<BodyPickerPage />} />
