@@ -1,76 +1,55 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import SimpleHeader from "@/components/SimpleHeader";
 
-const ResetPassword = () => {
+const PasswordResetAlternative = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { updatePassword } = useAuth();
 
   useEffect(() => {
-    // Check if we have the necessary tokens in the URL
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    const type = searchParams.get('type');
-    
-    console.log('🔄 ResetPassword: URL params:', { 
-      accessToken: !!accessToken, 
-      refreshToken: !!refreshToken, 
-      type,
-      allParams: Object.fromEntries(searchParams.entries())
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔄 PasswordResetAlternative: Auth state change:', event, session ? 'Session exists' : 'No session');
+      
+      if (event === 'PASSWORD_RECOVERY' && session) {
+        console.log('✅ PasswordResetAlternative: Password recovery session detected');
+        setIsAuthenticated(true);
+        setError(null);
+      } else if (event === 'SIGNED_IN' && session) {
+        console.log('✅ PasswordResetAlternative: User signed in');
+        setIsAuthenticated(true);
+        setError(null);
+      } else if (!session) {
+        console.log('⚠️ PasswordResetAlternative: No session');
+        setIsAuthenticated(false);
+      }
     });
-    
-    if (accessToken && refreshToken) {
-      console.log('🔄 ResetPassword: Setting session from URL tokens');
-      // Set the session with the tokens from the URL
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      }).then(({ data, error }) => {
-        if (error) {
-          console.error('❌ ResetPassword: Error setting session:', error);
-          setError(`Session error: ${error.message}`);
-        } else {
-          console.log('✅ ResetPassword: Session set successfully');
-        }
-      });
-    } else if (type === 'recovery') {
-      console.log('🔄 ResetPassword: Recovery type detected, checking for session');
-      // For password recovery, Supabase should automatically handle the session
-      supabase.auth.getSession().then(({ data: { session }, error }) => {
-        if (error) {
-          console.error('❌ ResetPassword: Error getting session:', error);
-          setError(`Session error: ${error.message}`);
-        } else if (!session) {
-          console.log('⚠️ ResetPassword: No active session for recovery');
-          setError('No valid session found. Please request a new password reset link.');
-        } else {
-          console.log('✅ ResetPassword: User authenticated for recovery');
-        }
-      });
-    } else {
-      console.log('⚠️ ResetPassword: No tokens or recovery type found in URL');
-      // Check if user is already authenticated
-      supabase.auth.getSession().then(({ data: { session }, error }) => {
-        if (error) {
-          console.error('❌ ResetPassword: Error getting session:', error);
-          setError(`Session error: ${error.message}`);
-        } else if (!session) {
-          console.log('⚠️ ResetPassword: No active session');
-          setError('No valid session found. Please request a new password reset link.');
-        } else {
-          console.log('✅ ResetPassword: User already authenticated');
-        }
-      });
-    }
-  }, [searchParams]);
+
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('❌ PasswordResetAlternative: Error getting session:', error);
+        setError(`Session error: ${error.message}`);
+      } else if (session) {
+        console.log('✅ PasswordResetAlternative: User already authenticated');
+        setIsAuthenticated(true);
+      } else {
+        console.log('⚠️ PasswordResetAlternative: No active session');
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,29 +69,64 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      console.log('🔄 ResetPassword: Updating password...');
+      console.log('🔄 PasswordResetAlternative: Updating password...');
       
-      const { error } = await updatePassword(password);
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
 
-      console.log('🔄 ResetPassword: Update password response:', { error });
+      console.log('🔄 PasswordResetAlternative: Update password response:', { error });
 
       if (error) {
-        console.error('❌ ResetPassword: Password update error:', error);
+        console.error('❌ PasswordResetAlternative: Password update error:', error);
         setError(`Error: ${error.message}`);
       } else {
-        console.log('✅ ResetPassword: Password updated successfully');
+        console.log('✅ PasswordResetAlternative: Password updated successfully');
         setMessage("Password updated successfully! Redirecting to homepage...");
         setTimeout(() => {
           navigate("/");
         }, 2000);
       }
     } catch (err) {
-      console.error('❌ ResetPassword: Password update exception:', err);
+      console.error('❌ PasswordResetAlternative: Password update exception:', err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen" style={{ backgroundColor: '#F2E4E5' }}>
+        <SimpleHeader />
+        
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4">
+          <div className="max-w-md w-full space-y-8">
+            <div className="text-center">
+              <h2 className="mt-6 text-center text-4xl font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Password Reset
+              </h2>
+              <p className="text-gray-600 text-center mt-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Waiting for authentication...
+              </p>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 font-medium" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                {error}
+              </div>
+            )}
+
+            <div className="text-center">
+              <p className="text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Please click the password reset link from your email to continue.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F2E4E5' }}>
@@ -219,4 +233,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default PasswordResetAlternative;
