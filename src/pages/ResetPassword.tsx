@@ -92,8 +92,16 @@ const ResetPassword = () => {
     try {
       console.log('🔄 ResetPassword: Updating password...');
       
+      // Add a manual timeout as backup
+      const timeoutId = setTimeout(() => {
+        console.error('❌ ResetPassword: Manual timeout triggered');
+        setError("Password update is taking too long. Please try again.");
+        setLoading(false);
+      }, 35000); // 35 seconds timeout
+      
       const { error } = await updatePassword(password);
 
+      clearTimeout(timeoutId);
       console.log('🔄 ResetPassword: Update password response:', { error });
 
       if (error) {
@@ -108,7 +116,7 @@ const ResetPassword = () => {
       }
     } catch (err) {
       console.error('❌ ResetPassword: Password update exception:', err);
-      setError("An unexpected error occurred. Please try again.");
+      setError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Please try again.'}`);
     } finally {
       setLoading(false);
     }

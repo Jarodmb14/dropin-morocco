@@ -28,6 +28,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PasswordResetTest from "./pages/PasswordResetTest";
 import PasswordResetAlternative from "./pages/PasswordResetAlternative";
+import SupabaseConnectionTest from "./pages/SupabaseConnectionTest";
 import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
@@ -158,6 +159,7 @@ const App = () => (
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/auth/password-reset-test" element={<PasswordResetTest />} />
           <Route path="/auth/reset-password-alt" element={<PasswordResetAlternative />} />
+          <Route path="/auth/supabase-test" element={<SupabaseConnectionTest />} />
           <Route path="/auth/verify" element={<EmailVerification />} />
           <Route path="/auth" element={<Auth />} />
 

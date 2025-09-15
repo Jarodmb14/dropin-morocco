@@ -259,11 +259,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updatePassword = async (password: string) => {
     try {
-      const { error } = await supabase.auth.updateUser({
+      console.log('🔄 AuthContext: Starting password update...');
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<{ error: AuthError }>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Password update timeout after 30 seconds'));
+        }, 30000);
+      });
+
+      const updatePromise = supabase.auth.updateUser({
         password: password
       });
-      return { error };
+
+      const result = await Promise.race([updatePromise, timeoutPromise]);
+      
+      console.log('🔄 AuthContext: Password update result:', result);
+      
+      if (result.error) {
+        console.error('❌ AuthContext: Password update error:', result.error);
+      } else {
+        console.log('✅ AuthContext: Password updated successfully');
+      }
+      
+      return result;
     } catch (error) {
+      console.error('❌ AuthContext: Password update exception:', error);
       return { error: error as AuthError };
     }
   };

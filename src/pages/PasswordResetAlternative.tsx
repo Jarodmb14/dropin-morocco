@@ -71,10 +71,18 @@ const PasswordResetAlternative = () => {
     try {
       console.log('🔄 PasswordResetAlternative: Updating password...');
       
+      // Add a manual timeout as backup
+      const timeoutId = setTimeout(() => {
+        console.error('❌ PasswordResetAlternative: Manual timeout triggered');
+        setError("Password update is taking too long. Please try again.");
+        setLoading(false);
+      }, 35000); // 35 seconds timeout
+      
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
+      clearTimeout(timeoutId);
       console.log('🔄 PasswordResetAlternative: Update password response:', { error });
 
       if (error) {
@@ -89,7 +97,7 @@ const PasswordResetAlternative = () => {
       }
     } catch (err) {
       console.error('❌ PasswordResetAlternative: Password update exception:', err);
-      setError("An unexpected error occurred. Please try again.");
+      setError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Please try again.'}`);
     } finally {
       setLoading(false);
     }
