@@ -31,7 +31,8 @@ const ComicHomepage = () => {
           <div className="mb-12 flex items-center justify-center">
             <div className="text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border" style={{ 
               backgroundColor: '#E3BFC0',
-              borderColor: '#E3BFC0'
+              borderColor: '#E3BFC0',
+              fontFamily: 'Space Grotesk, sans-serif'
             }}>
               🇲🇦 Morocco's Premier Fitness Platform
             </div>
