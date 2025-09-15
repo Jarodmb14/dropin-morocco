@@ -12,14 +12,14 @@ const ComicHomepage = () => {
       {/* Minimalist background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Very subtle geometric patterns */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gray-100 rounded-full opacity-3"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gray-200 rounded-full opacity-2"></div>
-        <div className="absolute bottom-40 left-1/4 w-20 h-20 bg-gray-100 rounded-full opacity-3"></div>
-        <div className="absolute top-60 left-1/3 w-16 h-16 bg-gray-200 rounded-full opacity-2"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-3" style={{ backgroundColor: '#E3BFC0' }}></div>
+        <div className="absolute top-40 right-20 w-24 h-24 rounded-full opacity-2" style={{ backgroundColor: '#E3BFC0' }}></div>
+        <div className="absolute bottom-40 left-1/4 w-20 h-20 rounded-full opacity-3" style={{ backgroundColor: '#E3BFC0' }}></div>
+        <div className="absolute top-60 left-1/3 w-16 h-16 rounded-full opacity-2" style={{ backgroundColor: '#E3BFC0' }}></div>
         
         {/* Minimalist grid pattern */}
         <div className="absolute inset-0 opacity-2" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(227, 191, 192, 0.1) 1px, transparent 0)',
           backgroundSize: '40px 40px'
         }}></div>
       </div>
@@ -29,7 +29,10 @@ const ComicHomepage = () => {
         <div className="container mx-auto px-6 text-center relative z-10">
           {/* Professional Badge */}
           <div className="mb-12 flex items-center justify-center">
-            <div className="bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border border-gray-800">
+            <div className="text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border" style={{ 
+              backgroundColor: '#E3BFC0',
+              borderColor: '#E3BFC0'
+            }}>
               🇲🇦 Morocco's Premier Fitness Platform
             </div>
           </div>
@@ -90,15 +93,23 @@ const ComicHomepage = () => {
           {/* Professional CTA */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <button 
-              className="bg-gray-900 text-white px-12 py-4 text-lg font-semibold hover:bg-gray-800 transition-all duration-200 rounded-lg shadow-lg"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              className="text-white px-12 py-4 text-lg font-semibold transition-all duration-200 rounded-lg shadow-lg"
+              style={{ 
+                fontFamily: 'Space Grotesk, sans-serif',
+                backgroundColor: '#E3BFC0'
+              }}
               onClick={() => navigate('/venues')}
             >
               Explore Facilities
             </button>
             <button 
-              className="border-2 border-gray-900 text-gray-900 px-12 py-4 text-lg font-semibold hover:bg-gray-900 hover:text-white transition-all duration-200 rounded-lg"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              className="border-2 px-12 py-4 text-lg font-semibold transition-all duration-200 rounded-lg"
+              style={{ 
+                fontFamily: 'Space Grotesk, sans-serif',
+                borderColor: '#E3BFC0',
+                color: '#E3BFC0',
+                backgroundColor: 'transparent'
+              }}
               onClick={() => navigate('/training')}
             >
               View Training
