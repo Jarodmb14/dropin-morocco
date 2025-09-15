@@ -55,16 +55,16 @@ const ComicHomepage = () => {
           {/* Main Title */}
           <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight">
             <div className="relative inline-block">
-              <span className="text-transparent bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 bg-clip-text drop-shadow-lg">
+              <span className="text-transparent bg-gradient-to-r from-rose-300 via-purple-300 to-blue-300 bg-clip-text drop-shadow-lg font-light tracking-wider">
                 DROP-IN
               </span>
-              <div className="absolute -inset-4 bg-yellow-300 opacity-30 rounded-xl transform -rotate-1 -z-10"></div>
+              <div className="absolute -inset-4 bg-gradient-to-r from-rose-100 to-purple-100 opacity-40 rounded-xl transform -rotate-1 -z-10"></div>
             </div>
             <div className="relative inline-block mt-4">
-              <span className="text-gray-800 drop-shadow-lg">
-                3 STEPS!
+              <span className="text-gray-700 drop-shadow-lg font-medium tracking-wider">
+                SIMPLE • FAST • EFFICIENT
               </span>
-              <div className="absolute -inset-2 bg-gradient-to-r from-orange-300 to-red-300 opacity-40 rounded-lg transform rotate-1 -z-10"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-rose-200 to-purple-200 opacity-30 rounded-lg transform rotate-1 -z-10"></div>
             </div>
           </h1>
 

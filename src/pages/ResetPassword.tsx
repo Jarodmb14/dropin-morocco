@@ -19,11 +19,35 @@ const ResetPassword = () => {
     const accessToken = searchParams.get('access_token');
     const refreshToken = searchParams.get('refresh_token');
     
+    console.log('🔄 ResetPassword: URL params:', { accessToken: !!accessToken, refreshToken: !!refreshToken });
+    
     if (accessToken && refreshToken) {
+      console.log('🔄 ResetPassword: Setting session from URL tokens');
       // Set the session with the tokens from the URL
       supabase.auth.setSession({
         access_token: accessToken,
         refresh_token: refreshToken,
+      }).then(({ data, error }) => {
+        if (error) {
+          console.error('❌ ResetPassword: Error setting session:', error);
+          setError(`Session error: ${error.message}`);
+        } else {
+          console.log('✅ ResetPassword: Session set successfully');
+        }
+      });
+    } else {
+      console.log('⚠️ ResetPassword: No tokens found in URL');
+      // Check if user is already authenticated
+      supabase.auth.getSession().then(({ data: { session }, error }) => {
+        if (error) {
+          console.error('❌ ResetPassword: Error getting session:', error);
+          setError(`Session error: ${error.message}`);
+        } else if (!session) {
+          console.log('⚠️ ResetPassword: No active session');
+          setError('No valid session found. Please request a new password reset link.');
+        } else {
+          console.log('✅ ResetPassword: User already authenticated');
+        }
       });
     }
   }, [searchParams]);
@@ -46,17 +70,24 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
+      console.log('🔄 ResetPassword: Updating password...');
+      
       const { error } = await updatePassword(password);
 
+      console.log('🔄 ResetPassword: Update password response:', { error });
+
       if (error) {
-        setError(error.message);
+        console.error('❌ ResetPassword: Password update error:', error);
+        setError(`Error: ${error.message}`);
       } else {
+        console.log('✅ ResetPassword: Password updated successfully');
         setMessage("Password updated successfully! Redirecting to homepage...");
         setTimeout(() => {
           navigate("/");
         }, 2000);
       }
     } catch (err) {
+      console.error('❌ ResetPassword: Password update exception:', err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);

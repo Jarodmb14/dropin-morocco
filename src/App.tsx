@@ -26,6 +26,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import PasswordResetTest from "./pages/PasswordResetTest";
 import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
@@ -154,6 +155,7 @@ const App = () => (
           <Route path="/auth/signup" element={<Signup />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/password-reset-test" element={<PasswordResetTest />} />
           <Route path="/auth/verify" element={<EmailVerification />} />
           <Route path="/auth" element={<Auth />} />
 

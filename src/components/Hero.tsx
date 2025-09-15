@@ -67,23 +67,23 @@ const Hero = () => {
           <h1 className="mb-10 text-5xl font-black leading-tight md:text-8xl tracking-tight">
             <div className="relative inline-block">
               <span 
-                className="block drop-shadow-2xl bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 bg-clip-text text-transparent"
+                className="block drop-shadow-2xl bg-gradient-to-r from-rose-300 via-purple-300 to-blue-300 bg-clip-text text-transparent font-light tracking-wider"
                 style={{ textShadow: '4px 4px 8px rgba(0,0,0,0.3)' }}
               >
                 FITNESS POWER
               </span>
-              {/* Comic-style action effect */}
-              <div className="absolute -inset-4 bg-yellow-300 opacity-30 rounded-xl transform -rotate-1 -z-10" />
+              {/* Elegant pastel background effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-rose-100 to-purple-100 opacity-40 rounded-xl transform -rotate-1 -z-10" />
             </div>
             <div className="relative inline-block mt-4">
               <span 
-                className="block text-gray-800 drop-shadow-2xl"
+                className="block text-gray-700 drop-shadow-2xl font-medium tracking-wider"
                 style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.2)' }}
               >
-                IN 3 STEPS!
+                SIMPLE • FAST • EFFICIENT
               </span>
-              {/* Comic burst effect */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-orange-300 to-red-300 opacity-40 rounded-lg transform rotate-1 -z-10" />
+              {/* Elegant pastel burst effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-rose-200 to-purple-200 opacity-30 rounded-lg transform rotate-1 -z-10" />
             </div>
             <div className="flex items-center justify-center mt-6 gap-4">
               <Trophy className="w-12 h-12 text-yellow-500 animate-pulse drop-shadow-lg" />
