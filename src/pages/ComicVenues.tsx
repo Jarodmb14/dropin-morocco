@@ -4,9 +4,13 @@ import SimpleHeader from "@/components/SimpleHeader";
 import { MapView } from "@/components/MapView";
 import { LocationSearch } from "@/components/LocationSearch";
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const ComicVenues = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [allVenues, setAllVenues] = useState<any[]>([]);
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -14,6 +18,45 @@ const ComicVenues = () => {
   const [showAllGyms, setShowAllGyms] = useState(false);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-400 mx-auto mb-4"></div>
+          <p className="text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50">
+        <SimpleHeader />
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur-sm border border-rose-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-gray-800">Access Required</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Please log in to access the venues and map.
+              </p>
+              <Button 
+                onClick={() => navigate('/auth/login')} 
+                className="bg-rose-400 hover:bg-rose-500 text-white"
+              >
+                Go to Login
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   // Fetch gyms from database
   useEffect(() => {
@@ -180,37 +223,18 @@ const ComicVenues = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#F8F9FA' }}>
-      {/* Comic-style energy bursts */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-40 h-40 rounded-full animate-pulse opacity-30" style={{ 
-          background: 'radial-gradient(circle, #FF6B35 0%, transparent 70%)',
-          filter: 'blur(20px)'
-        }} />
-        <div className="absolute top-40 right-20 w-32 h-32 rounded-full animate-pulse delay-1000 opacity-30" style={{ 
-          background: 'radial-gradient(circle, #007BFF 0%, transparent 70%)',
-          filter: 'blur(15px)'
-        }} />
-        <div className="absolute bottom-32 left-1/4 w-24 h-24 rounded-full animate-pulse delay-2000 opacity-30" style={{ 
-          background: 'radial-gradient(circle, #6F42C1 0%, transparent 70%)',
-          filter: 'blur(10px)'
-        }} />
-        
-        {/* Moroccan pattern overlay */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `repeating-linear-gradient(45deg, #FF6B35 0px, #FF6B35 2px, transparent 2px, transparent 20px)`,
-          backgroundSize: '20px 20px'
-        }} />
-        
-        {/* Comic-style action lines */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 2px, #FF6B35 2px, #FF6B35 4px)`,
-          backgroundSize: '20px 20px'
-        }} />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 relative overflow-hidden">
+      <SimpleHeader />
+      
+      {/* Subtle Pastel Background Pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-rose-200 rounded-full blur-xl"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-lavender-200 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 left-1/4 w-28 h-28 bg-sky-200 rounded-full blur-xl"></div>
+        <div className="absolute bottom-40 right-1/3 w-20 h-20 bg-rose-200 rounded-full blur-xl"></div>
       </div>
 
       <div className="relative z-10">
-        <SimpleHeader />
         
         {/* Main Content Section */}
         <section className="py-10">
