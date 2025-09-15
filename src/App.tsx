@@ -157,11 +157,10 @@ const App = () => (
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/signup" element={<Signup />} />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/reset-password" element={<DirectPasswordReset />} />
           <Route path="/auth/password-reset-test" element={<PasswordResetTest />} />
           <Route path="/auth/reset-password-alt" element={<PasswordResetAlternative />} />
           <Route path="/auth/supabase-test" element={<SupabaseConnectionTest />} />
-          <Route path="/auth/direct-reset" element={<DirectPasswordReset />} />
           <Route path="/auth/verify" element={<EmailVerification />} />
           <Route path="/auth" element={<Auth />} />
 
