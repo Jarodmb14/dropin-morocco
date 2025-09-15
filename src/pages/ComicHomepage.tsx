@@ -6,26 +6,21 @@ const ComicHomepage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50">
+    <div className="min-h-screen relative bg-white">
       <SimpleHeader />
       
-      {/* Subtle colored background */}
+      {/* Minimalist background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Subtle colored geometric patterns */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-blue-100 rounded-full opacity-20 blur-xl"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-purple-100 rounded-full opacity-15 blur-xl"></div>
-        <div className="absolute bottom-40 left-1/4 w-20 h-20 bg-green-100 rounded-full opacity-20 blur-xl"></div>
-        <div className="absolute top-60 left-1/3 w-16 h-16 bg-rose-100 rounded-full opacity-15 blur-xl"></div>
-        <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-indigo-100 rounded-full opacity-10 blur-xl"></div>
-        <div className="absolute top-80 right-1/4 w-20 h-20 bg-teal-100 rounded-full opacity-15 blur-xl"></div>
+        {/* Very subtle geometric patterns */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gray-100 rounded-full opacity-3"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-gray-200 rounded-full opacity-2"></div>
+        <div className="absolute bottom-40 left-1/4 w-20 h-20 bg-gray-100 rounded-full opacity-3"></div>
+        <div className="absolute top-60 left-1/3 w-16 h-16 bg-gray-200 rounded-full opacity-2"></div>
         
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-        
-        {/* Subtle dot pattern */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.1) 1px, transparent 0)',
-          backgroundSize: '30px 30px'
+        {/* Minimalist grid pattern */}
+        <div className="absolute inset-0 opacity-2" style={{
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)',
+          backgroundSize: '40px 40px'
         }}></div>
       </div>
       
@@ -34,7 +29,7 @@ const ComicHomepage = () => {
         <div className="container mx-auto px-6 text-center relative z-10">
           {/* Professional Badge */}
           <div className="mb-12 flex items-center justify-center">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border border-blue-500/20">
+            <div className="bg-gray-900 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border border-gray-800">
               🇲🇦 Morocco's Premier Fitness Platform
             </div>
           </div>
@@ -95,14 +90,14 @@ const ComicHomepage = () => {
           {/* Professional CTA */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <button 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-4 text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 rounded-lg shadow-lg"
+              className="bg-gray-900 text-white px-12 py-4 text-lg font-semibold hover:bg-gray-800 transition-all duration-200 rounded-lg shadow-lg"
               style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               onClick={() => navigate('/venues')}
             >
               Explore Facilities
             </button>
             <button 
-              className="border-2 border-blue-600 text-blue-600 px-12 py-4 text-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200 rounded-lg"
+              className="border-2 border-gray-900 text-gray-900 px-12 py-4 text-lg font-semibold hover:bg-gray-900 hover:text-white transition-all duration-200 rounded-lg"
               style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               onClick={() => navigate('/training')}
             >
