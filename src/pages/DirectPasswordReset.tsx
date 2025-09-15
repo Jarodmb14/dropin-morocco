@@ -3,46 +3,55 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import SimpleHeader from "@/components/SimpleHeader";
 
-const PasswordResetAlternative = () => {
+const DirectPasswordReset = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Listen for auth state changes
+    // Check session status immediately
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          setSessionInfo(`Session Error: ${error.message}`);
+          setError(`Session error: ${error.message}`);
+        } else if (session) {
+          setSessionInfo(`✅ Authenticated as: ${session.user.email}`);
+          console.log('✅ DirectPasswordReset: Valid session found:', session.user.email);
+        } else {
+          setSessionInfo('❌ No active session');
+          setError('No active session found. Please request a new password reset link.');
+        }
+      } catch (err) {
+        setSessionInfo('❌ Session check failed');
+        setError(`Session check failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔄 PasswordResetAlternative: Auth state change:', event, session ? 'Session exists' : 'No session');
+      console.log('🔄 DirectPasswordReset: Auth state change:', event, session ? 'Session exists' : 'No session');
       
       if (event === 'PASSWORD_RECOVERY' && session) {
-        console.log('✅ PasswordResetAlternative: Password recovery session detected');
-        setIsAuthenticated(true);
+        console.log('✅ DirectPasswordReset: Password recovery session detected');
+        setSessionInfo(`✅ Password Recovery Session: ${session.user.email}`);
         setError(null);
       } else if (event === 'SIGNED_IN' && session) {
-        console.log('✅ PasswordResetAlternative: User signed in');
-        setIsAuthenticated(true);
+        console.log('✅ DirectPasswordReset: User signed in');
+        setSessionInfo(`✅ Signed In: ${session.user.email}`);
         setError(null);
       } else if (!session) {
-        console.log('⚠️ PasswordResetAlternative: No session');
-        setIsAuthenticated(false);
-      }
-    });
-
-    // Check current session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('❌ PasswordResetAlternative: Error getting session:', error);
-        setError(`Session error: ${error.message}`);
-      } else if (session) {
-        console.log('✅ PasswordResetAlternative: User already authenticated');
-        setIsAuthenticated(true);
-      } else {
-        console.log('⚠️ PasswordResetAlternative: No active session');
-        setIsAuthenticated(false);
+        console.log('⚠️ DirectPasswordReset: No session');
+        setSessionInfo('❌ No active session');
       }
     });
 
@@ -69,91 +78,40 @@ const PasswordResetAlternative = () => {
     setLoading(true);
 
     try {
-      console.log('🔄 PasswordResetAlternative: Starting password update process...');
+      console.log('🔄 DirectPasswordReset: Starting direct password update...');
       
-      // First, verify we have a valid session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError) {
-        console.error('❌ PasswordResetAlternative: Session error:', sessionError);
-        setError(`Session error: ${sessionError.message}`);
-        setLoading(false);
-        return;
-      }
-      
-      if (!session) {
-        console.error('❌ PasswordResetAlternative: No active session');
-        setError('No active session found. Please request a new password reset link.');
-        setLoading(false);
-        return;
-      }
-      
-      console.log('✅ PasswordResetAlternative: Valid session found, proceeding with password update');
-      
-      // Add a manual timeout as backup
-      const timeoutId = setTimeout(() => {
-        console.error('❌ PasswordResetAlternative: Manual timeout triggered');
-        setError("Password update is taking too long. Please try again.");
-        setLoading(false);
-      }, 35000); // 35 seconds timeout
-      
-      const { error } = await supabase.auth.updateUser({
+      // Use a shorter timeout for faster feedback
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Password update timeout after 15 seconds'));
+        }, 15000);
+      });
+
+      const updatePromise = supabase.auth.updateUser({
         password: password
       });
 
-      clearTimeout(timeoutId);
-      console.log('🔄 PasswordResetAlternative: Update password response:', { error });
+      const result = await Promise.race([updatePromise, timeoutPromise]);
+      
+      console.log('🔄 DirectPasswordReset: Update password result:', result);
 
-      if (error) {
-        console.error('❌ PasswordResetAlternative: Password update error:', error);
-        setError(`Error: ${error.message}`);
+      if (result.error) {
+        console.error('❌ DirectPasswordReset: Password update error:', result.error);
+        setError(`Error: ${result.error.message}`);
       } else {
-        console.log('✅ PasswordResetAlternative: Password updated successfully');
+        console.log('✅ DirectPasswordReset: Password updated successfully');
         setMessage("Password updated successfully! Redirecting to homepage...");
         setTimeout(() => {
           navigate("/");
         }, 2000);
       }
     } catch (err) {
-      console.error('❌ PasswordResetAlternative: Password update exception:', err);
-      setError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Please try again.'}`);
+      console.error('❌ DirectPasswordReset: Password update exception:', err);
+      setError(`Error: ${err instanceof Error ? err.message : 'Please try again.'}`);
     } finally {
       setLoading(false);
     }
   };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen" style={{ backgroundColor: '#F2E4E5' }}>
-        <SimpleHeader />
-        
-        <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4">
-          <div className="max-w-md w-full space-y-8">
-            <div className="text-center">
-              <h2 className="mt-6 text-center text-4xl font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Password Reset
-              </h2>
-              <p className="text-gray-600 text-center mt-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Waiting for authentication...
-              </p>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 font-medium" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                {error}
-              </div>
-            )}
-
-            <div className="text-center">
-              <p className="text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Please click the password reset link from your email to continue.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F2E4E5' }}>
@@ -163,12 +121,19 @@ const PasswordResetAlternative = () => {
         <div className="max-w-md w-full space-y-8">
           <div className="text-center">
             <h2 className="mt-6 text-center text-4xl font-bold text-gray-900 uppercase tracking-wide" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Set New Password
+              Direct Password Reset
             </h2>
             <p className="text-gray-600 text-center mt-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Enter your new password below.
+              Direct Supabase password update
             </p>
           </div>
+
+          {/* Session Info */}
+          {sessionInfo && (
+            <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 px-4 py-3 font-medium" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              {sessionInfo}
+            </div>
+          )}
 
           <form className="mt-8 space-y-8" onSubmit={handleSubmit}>
             {error && (
@@ -260,4 +225,4 @@ const PasswordResetAlternative = () => {
   );
 };
 
-export default PasswordResetAlternative;
+export default DirectPasswordReset;
