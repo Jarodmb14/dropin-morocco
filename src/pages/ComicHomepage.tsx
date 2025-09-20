@@ -73,13 +73,25 @@ const ComicHomepage = () => {
             </div>
           </div>
 
-          {/* Sophisticated Main Title */}
+          {/* Dynamic Main Title */}
           <div className="mb-12">
             <h1 className="text-6xl md:text-8xl font-light mb-6 leading-none">
-              <span className="block text-gray-900 tracking-[0.15em]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                DROP-IN
+              <span className="block text-gray-900 tracking-[0.15em] relative group cursor-pointer" 
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    onClick={() => navigate('/venues')}>
+                {/* Dynamic DROP-IN with individual letter animations */}
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0s', animationDuration: '2s' }}>D</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.1s', animationDuration: '2s' }}>R</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.2s', animationDuration: '2s' }}>O</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.3s', animationDuration: '2s' }}>P</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.4s', animationDuration: '2s' }}>-</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.5s', animationDuration: '2s' }}>I</span>
+                <span className="inline-block animate-bounce hover:scale-110 transition-transform duration-200" style={{ animationDelay: '0.6s', animationDuration: '2s' }}>N</span>
+                
+                {/* Subtle glow effect on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-gradient-to-r from-blue-400 to-purple-400 blur-sm -z-10"></div>
               </span>
-              <span className="block text-2xl md:text-3xl text-gray-500 font-normal tracking-[0.25em] mt-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <span className="block text-2xl md:text-3xl text-gray-500 font-normal tracking-[0.25em] mt-4 animate-pulse" style={{ fontFamily: 'Space Grotesk, sans-serif', animationDuration: '3s' }}>
                 MOROCCO
               </span>
             </h1>
