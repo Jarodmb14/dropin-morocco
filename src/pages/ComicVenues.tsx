@@ -27,6 +27,14 @@ const ComicVenues = () => {
 
   // Fetch gyms from database
   useEffect(() => {
+    console.log('🏋️ ComicVenues useEffect triggered');
+    console.log('🏋️ isUserAuthenticated:', isUserAuthenticated);
+    console.log('🏋️ currentUser:', currentUser ? currentUser.email : 'None');
+    console.log('🏋️ isInitialized:', isInitialized);
+    console.log('🏋️ authLoading:', authLoading);
+    console.log('🏋️ user (from AuthContext):', user ? user.email : 'None');
+    console.log('🏋️ persistentUser:', persistentUser ? persistentUser.email : 'None');
+    
     // Only fetch gyms if user is authenticated and initialized
     if (!isUserAuthenticated || !currentUser || !isInitialized) {
       console.log('🏋️ User not authenticated or not initialized, skipping gym fetch');

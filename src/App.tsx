@@ -32,6 +32,7 @@ import SupabaseConnectionTest from "./pages/SupabaseConnectionTest";
 import DirectPasswordReset from "./pages/DirectPasswordReset";
 import PasswordResetFallback from "./pages/PasswordResetFallback";
 import SessionTest from "./pages/SessionTest";
+import AuthDebugSimple from "./pages/AuthDebugSimple";
 import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
@@ -196,6 +197,7 @@ const App = () => (
           <Route path="/reviews-test" element={<ReviewsTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/session-test" element={<SessionTest />} />
+          <Route path="/auth-debug-simple" element={<AuthDebugSimple />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </NetworkErrorHandler>
