@@ -9,6 +9,132 @@ const ComicHomepage = () => {
     <div className="min-h-screen relative bg-white">
       <SimpleHeader />
       
+      {/* Dispersed Animated Fitness Emojis */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+        {/* Top section emojis */}
+        <div className="absolute top-20 left-10 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '0s', animationDuration: '6s' }}
+             onClick={() => navigate('/venues')}>
+          🏋️
+        </div>
+        
+        <div className="absolute top-40 right-20 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '2s', animationDuration: '5s' }}
+             onClick={() => navigate('/venues')}>
+          💪
+        </div>
+        
+        <div className="absolute top-60 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '4s', animationDuration: '7s' }}
+             onClick={() => navigate('/venues')}>
+          🏀
+        </div>
+        
+        {/* Middle section emojis */}
+        <div className="absolute top-1/3 left-20 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '1s', animationDuration: '8s' }}
+             onClick={() => navigate('/venues')}>
+          ⚽
+        </div>
+        
+        <div className="absolute top-1/3 right-32 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '3s', animationDuration: '6s' }}
+             onClick={() => navigate('/venues')}>
+          🎾
+        </div>
+        
+        <div className="absolute top-1/2 left-16 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '5s', animationDuration: '9s' }}
+             onClick={() => navigate('/venues')}>
+          🏃
+        </div>
+        
+        <div className="absolute top-1/2 right-16 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '1.5s', animationDuration: '7.5s' }}
+             onClick={() => navigate('/venues')}>
+          🏊
+        </div>
+        
+        {/* Lower section emojis */}
+        <div className="absolute bottom-1/3 left-24 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '2.5s', animationDuration: '8.5s' }}
+             onClick={() => navigate('/venues')}>
+          🚴
+        </div>
+        
+        <div className="absolute bottom-1/3 right-24 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '3.5s', animationDuration: '6.5s' }}
+             onClick={() => navigate('/venues')}>
+          🧘
+        </div>
+        
+        <div className="absolute bottom-40 left-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '4.5s', animationDuration: '7.5s' }}
+             onClick={() => navigate('/venues')}>
+          🥊
+        </div>
+        
+        <div className="absolute bottom-1/2 right-12 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '1.8s', animationDuration: '8.2s' }}
+             onClick={() => navigate('/venues')}>
+          🏐
+        </div>
+        
+        <div className="absolute bottom-1/4 left-12 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '2.8s', animationDuration: '6.8s' }}
+             onClick={() => navigate('/venues')}>
+          ⚾
+        </div>
+        
+        <div className="absolute bottom-1/4 right-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '3.8s', animationDuration: '9.2s' }}
+             onClick={() => navigate('/venues')}>
+          ⛳
+        </div>
+        
+        <div className="absolute bottom-1/5 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '0.8s', animationDuration: '7.8s' }}
+             onClick={() => navigate('/venues')}>
+          🎿
+        </div>
+        
+        <div className="absolute bottom-1/6 right-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '4.2s', animationDuration: '8.8s' }}
+             onClick={() => navigate('/venues')}>
+          🧗
+        </div>
+        
+        <div className="absolute bottom-1/5 left-2/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '1.2s', animationDuration: '6.2s' }}
+             onClick={() => navigate('/venues')}>
+          🏄
+        </div>
+        
+        <div className="absolute bottom-1/6 left-1/2 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '2.2s', animationDuration: '7.2s' }}
+             onClick={() => navigate('/venues')}>
+          🥋
+        </div>
+        
+        <div className="absolute bottom-1/8 right-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '3.2s', animationDuration: '8.8s' }}
+             onClick={() => navigate('/venues')}>
+          🏹
+        </div>
+        
+        <div className="absolute bottom-1/8 left-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '0.5s', animationDuration: '9.5s' }}
+             onClick={() => navigate('/venues')}>
+          🤺
+        </div>
+        
+        <div className="absolute bottom-1/10 right-1/2 text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+             style={{ animationDelay: '1.7s', animationDuration: '6.7s' }}
+             onClick={() => navigate('/venues')}>
+          🏋️‍♀️
+        </div>
+      </div>
+      
       {/* Minimalist background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Very subtle geometric patterns */}
@@ -27,148 +153,6 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Animated Fitness Emojis */}
-          <div className="mb-12 relative">
-            {/* Floating Dumbbell Emoji */}
-            <div className="absolute top-2 left-1/4 text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '0s', animationDuration: '6s' }}
-                 onClick={() => navigate('/venues')}>
-              🏋️
-            </div>
-            
-            {/* Floating Muscle Emoji */}
-            <div className="absolute top-8 right-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '2s', animationDuration: '5s' }}
-                 onClick={() => navigate('/venues')}>
-              💪
-            </div>
-            
-            {/* Floating Basketball Emoji */}
-            <div className="absolute top-16 left-1/2 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '4s', animationDuration: '7s' }}
-                 onClick={() => navigate('/venues')}>
-              🏀
-            </div>
-            
-            {/* Floating Soccer Ball Emoji */}
-            <div className="absolute top-4 right-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '1s', animationDuration: '8s' }}
-                 onClick={() => navigate('/venues')}>
-              ⚽
-            </div>
-            
-            {/* Floating Tennis Emoji */}
-            <div className="absolute top-12 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '3s', animationDuration: '6s' }}
-                 onClick={() => navigate('/venues')}>
-              🎾
-            </div>
-            
-            {/* Floating Running Emoji */}
-            <div className="absolute top-20 left-1/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '5s', animationDuration: '9s' }}
-                 onClick={() => navigate('/venues')}>
-              🏃
-            </div>
-            
-            {/* Floating Swimming Emoji */}
-            <div className="absolute top-6 left-2/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '1.5s', animationDuration: '7.5s' }}
-                 onClick={() => navigate('/venues')}>
-              🏊
-            </div>
-            
-            {/* Floating Cycling Emoji */}
-            <div className="absolute top-14 right-1/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '2.5s', animationDuration: '8.5s' }}
-                 onClick={() => navigate('/venues')}>
-              🚴
-            </div>
-            
-            {/* Floating Yoga Emoji */}
-            <div className="absolute top-18 right-1/2 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '3.5s', animationDuration: '6.5s' }}
-                 onClick={() => navigate('/venues')}>
-              🧘
-            </div>
-            
-            {/* Floating Boxing Glove Emoji */}
-            <div className="absolute top-10 left-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '4.5s', animationDuration: '7.5s' }}
-                 onClick={() => navigate('/venues')}>
-              🥊
-            </div>
-            
-            {/* Floating Volleyball Emoji */}
-            <div className="absolute top-22 right-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '1.8s', animationDuration: '8.2s' }}
-                 onClick={() => navigate('/venues')}>
-              🏐
-            </div>
-            
-            {/* Floating Baseball Emoji */}
-            <div className="absolute top-8 left-2/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '2.8s', animationDuration: '6.8s' }}
-                 onClick={() => navigate('/venues')}>
-              ⚾
-            </div>
-            
-            {/* Floating Golf Emoji */}
-            <div className="absolute top-24 left-3/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '3.8s', animationDuration: '9.2s' }}
-                 onClick={() => navigate('/venues')}>
-              ⛳
-            </div>
-            
-            {/* Floating Skiing Emoji */}
-            <div className="absolute top-12 right-1/8 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '0.8s', animationDuration: '7.8s' }}
-                 onClick={() => navigate('/venues')}>
-              🎿
-            </div>
-            
-            {/* Floating Climbing Emoji */}
-            <div className="absolute top-26 left-1/8 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '4.2s', animationDuration: '8.8s' }}
-                 onClick={() => navigate('/venues')}>
-              🧗
-            </div>
-            
-            {/* Floating Surfing Emoji */}
-            <div className="absolute top-14 left-4/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '1.2s', animationDuration: '6.2s' }}
-                 onClick={() => navigate('/venues')}>
-              🏄
-            </div>
-            
-            {/* Floating Martial Arts Emoji */}
-            <div className="absolute top-28 right-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '2.2s', animationDuration: '7.2s' }}
-                 onClick={() => navigate('/venues')}>
-              🥋
-            </div>
-            
-            {/* Floating Archery Emoji */}
-            <div className="absolute top-16 right-3/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '3.2s', animationDuration: '8.8s' }}
-                 onClick={() => navigate('/venues')}>
-              🏹
-            </div>
-            
-            {/* Floating Fencing Emoji */}
-            <div className="absolute top-30 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '0.5s', animationDuration: '9.5s' }}
-                 onClick={() => navigate('/venues')}>
-              🤺
-            </div>
-            
-            {/* Floating Weight Lifting Emoji */}
-            <div className="absolute top-32 right-1/2 text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
-                 style={{ animationDelay: '1.7s', animationDuration: '6.7s' }}
-                 onClick={() => navigate('/venues')}>
-              🏋️‍♀️
-            </div>
-          </div>
 
           {/* Dynamic Main Title */}
           <div className="mb-12">
@@ -202,7 +186,7 @@ const ComicHomepage = () => {
               <div className="h-px bg-gray-300 flex-1 max-w-24"></div>
             </div>
           </div>
-          
+
           {/* Sophisticated Subtitle */}
           <div className="max-w-4xl mx-auto mb-16">
             <p className="text-xl md:text-2xl text-gray-700 leading-relaxed font-light mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
@@ -220,7 +204,7 @@ const ComicHomepage = () => {
               <span>•</span>
               <span>Digital Pass</span>
             </div>
-          </div>
+            </div>
 
 
           {/* Professional Process Steps */}
