@@ -14,7 +14,25 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    storageKey: 'sb-obqhxrqpxoaiublaoidv-auth-token'
+    storageKey: 'sb-obqhxrqpxoaiublaoidv-auth-token',
+    storage: {
+      getItem: (key: string) => {
+        if (typeof window !== 'undefined') {
+          return localStorage.getItem(key);
+        }
+        return null;
+      },
+      setItem: (key: string, value: string) => {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(key, value);
+        }
+      },
+      removeItem: (key: string) => {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(key);
+        }
+      }
+    }
   },
   realtime: {
     enabled: false

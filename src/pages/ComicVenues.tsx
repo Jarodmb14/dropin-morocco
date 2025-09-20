@@ -5,12 +5,14 @@ import { MapView } from "@/components/MapView";
 import { LocationSearch } from "@/components/LocationSearch";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSessionRefresh } from '@/hooks/useSessionRefresh';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const ComicVenues = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { refreshSession, isSessionValid } = useSessionRefresh();
   const [allVenues, setAllVenues] = useState<any[]>([]);
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -64,6 +66,14 @@ const ComicVenues = () => {
       try {
         setLoading(true);
         console.log('🏋️ Fetching gyms from database...');
+        
+        // Validate session before making database calls
+        const sessionValid = await refreshSession();
+        if (!sessionValid) {
+          console.log('🏋️ Session invalid, skipping gym fetch');
+          setLoading(false);
+          return;
+        }
         
         const { data, error } = await supabase
           .from('clubs')

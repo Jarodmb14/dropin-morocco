@@ -25,6 +25,7 @@ interface AuthContextType {
   isEmailVerified: boolean;
   userRole: UserRole | null;
   refreshUserRole: () => Promise<void>;
+  validateSession: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,28 +47,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('🔐 AuthContext: Initializing...');
     
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('🔐 AuthContext: Initial session:', session ? 'Found' : 'None');
-      if (error) {
-        console.error('🔐 AuthContext: Session error:', error);
-      }
-      
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserRole(session.user.id, session.user);
-      } else {
+    // Get initial session with better error handling
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('🔐 AuthContext: Initial session:', session ? 'Found' : 'None');
+        
+        if (error) {
+          console.error('🔐 AuthContext: Session error:', error);
+          // Clear any corrupted session data
+          if (error.message.includes('Invalid JWT') || error.message.includes('expired')) {
+            console.log('🔐 AuthContext: Clearing corrupted session data');
+            await supabase.auth.signOut();
+          }
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchUserRole(session.user.id, session.user);
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('🔐 AuthContext: Initialization error:', err);
         setLoading(false);
       }
-    });
+    };
 
-    // Listen for auth changes
+    initializeAuth();
+
+    // Listen for auth changes with better handling
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('🔐 AuthContext: Auth state change:', event, session ? 'Session exists' : 'No session');
+      
+      // Handle different auth events
+      switch (event) {
+        case 'SIGNED_IN':
+          console.log('🔐 AuthContext: User signed in');
+          break;
+        case 'SIGNED_OUT':
+          console.log('🔐 AuthContext: User signed out');
+          setUserRole(null);
+          setLoading(false);
+          break;
+        case 'TOKEN_REFRESHED':
+          console.log('🔐 AuthContext: Token refreshed');
+          break;
+        case 'USER_UPDATED':
+          console.log('🔐 AuthContext: User updated');
+          break;
+        default:
+          console.log('🔐 AuthContext: Unknown event:', event);
+      }
       
       setSession(session);
       setUser(session?.user ?? null);
@@ -233,6 +268,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Session validation function
+  const validateSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('🔐 AuthContext: Session validation error:', error);
+        return false;
+      }
+      
+      if (!session) {
+        console.log('🔐 AuthContext: No valid session found');
+        return false;
+      }
+      
+      // Check if session is expired
+      if (session.expires_at && new Date(session.expires_at * 1000) <= new Date()) {
+        console.log('🔐 AuthContext: Session expired');
+        return false;
+      }
+      
+      console.log('🔐 AuthContext: Session is valid');
+      return true;
+    } catch (err) {
+      console.error('🔐 AuthContext: Session validation exception:', err);
+      return false;
+    }
+  };
+
   const resetPassword = async (email: string) => {
     try {
       console.log('🔄 AuthContext: Requesting password reset for:', email);
@@ -330,6 +393,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isEmailVerified,
     userRole, // Expose the role for debugging
     refreshUserRole, // Expose manual refresh function
+    validateSession, // Expose session validation function
   };
 
   return (
