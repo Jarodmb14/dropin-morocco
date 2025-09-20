@@ -27,55 +27,67 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Interactive Doodle */}
+          {/* Interactive Fitness Game */}
           <div className="mb-12 flex items-center justify-center">
-            <div className="relative group cursor-pointer" onClick={() => navigate('/venues')}>
-              {/* Main doodle container */}
-              <div className="relative bg-white border-2 border-gray-300 rounded-full p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                {/* Animated weightlifter doodle */}
-                <div className="relative w-20 h-20 mx-auto">
-                  {/* Weightlifter figure */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    {/* Head */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-800 rounded-full animate-pulse"></div>
-                    
-                    {/* Body */}
-                    <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-6 bg-gray-800 rounded-sm"></div>
-                    
-                    {/* Arms (lifting position) */}
-                    <div className="absolute top-4 left-0 w-3 h-1 bg-gray-800 rounded-full transform rotate-45 origin-left"></div>
-                    <div className="absolute top-4 right-0 w-3 h-1 bg-gray-800 rounded-full transform -rotate-45 origin-right"></div>
-                    
-                    {/* Barbell */}
-                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full">
-                      {/* Weight plates */}
-                      <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1.5 h-3 bg-gray-700 rounded-sm"></div>
-                      <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-3 bg-gray-700 rounded-sm"></div>
-                    </div>
-                    
-                    {/* Legs */}
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-800 rounded-sm"></div>
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-800 rounded-sm ml-1"></div>
+            <div className="relative group">
+              {/* Game container */}
+              <div className="relative bg-white border-2 border-gray-300 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-48 h-32">
+                {/* Game title */}
+                <div className="text-center mb-2">
+                  <span className="text-xs font-semibold text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                    FITNESS CATCH
+                  </span>
+                </div>
+                
+                {/* Game area */}
+                <div className="relative w-full h-20 bg-gradient-to-b from-blue-50 to-green-50 rounded-lg overflow-hidden border border-gray-200">
+                  {/* Falling objects */}
+                  <div className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full animate-bounce cursor-pointer" 
+                       style={{ animationDuration: '2s', animationIterationCount: 'infinite' }}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         const target = e.target as HTMLElement;
+                         target.style.display = 'none';
+                         // Add score or effect here
+                       }}>
+                  </div>
+                  <div className="absolute top-0 left-16 w-3 h-3 bg-yellow-500 rounded-full animate-bounce cursor-pointer" 
+                       style={{ animationDuration: '2.5s', animationIterationCount: 'infinite', animationDelay: '0.5s' }}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         const target = e.target as HTMLElement;
+                         target.style.display = 'none';
+                       }}>
+                  </div>
+                  <div className="absolute top-0 right-4 w-3 h-3 bg-green-500 rounded-full animate-bounce cursor-pointer" 
+                       style={{ animationDuration: '1.8s', animationIterationCount: 'infinite', animationDelay: '1s' }}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         const target = e.target as HTMLElement;
+                         target.style.display = 'none';
+                       }}>
                   </div>
                   
-                  {/* Floating particles (sweat drops) */}
-                  <div className="absolute top-1 left-2 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '1.5s' }}></div>
-                  <div className="absolute top-3 right-2 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0.3s', animationDuration: '1.5s' }}></div>
-                  <div className="absolute bottom-2 left-1 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0.6s', animationDuration: '1.5s' }}></div>
+                  {/* Player (fitness character) */}
+                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gray-800 rounded-full cursor-pointer"
+                       onClick={() => navigate('/venues')}>
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
+                  </div>
                   
-                  {/* Energy sparks */}
-                  <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0s' }}></div>
-                  <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+                  {/* Ground */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-300"></div>
+                </div>
+                
+                {/* Game instructions */}
+                <div className="text-center mt-2">
+                  <span className="text-xs text-gray-500" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                    Catch the weights! Click to explore
+                  </span>
                 </div>
               </div>
               
               {/* Interactive hover effect */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-200 to-blue-200 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
-              
-              {/* Tooltip */}
-              <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Lift your way to fitness! 🏋️
-              </div>
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-200 to-blue-200 opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-sm"></div>
             </div>
           </div>
 
