@@ -133,20 +133,7 @@ const ComicHomepage = () => {
         </div>
       </div>
       
-      {/* Minimalist background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Very subtle geometric patterns */}
-        <div className="absolute top-20 left-10 w-32 h-32 rounded-full opacity-3" style={{ backgroundColor: '#E3BFC0' }}></div>
-        <div className="absolute top-40 right-20 w-24 h-24 rounded-full opacity-2" style={{ backgroundColor: '#E3BFC0' }}></div>
-        <div className="absolute bottom-40 left-1/4 w-20 h-20 rounded-full opacity-3" style={{ backgroundColor: '#E3BFC0' }}></div>
-        <div className="absolute top-60 left-1/3 w-16 h-16 rounded-full opacity-2" style={{ backgroundColor: '#E3BFC0' }}></div>
-        
-        {/* Minimalist grid pattern */}
-        <div className="absolute inset-0 opacity-2" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(227, 191, 192, 0.1) 1px, transparent 0)',
-          backgroundSize: '40px 40px'
-        }}></div>
-      </div>
+      {/* Clean background - no geometric elements */}
       
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
