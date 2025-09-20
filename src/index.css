@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Floating Animation for Gym Equipment */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float ease-in-out infinite;
+}
+
 /* Body Diagram Interactive Styles */
 [data-bodypart] {
   transition: opacity 0.15s ease;

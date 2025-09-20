@@ -27,67 +27,65 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Interactive Fitness Game */}
-          <div className="mb-12 flex items-center justify-center">
-            <div className="relative group">
-              {/* Game container */}
-              <div className="relative bg-white border-2 border-gray-300 rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-48 h-32">
-                {/* Game title */}
-                <div className="text-center mb-2">
-                  <span className="text-xs font-semibold text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    FITNESS CATCH
-                  </span>
-                </div>
-                
-                {/* Game area */}
-                <div className="relative w-full h-20 bg-gradient-to-b from-blue-50 to-green-50 rounded-lg overflow-hidden border border-gray-200">
-                  {/* Falling objects */}
-                  <div className="absolute top-0 left-4 w-3 h-3 bg-red-500 rounded-full animate-bounce cursor-pointer" 
-                       style={{ animationDuration: '2s', animationIterationCount: 'infinite' }}
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         const target = e.target as HTMLElement;
-                         target.style.display = 'none';
-                         // Add score or effect here
-                       }}>
-                  </div>
-                  <div className="absolute top-0 left-16 w-3 h-3 bg-yellow-500 rounded-full animate-bounce cursor-pointer" 
-                       style={{ animationDuration: '2.5s', animationIterationCount: 'infinite', animationDelay: '0.5s' }}
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         const target = e.target as HTMLElement;
-                         target.style.display = 'none';
-                       }}>
-                  </div>
-                  <div className="absolute top-0 right-4 w-3 h-3 bg-green-500 rounded-full animate-bounce cursor-pointer" 
-                       style={{ animationDuration: '1.8s', animationIterationCount: 'infinite', animationDelay: '1s' }}
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         const target = e.target as HTMLElement;
-                         target.style.display = 'none';
-                       }}>
-                  </div>
-                  
-                  {/* Player (fitness character) */}
-                  <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gray-800 rounded-full cursor-pointer"
-                       onClick={() => navigate('/venues')}>
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full"></div>
-                  </div>
-                  
-                  {/* Ground */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-300"></div>
-                </div>
-                
-                {/* Game instructions */}
-                <div className="text-center mt-2">
-                  <span className="text-xs text-gray-500" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                    Catch the weights! Click to explore
-                  </span>
-                </div>
+          {/* Floating Gym Equipment Background */}
+          <div className="mb-12 relative">
+            {/* Floating Dumbbell 1 */}
+            <div className="absolute top-0 left-1/4 w-8 h-4 opacity-20 animate-float" style={{ animationDelay: '0s', animationDuration: '6s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-1/2 left-0 w-6 h-1 bg-gray-400 rounded-full"></div>
+                <div className="absolute top-1/2 -left-1 w-1 h-3 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
+                <div className="absolute top-1/2 -right-1 w-1 h-3 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
               </div>
-              
-              {/* Interactive hover effect */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-200 to-blue-200 opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-sm"></div>
+            </div>
+            
+            {/* Floating Barbell */}
+            <div className="absolute top-8 right-1/3 w-12 h-2 opacity-15 animate-float" style={{ animationDelay: '2s', animationDuration: '8s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-1/2 left-0 w-10 h-1 bg-gray-500 rounded-full transform -translate-y-1/2"></div>
+                <div className="absolute top-1/2 -left-1 w-1 h-4 bg-gray-500 rounded-sm transform -translate-y-1/2"></div>
+                <div className="absolute top-1/2 -right-1 w-1 h-4 bg-gray-500 rounded-sm transform -translate-y-1/2"></div>
+              </div>
+            </div>
+            
+            {/* Floating Kettlebell */}
+            <div className="absolute top-16 left-1/2 w-6 h-8 opacity-20 animate-float" style={{ animationDelay: '4s', animationDuration: '7s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-full"></div>
+                <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-2 h-1 bg-gray-500 rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Floating Medicine Ball */}
+            <div className="absolute top-4 right-1/4 w-6 h-6 opacity-15 animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gray-400 rounded-full"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 border border-gray-500 rounded-full"></div>
+              </div>
+            </div>
+            
+            {/* Floating Resistance Band */}
+            <div className="absolute top-12 left-1/3 w-8 h-1 opacity-10 animate-float" style={{ animationDelay: '3s', animationDuration: '5s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-1/2 left-0 w-6 h-1 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
+                <div className="absolute top-1/2 right-0 w-2 h-1 bg-gray-500 rounded-full transform -translate-y-1/2"></div>
+              </div>
+            </div>
+            
+            {/* Floating Yoga Mat */}
+            <div className="absolute top-20 left-1/5 w-10 h-2 opacity-10 animate-float" style={{ animationDelay: '5s', animationDuration: '10s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-1/2 left-0 w-8 h-2 bg-gray-300 rounded transform -translate-y-1/2"></div>
+                <div className="absolute top-1/2 left-2 w-4 h-1 bg-gray-400 rounded transform -translate-y-1/2"></div>
+              </div>
+            </div>
+            
+            {/* Floating Jump Rope */}
+            <div className="absolute top-6 left-2/3 w-6 h-6 opacity-15 animate-float" style={{ animationDelay: '1.5s', animationDuration: '6.5s' }}>
+              <div className="relative w-full h-full">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-gray-500 rounded-full"></div>
+              </div>
             </div>
           </div>
 
