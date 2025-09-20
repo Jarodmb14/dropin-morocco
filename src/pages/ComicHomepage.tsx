@@ -91,6 +91,83 @@ const ComicHomepage = () => {
                  onClick={() => navigate('/venues')}>
               🧘
             </div>
+            
+            {/* Floating Boxing Glove Emoji */}
+            <div className="absolute top-10 left-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '4.5s', animationDuration: '7.5s' }}
+                 onClick={() => navigate('/venues')}>
+              🥊
+            </div>
+            
+            {/* Floating Volleyball Emoji */}
+            <div className="absolute top-22 right-1/6 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '1.8s', animationDuration: '8.2s' }}
+                 onClick={() => navigate('/venues')}>
+              🏐
+            </div>
+            
+            {/* Floating Baseball Emoji */}
+            <div className="absolute top-8 left-2/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '2.8s', animationDuration: '6.8s' }}
+                 onClick={() => navigate('/venues')}>
+              ⚾
+            </div>
+            
+            {/* Floating Golf Emoji */}
+            <div className="absolute top-24 left-3/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '3.8s', animationDuration: '9.2s' }}
+                 onClick={() => navigate('/venues')}>
+              ⛳
+            </div>
+            
+            {/* Floating Skiing Emoji */}
+            <div className="absolute top-12 right-1/8 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '0.8s', animationDuration: '7.8s' }}
+                 onClick={() => navigate('/venues')}>
+              🎿
+            </div>
+            
+            {/* Floating Climbing Emoji */}
+            <div className="absolute top-26 left-1/8 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '4.2s', animationDuration: '8.8s' }}
+                 onClick={() => navigate('/venues')}>
+              🧗
+            </div>
+            
+            {/* Floating Surfing Emoji */}
+            <div className="absolute top-14 left-4/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '1.2s', animationDuration: '6.2s' }}
+                 onClick={() => navigate('/venues')}>
+              🏄
+            </div>
+            
+            {/* Floating Martial Arts Emoji */}
+            <div className="absolute top-28 right-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '2.2s', animationDuration: '7.2s' }}
+                 onClick={() => navigate('/venues')}>
+              🥋
+            </div>
+            
+            {/* Floating Archery Emoji */}
+            <div className="absolute top-16 right-3/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '3.2s', animationDuration: '8.8s' }}
+                 onClick={() => navigate('/venues')}>
+              🏹
+            </div>
+            
+            {/* Floating Fencing Emoji */}
+            <div className="absolute top-30 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '0.5s', animationDuration: '9.5s' }}
+                 onClick={() => navigate('/venues')}>
+              🤺
+            </div>
+            
+            {/* Floating Weight Lifting Emoji */}
+            <div className="absolute top-32 right-1/2 text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '1.7s', animationDuration: '6.7s' }}
+                 onClick={() => navigate('/venues')}>
+              🏋️‍♀️
+            </div>
           </div>
 
           {/* Dynamic Main Title */}
