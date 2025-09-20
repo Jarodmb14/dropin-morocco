@@ -27,49 +27,69 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Elegant Floating Elements */}
+          {/* Animated Fitness Emojis */}
           <div className="mb-12 relative">
-            {/* Floating Geometric Circle */}
-            <div className="absolute top-2 left-1/4 w-6 h-6 opacity-8 animate-float" style={{ animationDelay: '0s', animationDuration: '8s' }}>
-              <div className="w-full h-full border border-gray-300 rounded-full"></div>
+            {/* Floating Dumbbell Emoji */}
+            <div className="absolute top-2 left-1/4 text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '0s', animationDuration: '6s' }}
+                 onClick={() => navigate('/venues')}>
+              🏋️
             </div>
             
-            {/* Floating Elegant Line */}
-            <div className="absolute top-8 right-1/3 w-16 h-0.5 opacity-6 animate-float" style={{ animationDelay: '3s', animationDuration: '12s' }}>
-              <div className="w-full h-full bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            {/* Floating Muscle Emoji */}
+            <div className="absolute top-8 right-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '2s', animationDuration: '5s' }}
+                 onClick={() => navigate('/venues')}>
+              💪
             </div>
             
-            {/* Floating Minimalist Square */}
-            <div className="absolute top-16 left-1/2 w-4 h-4 opacity-10 animate-float" style={{ animationDelay: '6s', animationDuration: '10s' }}>
-              <div className="w-full h-full border border-gray-400 transform rotate-45"></div>
+            {/* Floating Basketball Emoji */}
+            <div className="absolute top-16 left-1/2 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '4s', animationDuration: '7s' }}
+                 onClick={() => navigate('/venues')}>
+              🏀
             </div>
             
-            {/* Floating Subtle Dot */}
-            <div className="absolute top-4 right-1/4 w-2 h-2 opacity-12 animate-float" style={{ animationDelay: '2s', animationDuration: '7s' }}>
-              <div className="w-full h-full bg-gray-400 rounded-full"></div>
+            {/* Floating Soccer Ball Emoji */}
+            <div className="absolute top-4 right-1/4 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '1s', animationDuration: '8s' }}
+                 onClick={() => navigate('/venues')}>
+              ⚽
             </div>
             
-            {/* Floating Elegant Curve */}
-            <div className="absolute top-12 left-1/3 w-12 h-8 opacity-5 animate-float" style={{ animationDelay: '4s', animationDuration: '15s' }}>
-              <div className="w-full h-full">
-                <svg viewBox="0 0 48 32" className="w-full h-full">
-                  <path d="M4 16 Q24 4 44 16" stroke="currentColor" strokeWidth="1" fill="none" className="text-gray-300"/>
-                </svg>
-              </div>
+            {/* Floating Tennis Emoji */}
+            <div className="absolute top-12 left-1/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '3s', animationDuration: '6s' }}
+                 onClick={() => navigate('/venues')}>
+              🎾
             </div>
             
-            {/* Floating Minimalist Triangle */}
-            <div className="absolute top-20 left-1/5 w-5 h-5 opacity-8 animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }}>
-              <div className="w-full h-full">
-                <svg viewBox="0 0 20 20" className="w-full h-full">
-                  <polygon points="10,2 18,18 2,18" stroke="currentColor" strokeWidth="1" fill="none" className="text-gray-300"/>
-                </svg>
-              </div>
+            {/* Floating Running Emoji */}
+            <div className="absolute top-20 left-1/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '5s', animationDuration: '9s' }}
+                 onClick={() => navigate('/venues')}>
+              🏃
             </div>
             
-            {/* Floating Subtle Diamond */}
-            <div className="absolute top-6 left-2/3 w-3 h-3 opacity-7 animate-float" style={{ animationDelay: '5s', animationDuration: '11s' }}>
-              <div className="w-full h-full border border-gray-400 transform rotate-45"></div>
+            {/* Floating Swimming Emoji */}
+            <div className="absolute top-6 left-2/3 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '1.5s', animationDuration: '7.5s' }}
+                 onClick={() => navigate('/venues')}>
+              🏊
+            </div>
+            
+            {/* Floating Cycling Emoji */}
+            <div className="absolute top-14 right-1/5 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '2.5s', animationDuration: '8.5s' }}
+                 onClick={() => navigate('/venues')}>
+              🚴
+            </div>
+            
+            {/* Floating Yoga Emoji */}
+            <div className="absolute top-18 right-1/2 text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+                 style={{ animationDelay: '3.5s', animationDuration: '6.5s' }}
+                 onClick={() => navigate('/venues')}>
+              🧘
             </div>
           </div>
 
