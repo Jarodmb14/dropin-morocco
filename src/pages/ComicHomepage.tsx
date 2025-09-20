@@ -38,24 +38,45 @@ const ComicHomepage = () => {
             </div>
           </div>
 
-          {/* Professional Main Title */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-            <div className="relative inline-block mb-6">
-              <span className="text-gray-800 font-light tracking-wider">
+          {/* Sophisticated Main Title */}
+          <div className="mb-12">
+            <h1 className="text-6xl md:text-8xl font-light mb-6 leading-none">
+              <span className="block text-gray-900 tracking-[0.15em]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 DROP-IN
               </span>
-            </div>
-            <div className="relative inline-block">
-              <span className="text-gray-600 font-medium tracking-wide text-2xl md:text-3xl">
-                SIMPLE • FAST • EFFICIENT
+              <span className="block text-2xl md:text-3xl text-gray-500 font-normal tracking-[0.25em] mt-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                MOROCCO
               </span>
+            </h1>
+            
+            {/* Elegant Tagline */}
+            <div className="flex items-center justify-center space-x-8 mb-8">
+              <div className="h-px bg-gray-300 flex-1 max-w-24"></div>
+              <span className="text-lg font-light text-gray-600 tracking-wider uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Premium Fitness Access
+              </span>
+              <div className="h-px bg-gray-300 flex-1 max-w-24"></div>
             </div>
-          </h1>
+          </div>
           
-          {/* Professional Subtitle */}
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            Connect with premium fitness facilities across Morocco. Book your workout session in seconds with our streamlined platform.
-          </p>
+          {/* Sophisticated Subtitle */}
+          <div className="max-w-4xl mx-auto mb-16">
+            <p className="text-xl md:text-2xl text-gray-700 leading-relaxed font-light mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Experience seamless access to Morocco's finest fitness facilities. 
+              <span className="block mt-3 text-lg text-gray-600">
+                Book, arrive, train — all in one elegant platform.
+              </span>
+            </p>
+            
+            {/* Elegant Feature Highlights */}
+            <div className="flex justify-center items-center space-x-12 text-sm text-gray-500 uppercase tracking-wider" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <span>Instant Access</span>
+              <span>•</span>
+              <span>Premium Venues</span>
+              <span>•</span>
+              <span>Digital Pass</span>
+            </div>
+          </div>
 
 
           {/* Professional Process Steps */}
