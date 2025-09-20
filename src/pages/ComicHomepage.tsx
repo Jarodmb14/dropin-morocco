@@ -27,14 +27,35 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Professional Badge */}
+          {/* Interactive Doodle */}
           <div className="mb-12 flex items-center justify-center">
-            <div className="text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg border" style={{ 
-              backgroundColor: '#E3BFC0',
-              borderColor: '#E3BFC0',
-              fontFamily: 'Space Grotesk, sans-serif'
-            }}>
-              🇲🇦 Morocco's Premier Fitness Platform
+            <div className="relative group cursor-pointer" onClick={() => navigate('/venues')}>
+              {/* Main doodle container */}
+              <div className="relative bg-white border-2 border-gray-300 rounded-full p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                {/* Animated fitness doodle */}
+                <div className="relative w-16 h-16 mx-auto">
+                  {/* Dumbell */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="w-12 h-2 bg-gray-800 rounded-full animate-pulse"></div>
+                    <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-2 h-6 bg-gray-800 rounded-full"></div>
+                    <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-2 h-6 bg-gray-800 rounded-full"></div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 left-2 w-1 h-1 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '2s' }}></div>
+                  <div className="absolute top-4 right-3 w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2s' }}></div>
+                  <div className="absolute bottom-3 left-3 w-1 h-1 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '1s', animationDuration: '2s' }}></div>
+                  <div className="absolute bottom-2 right-2 w-1 h-1 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '2s' }}></div>
+                </div>
+              </div>
+              
+              {/* Interactive hover effect */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-200 to-blue-200 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
+              
+              {/* Tooltip */}
+              <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Click to explore! 💪
+              </div>
             </div>
           </div>
 
