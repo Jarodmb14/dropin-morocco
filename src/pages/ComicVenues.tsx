@@ -25,45 +25,6 @@ const ComicVenues = () => {
   const currentUser = persistentUser || user;
   const isUserAuthenticated = isAuthenticated || !!user;
 
-  // Show loading while checking authentication
-  if (authLoading || !isInitialized) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-400 mx-auto mb-4"></div>
-          <p className="text-gray-700">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show login prompt if not authenticated
-  if (!isUserAuthenticated || !currentUser) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50">
-        <SimpleHeader />
-        <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur-sm border border-rose-200 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-gray-800">Access Required</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600 mb-4">
-                Please log in to access the venues and map.
-              </p>
-              <Button 
-                onClick={() => navigate('/auth/login')} 
-                className="bg-rose-400 hover:bg-rose-500 text-white"
-              >
-                Go to Login
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   // Fetch gyms from database
   useEffect(() => {
     // Only fetch gyms if user is authenticated and initialized
@@ -234,6 +195,45 @@ const ComicVenues = () => {
     setShowAllGyms(true);
     setFilteredGyms(allVenues);
   };
+
+  // Show loading while checking authentication
+  if (authLoading || !isInitialized) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-400 mx-auto mb-4"></div>
+          <p className="text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!isUserAuthenticated || !currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50">
+        <SimpleHeader />
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto text-center bg-white/80 backdrop-blur-sm border border-rose-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-gray-800">Access Required</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Please log in to access the venues and map.
+              </p>
+              <Button 
+                onClick={() => navigate('/auth/login')} 
+                className="bg-rose-400 hover:bg-rose-500 text-white"
+              >
+                Go to Login
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 relative overflow-hidden">
