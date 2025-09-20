@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthPersistence } from '@/hooks/useAuthPersistence';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { WorkoutCool } from '@/components/WorkoutCool';
@@ -10,9 +11,14 @@ import { ArrowLeft } from 'lucide-react';
 const Training = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { isInitialized, user: persistentUser, isAuthenticated } = useAuthPersistence();
+
+  // Use persistent user if available, fallback to AuthContext user
+  const currentUser = persistentUser || user;
+  const isUserAuthenticated = isAuthenticated || !!user;
 
   // Show loading while checking authentication
-  if (loading) {
+  if (loading || !isInitialized) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 flex items-center justify-center">
         <div className="text-center">
@@ -23,7 +29,7 @@ const Training = () => {
     );
   }
 
-  if (!user) {
+  if (!isUserAuthenticated || !currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50">
         <SimpleHeader />

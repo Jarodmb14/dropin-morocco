@@ -18,23 +18,41 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: {
       getItem: (key: string) => {
         if (typeof window !== 'undefined') {
-          return localStorage.getItem(key);
+          try {
+            return localStorage.getItem(key);
+          } catch (error) {
+            console.error('Error getting item from localStorage:', error);
+            return null;
+          }
         }
         return null;
       },
       setItem: (key: string, value: string) => {
         if (typeof window !== 'undefined') {
-          localStorage.setItem(key, value);
+          try {
+            localStorage.setItem(key, value);
+          } catch (error) {
+            console.error('Error setting item in localStorage:', error);
+          }
         }
       },
       removeItem: (key: string) => {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem(key);
+          try {
+            localStorage.removeItem(key);
+          } catch (error) {
+            console.error('Error removing item from localStorage:', error);
+          }
         }
       }
     }
   },
   realtime: {
     enabled: false
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'dropin-morocco-app'
+    }
   }
 });

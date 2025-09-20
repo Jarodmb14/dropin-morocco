@@ -5,14 +5,14 @@ import { MapView } from "@/components/MapView";
 import { LocationSearch } from "@/components/LocationSearch";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSessionRefresh } from '@/hooks/useSessionRefresh';
+import { useAuthPersistence } from '@/hooks/useAuthPersistence';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const ComicVenues = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { refreshSession, isSessionValid } = useSessionRefresh();
+  const { isInitialized, user: persistentUser, isAuthenticated } = useAuthPersistence();
   const [allVenues, setAllVenues] = useState<any[]>([]);
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -21,8 +21,12 @@ const ComicVenues = () => {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
 
+  // Use persistent user if available, fallback to AuthContext user
+  const currentUser = persistentUser || user;
+  const isUserAuthenticated = isAuthenticated || !!user;
+
   // Show loading while checking authentication
-  if (authLoading) {
+  if (authLoading || !isInitialized) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50 flex items-center justify-center">
         <div className="text-center">
@@ -34,7 +38,7 @@ const ComicVenues = () => {
   }
 
   // Show login prompt if not authenticated
-  if (!user) {
+  if (!isUserAuthenticated || !currentUser) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-lavender-50 to-sky-50">
         <SimpleHeader />
@@ -62,9 +66,9 @@ const ComicVenues = () => {
 
   // Fetch gyms from database
   useEffect(() => {
-    // Only fetch gyms if user is authenticated and not loading
-    if (!user || authLoading) {
-      console.log('🏋️ User not authenticated or still loading, skipping gym fetch');
+    // Only fetch gyms if user is authenticated and initialized
+    if (!isUserAuthenticated || !currentUser || !isInitialized) {
+      console.log('🏋️ User not authenticated or not initialized, skipping gym fetch');
       setLoading(false);
       return;
     }
@@ -132,7 +136,7 @@ const ComicVenues = () => {
     };
 
     fetchGyms();
-  }, [user, authLoading]);
+  }, [isUserAuthenticated, currentUser, isInitialized]);
 
   // Get tier color
   const getTierColor = (tier: string) => {
