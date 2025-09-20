@@ -6,7 +6,7 @@ const ComicHomepage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative bg-white">
+    <div className="min-h-screen relative" style={{ backgroundColor: '#F2E4E5' }}>
       <SimpleHeader />
       
       {/* Animated Fitness Emojis - Upper Section (8-28%) */}
