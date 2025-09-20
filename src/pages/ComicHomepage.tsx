@@ -27,65 +27,49 @@ const ComicHomepage = () => {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Floating Gym Equipment Background */}
+          {/* Elegant Floating Elements */}
           <div className="mb-12 relative">
-            {/* Floating Dumbbell 1 */}
-            <div className="absolute top-0 left-1/4 w-8 h-4 opacity-20 animate-float" style={{ animationDelay: '0s', animationDuration: '6s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-1/2 left-0 w-6 h-1 bg-gray-400 rounded-full"></div>
-                <div className="absolute top-1/2 -left-1 w-1 h-3 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
-                <div className="absolute top-1/2 -right-1 w-1 h-3 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
+            {/* Floating Geometric Circle */}
+            <div className="absolute top-2 left-1/4 w-6 h-6 opacity-8 animate-float" style={{ animationDelay: '0s', animationDuration: '8s' }}>
+              <div className="w-full h-full border border-gray-300 rounded-full"></div>
+            </div>
+            
+            {/* Floating Elegant Line */}
+            <div className="absolute top-8 right-1/3 w-16 h-0.5 opacity-6 animate-float" style={{ animationDelay: '3s', animationDuration: '12s' }}>
+              <div className="w-full h-full bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            </div>
+            
+            {/* Floating Minimalist Square */}
+            <div className="absolute top-16 left-1/2 w-4 h-4 opacity-10 animate-float" style={{ animationDelay: '6s', animationDuration: '10s' }}>
+              <div className="w-full h-full border border-gray-400 transform rotate-45"></div>
+            </div>
+            
+            {/* Floating Subtle Dot */}
+            <div className="absolute top-4 right-1/4 w-2 h-2 opacity-12 animate-float" style={{ animationDelay: '2s', animationDuration: '7s' }}>
+              <div className="w-full h-full bg-gray-400 rounded-full"></div>
+            </div>
+            
+            {/* Floating Elegant Curve */}
+            <div className="absolute top-12 left-1/3 w-12 h-8 opacity-5 animate-float" style={{ animationDelay: '4s', animationDuration: '15s' }}>
+              <div className="w-full h-full">
+                <svg viewBox="0 0 48 32" className="w-full h-full">
+                  <path d="M4 16 Q24 4 44 16" stroke="currentColor" strokeWidth="1" fill="none" className="text-gray-300"/>
+                </svg>
               </div>
             </div>
             
-            {/* Floating Barbell */}
-            <div className="absolute top-8 right-1/3 w-12 h-2 opacity-15 animate-float" style={{ animationDelay: '2s', animationDuration: '8s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-1/2 left-0 w-10 h-1 bg-gray-500 rounded-full transform -translate-y-1/2"></div>
-                <div className="absolute top-1/2 -left-1 w-1 h-4 bg-gray-500 rounded-sm transform -translate-y-1/2"></div>
-                <div className="absolute top-1/2 -right-1 w-1 h-4 bg-gray-500 rounded-sm transform -translate-y-1/2"></div>
+            {/* Floating Minimalist Triangle */}
+            <div className="absolute top-20 left-1/5 w-5 h-5 opacity-8 animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }}>
+              <div className="w-full h-full">
+                <svg viewBox="0 0 20 20" className="w-full h-full">
+                  <polygon points="10,2 18,18 2,18" stroke="currentColor" strokeWidth="1" fill="none" className="text-gray-300"/>
+                </svg>
               </div>
             </div>
             
-            {/* Floating Kettlebell */}
-            <div className="absolute top-16 left-1/2 w-6 h-8 opacity-20 animate-float" style={{ animationDelay: '4s', animationDuration: '7s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-gray-400 rounded-full"></div>
-                <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-2 h-1 bg-gray-500 rounded-full"></div>
-              </div>
-            </div>
-            
-            {/* Floating Medicine Ball */}
-            <div className="absolute top-4 right-1/4 w-6 h-6 opacity-15 animate-float" style={{ animationDelay: '1s', animationDuration: '9s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-gray-400 rounded-full"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 border border-gray-500 rounded-full"></div>
-              </div>
-            </div>
-            
-            {/* Floating Resistance Band */}
-            <div className="absolute top-12 left-1/3 w-8 h-1 opacity-10 animate-float" style={{ animationDelay: '3s', animationDuration: '5s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-1/2 left-0 w-6 h-1 bg-gray-400 rounded-full transform -translate-y-1/2"></div>
-                <div className="absolute top-1/2 right-0 w-2 h-1 bg-gray-500 rounded-full transform -translate-y-1/2"></div>
-              </div>
-            </div>
-            
-            {/* Floating Yoga Mat */}
-            <div className="absolute top-20 left-1/5 w-10 h-2 opacity-10 animate-float" style={{ animationDelay: '5s', animationDuration: '10s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-1/2 left-0 w-8 h-2 bg-gray-300 rounded transform -translate-y-1/2"></div>
-                <div className="absolute top-1/2 left-2 w-4 h-1 bg-gray-400 rounded transform -translate-y-1/2"></div>
-              </div>
-            </div>
-            
-            {/* Floating Jump Rope */}
-            <div className="absolute top-6 left-2/3 w-6 h-6 opacity-15 animate-float" style={{ animationDelay: '1.5s', animationDuration: '6.5s' }}>
-              <div className="relative w-full h-full">
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-400 rounded-full"></div>
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-gray-500 rounded-full"></div>
-              </div>
+            {/* Floating Subtle Diamond */}
+            <div className="absolute top-6 left-2/3 w-3 h-3 opacity-7 animate-float" style={{ animationDelay: '5s', animationDuration: '11s' }}>
+              <div className="w-full h-full border border-gray-400 transform rotate-45"></div>
             </div>
           </div>
 
