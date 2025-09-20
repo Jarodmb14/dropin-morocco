@@ -9,124 +9,124 @@ const ComicHomepage = () => {
     <div className="min-h-screen relative bg-white">
       <SimpleHeader />
       
-      {/* Animated Fitness Emojis - Top Section (5-25%) */}
+      {/* Animated Fitness Emojis - Upper Section (8-28%) */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-        {/* Emojis positioned between 5% and 25% of screen */}
-        <div className="absolute top-[7%] left-[10%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        {/* Emojis positioned between 8% and 28% of screen */}
+        <div className="absolute top-[10%] left-[10%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '0s', animationDuration: '6s' }}
              onClick={() => navigate('/venues')}>
           🏋️
         </div>
         
-        <div className="absolute top-[10%] right-[20%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[13%] right-[20%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '2s', animationDuration: '5s' }}
              onClick={() => navigate('/venues')}>
           💪
         </div>
         
-        <div className="absolute top-[12%] left-[30%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[15%] left-[30%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '4s', animationDuration: '7s' }}
              onClick={() => navigate('/venues')}>
           🏀
         </div>
         
-        <div className="absolute top-[8%] left-[20%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[11%] left-[20%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '1s', animationDuration: '8s' }}
              onClick={() => navigate('/venues')}>
           ⚽
         </div>
         
-        <div className="absolute top-[14%] right-[30%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[17%] right-[30%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '3s', animationDuration: '6s' }}
              onClick={() => navigate('/venues')}>
           🎾
         </div>
         
-        <div className="absolute top-[16%] left-[15%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[19%] left-[15%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '5s', animationDuration: '9s' }}
              onClick={() => navigate('/venues')}>
           🏃
         </div>
         
-        <div className="absolute top-[18%] right-[15%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[21%] right-[15%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '1.5s', animationDuration: '7.5s' }}
              onClick={() => navigate('/venues')}>
           🏊
         </div>
         
-        <div className="absolute top-[9%] left-[25%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[12%] left-[25%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '2.5s', animationDuration: '8.5s' }}
              onClick={() => navigate('/venues')}>
           🚴
         </div>
         
-        <div className="absolute top-[11%] right-[25%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[14%] right-[25%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '3.5s', animationDuration: '6.5s' }}
              onClick={() => navigate('/venues')}>
           🧘
         </div>
         
-        <div className="absolute top-[13%] left-[40%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[16%] left-[40%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '4.5s', animationDuration: '7.5s' }}
              onClick={() => navigate('/venues')}>
           🥊
         </div>
         
-        <div className="absolute top-[15%] right-[40%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[18%] right-[40%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '1.8s', animationDuration: '8.2s' }}
              onClick={() => navigate('/venues')}>
           🏐
         </div>
         
-        <div className="absolute top-[17%] left-[35%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[20%] left-[35%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '2.8s', animationDuration: '6.8s' }}
              onClick={() => navigate('/venues')}>
           ⚾
         </div>
         
-        <div className="absolute top-[19%] right-[35%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[22%] right-[35%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '3.8s', animationDuration: '9.2s' }}
              onClick={() => navigate('/venues')}>
           ⛳
         </div>
         
-        <div className="absolute top-[21%] left-[45%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[24%] left-[45%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '0.8s', animationDuration: '7.8s' }}
              onClick={() => navigate('/venues')}>
           🎿
         </div>
         
-        <div className="absolute top-[23%] right-[45%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[26%] right-[45%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '4.2s', animationDuration: '8.8s' }}
              onClick={() => navigate('/venues')}>
           🧗
         </div>
         
-        <div className="absolute top-[5%] left-[50%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[8%] left-[50%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '1.2s', animationDuration: '6.2s' }}
              onClick={() => navigate('/venues')}>
           🏄
         </div>
         
-        <div className="absolute top-[25%] right-[50%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[28%] right-[50%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '2.2s', animationDuration: '7.2s' }}
              onClick={() => navigate('/venues')}>
           🥋
         </div>
         
-        <div className="absolute top-[20%] right-[60%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[23%] right-[60%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '3.2s', animationDuration: '8.8s' }}
              onClick={() => navigate('/venues')}>
           🏹
         </div>
         
-        <div className="absolute top-[22%] left-[60%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[25%] left-[60%] text-2xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '0.5s', animationDuration: '9.5s' }}
              onClick={() => navigate('/venues')}>
           🤺
         </div>
         
-        <div className="absolute top-[24%] right-[10%] text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
+        <div className="absolute top-[27%] right-[10%] text-3xl animate-float cursor-pointer hover:scale-125 transition-transform duration-300" 
              style={{ animationDelay: '1.7s', animationDuration: '6.7s' }}
              onClick={() => navigate('/venues')}>
           🏋️‍♀️
