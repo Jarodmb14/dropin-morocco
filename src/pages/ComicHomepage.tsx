@@ -32,20 +32,40 @@ const ComicHomepage = () => {
             <div className="relative group cursor-pointer" onClick={() => navigate('/venues')}>
               {/* Main doodle container */}
               <div className="relative bg-white border-2 border-gray-300 rounded-full p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                {/* Animated fitness doodle */}
-                <div className="relative w-16 h-16 mx-auto">
-                  {/* Dumbell */}
+                {/* Animated weightlifter doodle */}
+                <div className="relative w-20 h-20 mx-auto">
+                  {/* Weightlifter figure */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-12 h-2 bg-gray-800 rounded-full animate-pulse"></div>
-                    <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-2 h-6 bg-gray-800 rounded-full"></div>
-                    <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-2 h-6 bg-gray-800 rounded-full"></div>
+                    {/* Head */}
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gray-800 rounded-full animate-pulse"></div>
+                    
+                    {/* Body */}
+                    <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-2 h-6 bg-gray-800 rounded-sm"></div>
+                    
+                    {/* Arms (lifting position) */}
+                    <div className="absolute top-4 left-0 w-3 h-1 bg-gray-800 rounded-full transform rotate-45 origin-left"></div>
+                    <div className="absolute top-4 right-0 w-3 h-1 bg-gray-800 rounded-full transform -rotate-45 origin-right"></div>
+                    
+                    {/* Barbell */}
+                    <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full">
+                      {/* Weight plates */}
+                      <div className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1.5 h-3 bg-gray-700 rounded-sm"></div>
+                      <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-3 bg-gray-700 rounded-sm"></div>
+                    </div>
+                    
+                    {/* Legs */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-800 rounded-sm"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-gray-800 rounded-sm ml-1"></div>
                   </div>
                   
-                  {/* Floating particles */}
-                  <div className="absolute top-2 left-2 w-1 h-1 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '2s' }}></div>
-                  <div className="absolute top-4 right-3 w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2s' }}></div>
-                  <div className="absolute bottom-3 left-3 w-1 h-1 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: '1s', animationDuration: '2s' }}></div>
-                  <div className="absolute bottom-2 right-2 w-1 h-1 bg-yellow-400 rounded-full animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '2s' }}></div>
+                  {/* Floating particles (sweat drops) */}
+                  <div className="absolute top-1 left-2 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '1.5s' }}></div>
+                  <div className="absolute top-3 right-2 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0.3s', animationDuration: '1.5s' }}></div>
+                  <div className="absolute bottom-2 left-1 w-1 h-1 bg-blue-300 rounded-full animate-bounce" style={{ animationDelay: '0.6s', animationDuration: '1.5s' }}></div>
+                  
+                  {/* Energy sparks */}
+                  <div className="absolute top-1 right-1 w-0.5 h-0.5 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0s' }}></div>
+                  <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
                 </div>
               </div>
               
@@ -54,7 +74,7 @@ const ComicHomepage = () => {
               
               {/* Tooltip */}
               <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Click to explore! 💪
+                Lift your way to fitness! 🏋️
               </div>
             </div>
           </div>
