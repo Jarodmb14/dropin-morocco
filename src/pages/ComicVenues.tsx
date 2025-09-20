@@ -62,18 +62,17 @@ const ComicVenues = () => {
 
   // Fetch gyms from database
   useEffect(() => {
+    // Only fetch gyms if user is authenticated and not loading
+    if (!user || authLoading) {
+      console.log('🏋️ User not authenticated or still loading, skipping gym fetch');
+      setLoading(false);
+      return;
+    }
+
     const fetchGyms = async () => {
       try {
         setLoading(true);
         console.log('🏋️ Fetching gyms from database...');
-        
-        // Validate session before making database calls
-        const sessionValid = await refreshSession();
-        if (!sessionValid) {
-          console.log('🏋️ Session invalid, skipping gym fetch');
-          setLoading(false);
-          return;
-        }
         
         const { data, error } = await supabase
           .from('clubs')
@@ -133,7 +132,7 @@ const ComicVenues = () => {
     };
 
     fetchGyms();
-  }, []);
+  }, [user, authLoading]);
 
   // Get tier color
   const getTierColor = (tier: string) => {

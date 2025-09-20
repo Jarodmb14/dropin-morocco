@@ -50,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session with better error handling
     const initializeAuth = async () => {
       try {
+        console.log('🔐 AuthContext: Getting initial session...');
         const { data: { session }, error } = await supabase.auth.getSession();
         console.log('🔐 AuthContext: Initial session:', session ? 'Found' : 'None');
         
@@ -59,15 +60,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (error.message.includes('Invalid JWT') || error.message.includes('expired')) {
             console.log('🔐 AuthContext: Clearing corrupted session data');
             await supabase.auth.signOut();
+            setSession(null);
+            setUser(null);
+            setUserRole(null);
           }
+          setLoading(false);
+          return;
         }
         
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          console.log('🔐 AuthContext: User found, fetching role...');
           await fetchUserRole(session.user.id, session.user);
         } else {
+          console.log('🔐 AuthContext: No user in session');
           setLoading(false);
         }
       } catch (err) {

@@ -8,7 +8,13 @@ export const useSessionRefresh = () => {
   const { validateSession, user, loading } = useAuth();
 
   const refreshSession = useCallback(async () => {
-    if (!user && !loading) {
+    // Don't refresh if we're still loading or if there's no user
+    if (loading) {
+      console.log('🔄 useSessionRefresh: Still loading, skipping refresh');
+      return false;
+    }
+
+    if (!user) {
       console.log('🔄 useSessionRefresh: No user found, skipping refresh');
       return false;
     }

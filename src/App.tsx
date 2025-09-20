@@ -31,6 +31,7 @@ import PasswordResetAlternative from "./pages/PasswordResetAlternative";
 import SupabaseConnectionTest from "./pages/SupabaseConnectionTest";
 import DirectPasswordReset from "./pages/DirectPasswordReset";
 import PasswordResetFallback from "./pages/PasswordResetFallback";
+import SessionTest from "./pages/SessionTest";
 import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
@@ -194,6 +195,7 @@ const App = () => (
           <Route path="/quick-role-test" element={<QuickRoleTest />} />
           <Route path="/reviews-test" element={<ReviewsTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
+          <Route path="/session-test" element={<SessionTest />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </NetworkErrorHandler>
