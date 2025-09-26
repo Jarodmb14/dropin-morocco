@@ -140,13 +140,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('🔐 AuthContext: Fetching user role for:', userId);
       
-      // Try to get role from profiles table first
+      // Try to get role from profiles table first with timeout
       console.log('🔐 AuthContext: Querying profiles table for user_id:', userId);
-      const { data: profileData, error: profileError } = await supabase
+      
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Profile query timeout')), 5000); // 5 second timeout
+      });
+      
+      const profileQuery = supabase
         .from('profiles')
         .select('role')
         .eq('id', userId)
         .single();
+
+      // Race between the query and timeout
+      const { data: profileData, error: profileError } = await Promise.race([
+        profileQuery,
+        timeoutPromise
+      ]) as any;
 
       console.log('🔐 AuthContext: Profile query result:', { profileData, profileError });
       console.log('🔐 AuthContext: Profile data role:', profileData?.role);
@@ -174,11 +186,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     } catch (error) {
       console.error('🔐 AuthContext: Exception fetching role:', error);
+      
+      // Check if it's a timeout error
+      if (error instanceof Error && error.message === 'Profile query timeout') {
+        console.log('🔐 AuthContext: ⏰ Profile query timed out, using fallback');
+      }
+      
       // Fallback to metadata or default
       const metadataRole = currentUser?.user_metadata?.role;
       if (metadataRole) {
+        console.log('🔐 AuthContext: Using metadata role as fallback:', metadataRole);
         setUserRole(metadataRole as UserRole);
       } else {
+        console.log('🔐 AuthContext: Using default CUSTOMER role');
         setUserRole('CUSTOMER');
       }
     } finally {
