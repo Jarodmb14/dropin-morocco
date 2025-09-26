@@ -34,6 +34,7 @@ export const useAuthPersistence = () => {
         } else if (session?.user) {
           console.log('🔄 useAuthPersistence: Valid session found for user:', session.user.email);
           setSessionData(session);
+          setIsInitialized(true);
         } else if (storedSession) {
           // Try to parse stored session as fallback
           try {
@@ -41,20 +42,22 @@ export const useAuthPersistence = () => {
             if (parsedSession?.user) {
               console.log('🔄 useAuthPersistence: Using stored session for user:', parsedSession.user.email);
               setSessionData(parsedSession);
+              setIsInitialized(true);
             } else {
               console.log('🔄 useAuthPersistence: No user in stored session');
               setSessionData(null);
+              setIsInitialized(true);
             }
           } catch (parseError) {
             console.error('🔄 useAuthPersistence: Error parsing stored session:', parseError);
             setSessionData(null);
+            setIsInitialized(true);
           }
         } else {
           console.log('🔄 useAuthPersistence: No session found');
           setSessionData(null);
+          setIsInitialized(true);
         }
-        
-        setIsInitialized(true);
       } catch (err) {
         console.error('🔄 useAuthPersistence: Initialization error:', err);
         setSessionData(null);
