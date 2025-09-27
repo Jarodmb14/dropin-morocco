@@ -107,6 +107,18 @@ const ComicVenues = () => {
     fetchGyms();
   }, [isUserAuthenticated, currentUser, isInitialized]);
 
+  // Update filtered gyms when radius changes and location is set
+  useEffect(() => {
+    if (currentLocation && allVenues.length > 0) {
+      const nearbyGyms = allVenues.filter(venue => {
+        const distance = calculateDistance(currentLocation.lat, currentLocation.lng, venue.latitude, venue.longitude);
+        return distance <= searchRadius;
+      });
+      setFilteredGyms(nearbyGyms);
+      console.log(`🔄 Radius changed to ${searchRadius}km, found ${nearbyGyms.length} gyms`);
+    }
+  }, [searchRadius, currentLocation, allVenues]);
+
   // Get tier color
   const getTierColor = (tier: string) => {
     switch (tier) {
@@ -154,14 +166,18 @@ const ComicVenues = () => {
 
   // Handle radius change
   const handleRadiusChange = (radius: number) => {
+    console.log(`🔄 Radius changing from ${searchRadius}km to ${radius}km`);
     setSearchRadius(radius);
     
-    if (currentLocation) {
+    if (currentLocation && allVenues.length > 0) {
       const nearbyGyms = allVenues.filter(venue => {
         const distance = calculateDistance(currentLocation.lat, currentLocation.lng, venue.latitude, venue.longitude);
         return distance <= radius;
       });
       setFilteredGyms(nearbyGyms);
+      console.log(`✅ Radius updated to ${radius}km, showing ${nearbyGyms.length} gyms`);
+    } else {
+      console.log(`⚠️ Cannot filter by radius: currentLocation=${!!currentLocation}, allVenues=${allVenues.length}`);
     }
   };
 
