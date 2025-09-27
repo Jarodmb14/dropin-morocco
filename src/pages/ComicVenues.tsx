@@ -322,7 +322,10 @@ const ComicVenues = () => {
                         </label>
                         <select
                           value={searchRadius}
-                          onChange={(e) => handleRadiusChange(Number(e.target.value))}
+                          onChange={(e) => {
+                            console.log('🎯 Radius selector changed:', e.target.value);
+                            handleRadiusChange(Number(e.target.value));
+                          }}
                           className="px-3 py-1 border border-gray-300 rounded-md text-sm font-space-grotesk"
                         >
                           <option value={5}>5 km</option>
@@ -426,6 +429,8 @@ const ComicVenues = () => {
                         <MapView 
                           gyms={filteredGyms || []}
                           userLocation={currentLocation ? [currentLocation.lat, currentLocation.lng] : undefined}
+                          radius={searchRadius}
+                          center={currentLocation ? [currentLocation.lat, currentLocation.lng] : undefined}
                         />
                       )
                     ) : (
