@@ -36,6 +36,7 @@ import AuthDebugSimple from "./pages/AuthDebugSimple";
 import EmailVerification from "./pages/EmailVerification";
 import UserProfile from "./pages/UserProfile";
 import Index from "./pages/Index";
+import MapboxTest from "./components/MapboxTest";
 import Admin from "./pages/Admin";
 import SimpleAdmin from "./pages/SimpleAdmin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -198,6 +199,7 @@ const App = () => (
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/session-test" element={<SessionTest />} />
           <Route path="/auth-debug-simple" element={<AuthDebugSimple />} />
+          <Route path="/mapbox-test" element={<MapboxTest />} />
           <Route path="*" element={<NotFound />} />
           </Routes>
         </NetworkErrorHandler>

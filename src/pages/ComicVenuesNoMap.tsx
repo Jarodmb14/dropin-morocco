@@ -85,6 +85,13 @@ const ComicVenuesNoMap = () => {
   const [user, setUser] = useState<any>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [qrCodeData, setQrCodeData] = useState<any>(null);
+  
+  // Filter states
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [minRating, setMinRating] = useState<number>(0);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Handle ESC key to close QR modal
   useEffect(() => {
@@ -99,6 +106,28 @@ const ComicVenuesNoMap = () => {
       return () => document.removeEventListener('keydown', handleEscKey);
     }
   }, [qrCodeData]);
+
+  // Prevent body scroll when any modal is open
+  useEffect(() => {
+    if (showBookingModal || qrCodeData || showQRScanner) {
+      // Disable body scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      // Re-enable body scroll
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [showBookingModal, qrCodeData, showQRScanner]);
 
   // Load user session on component mount
   useEffect(() => {
@@ -234,6 +263,58 @@ const ComicVenuesNoMap = () => {
     }
   };
 
+  // Filter logic
+  const applyFilters = () => {
+    let filtered = venues;
+
+    // Filter by amenities
+    if (selectedAmenities.length > 0) {
+      filtered = filtered.filter(venue => 
+        selectedAmenities.every(amenity => 
+          venue.amenities.some((v: string) => v.toLowerCase().includes(amenity.toLowerCase()))
+        )
+      );
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(venue => 
+      venue.price_per_hour >= priceRange[0] && venue.price_per_hour <= priceRange[1]
+    );
+
+    // Filter by rating
+    if (minRating > 0) {
+      filtered = filtered.filter(venue => venue.rating >= minRating);
+    }
+
+    // Filter by tiers
+    if (selectedTiers.length > 0) {
+      filtered = filtered.filter(venue => selectedTiers.includes(venue.tier));
+    }
+
+    setFilteredGyms(filtered);
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setSelectedAmenities([]);
+    setPriceRange([0, 1000]);
+    setMinRating(0);
+    setSelectedTiers([]);
+    setFilteredGyms(venues);
+  };
+
+  // Apply filters when filter states change
+  useEffect(() => {
+    applyFilters();
+  }, [selectedAmenities, priceRange, minRating, selectedTiers]);
+
+  // Get all unique amenities for filter options
+  const allAmenities = Array.from(new Set(venues.flatMap(venue => venue.amenities)));
+  const amenityOptions = allAmenities.map(amenity => ({
+    key: amenity.toLowerCase().replace(/[^\w\s]/g, '').trim(),
+    label: amenity
+  }));
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-100 via-blue-50 to-purple-100">
       <SimpleHeader />
@@ -263,9 +344,9 @@ const ComicVenuesNoMap = () => {
           </p>
 
           {/* Location Search */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white/95 rounded-3xl shadow-xl p-6">
+          <div className="max-w-6xl mx-auto mb-8">
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="md:col-span-2 bg-white/95 rounded-3xl shadow-xl p-8">
                 <LocationSearch
                   onLocationSelect={handleLocationSelect}
                   onGPSLocation={handleGPSLocation}
@@ -274,14 +355,134 @@ const ComicVenuesNoMap = () => {
               </div>
               <div className="bg-white/95 rounded-3xl shadow-xl p-6 flex items-center justify-center">
                 <button
-                  onClick={() => alert('Map temporarily disabled - debugging MapView component')}
-                  className="bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 hover:from-orange-600 hover:via-blue-600 hover:to-purple-600 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="bg-gradient-to-r from-orange-500 via-blue-500 to-purple-500 hover:from-orange-600 hover:via-blue-600 hover:to-purple-600 text-white px-6 py-3 rounded-2xl font-black text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
-                  🗺️ Show Map (Debug Mode)
+                  🔍 {showFilters ? 'Hide Filters' : 'Show Filters'}
                 </button>
               </div>
             </div>
           </div>
+
+          {/* Filters Panel */}
+          {showFilters && (
+            <div className="max-w-6xl mx-auto mb-8">
+              <div className="bg-white/95 rounded-3xl shadow-xl p-6">
+                <div className="grid md:grid-cols-4 gap-6">
+                  {/* Amenities Filter */}
+                  <div>
+                    <h3 className="font-bold text-gray-800 mb-3">🏋️ Amenities</h3>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {amenityOptions.map((amenity) => (
+                        <label key={amenity.key} className="flex items-center space-x-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={selectedAmenities.includes(amenity.key)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedAmenities([...selectedAmenities, amenity.key]);
+                              } else {
+                                setSelectedAmenities(selectedAmenities.filter(a => a !== amenity.key));
+                              }
+                            }}
+                            className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                          />
+                          <span className="text-gray-700">{amenity.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Price Range Filter */}
+                  <div>
+                    <h3 className="font-bold text-gray-800 mb-3">💰 Price Range</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="1000"
+                          value={priceRange[0]}
+                          onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+                          className="flex-1"
+                        />
+                        <span className="text-sm font-medium">{priceRange[0]} DH</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="1000"
+                          value={priceRange[1]}
+                          onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                          className="flex-1"
+                        />
+                        <span className="text-sm font-medium">{priceRange[1]} DH</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rating Filter */}
+                  <div>
+                    <h3 className="font-bold text-gray-800 mb-3">⭐ Min Rating</h3>
+                    <div className="space-y-2">
+                      {[0, 3, 4, 4.5, 5].map((rating) => (
+                        <label key={rating} className="flex items-center space-x-2 text-sm">
+                          <input
+                            type="radio"
+                            name="rating"
+                            checked={minRating === rating}
+                            onChange={() => setMinRating(rating)}
+                            className="text-orange-500 focus:ring-orange-500"
+                          />
+                          <span className="text-gray-700">
+                            {rating === 0 ? 'Any' : `${rating}+ stars`}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tier Filter */}
+                  <div>
+                    <h3 className="font-bold text-gray-800 mb-3">🏆 Tier</h3>
+                    <div className="space-y-2">
+                      {['BASIC', 'STANDARD', 'PREMIUM', 'LUXURY'].map((tier) => (
+                        <label key={tier} className="flex items-center space-x-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={selectedTiers.includes(tier)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedTiers([...selectedTiers, tier]);
+                              } else {
+                                setSelectedTiers(selectedTiers.filter(t => t !== tier));
+                              }
+                            }}
+                            className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                          />
+                          <span className="text-gray-700">{tier}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filter Actions */}
+                <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                  <div className="text-sm text-gray-600">
+                    Showing {filteredGyms.length} of {venues.length} venues
+                  </div>
+                  <button
+                    onClick={resetFilters}
+                    className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors duration-200"
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Venues Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -466,14 +667,32 @@ const ComicVenuesNoMap = () => {
       {/* QR Code Display Modal */}
       {qrCodeData && (
         <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-hidden"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setQrCodeData(null);
             }
           }}
+          onTouchMove={(e) => {
+            // Prevent background scrolling when touching the modal backdrop
+            e.preventDefault();
+          }}
+          style={{ 
+            touchAction: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
+          <div 
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
+            onTouchMove={(e) => {
+              // Allow scrolling within the modal content
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              // Prevent modal from closing when clicking inside
+              e.stopPropagation();
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-2xl font-black text-gray-800">
                 🎯 Your Booking QR Code
@@ -503,8 +722,28 @@ const ComicVenuesNoMap = () => {
 
       {/* QR Scanner Modal */}
       {showQRScanner && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-hidden"
+          onTouchMove={(e) => {
+            // Prevent background scrolling when touching the modal backdrop
+            e.preventDefault();
+          }}
+          style={{ 
+            touchAction: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          <div 
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
+            onTouchMove={(e) => {
+              // Allow scrolling within the modal content
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              // Prevent modal from closing when clicking inside
+              e.stopPropagation();
+            }}
+          >
             <h3 className="text-2xl font-black mb-4 text-center text-gray-800">
               📱 Scan QR Code
             </h3>

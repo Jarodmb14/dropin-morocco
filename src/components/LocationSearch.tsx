@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, MapPin, Navigation, X } from 'lucide-react';
+import { MAPBOX_CONFIG, isMapboxConfigured } from '@/config/mapbox';
 
 interface Location {
   id: string;
@@ -93,6 +94,14 @@ const MOROCCAN_LOCATIONS: Location[] = [
   // Business Districts
   { id: 'casablanca-finance-city', name: 'Casablanca Finance City', address: 'Casablanca Finance City, Morocco', latitude: 33.5731, longitude: -7.5898, type: 'landmark' },
   { id: 'rabat-business-district', name: 'Rabat Business District', address: 'Business District, Rabat, Morocco', latitude: 34.0209, longitude: -6.8416, type: 'landmark' },
+  
+  // Famous Streets and Addresses in Morocco
+  { id: 'boulevard-anfa', name: 'Boulevard d\'Anfa', address: 'Boulevard d\'Anfa, Casablanca, Morocco', latitude: 33.5731, longitude: -7.5898, type: 'street' },
+  { id: 'rue-mohammed-v', name: 'Rue Mohammed V', address: 'Rue Mohammed V, Casablanca, Morocco', latitude: 33.5731, longitude: -7.5898, type: 'street' },
+  { id: 'avenue-hassan-ii', name: 'Avenue Hassan II', address: 'Avenue Hassan II, Casablanca, Morocco', latitude: 33.5731, longitude: -7.5898, type: 'street' },
+  { id: 'place-jemaa-el-fna', name: 'Place Jemaa el-Fnaa', address: 'Place Jemaa el-Fnaa, Marrakech, Morocco', latitude: 31.6295, longitude: -7.9811, type: 'landmark' },
+  { id: 'rue-de-la-liberte', name: 'Rue de la Liberté', address: 'Rue de la Liberté, Rabat, Morocco', latitude: 34.0209, longitude: -6.8416, type: 'street' },
+  { id: 'boulevard-anfa-139', name: '139 Boulevard d\'Anfa', address: '139 Boulevard d\'Anfa, Casablanca, Morocco', latitude: 33.5731, longitude: -7.5898, type: 'address' },
 ];
 
 export const LocationSearch: React.FC<LocationSearchProps> = ({
@@ -109,37 +118,312 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Geocode address using OpenStreetMap Nominatim (supports Morocco)
+  // Enhanced geocoding with multiple FREE strategies
   const geocodeAddress = async (query: string): Promise<Location[]> => {
     if (!query.trim() || query.length < 3) return [];
     
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?` +
-        `format=json&` +
-        `q=${encodeURIComponent(query + ', Morocco')}&` +
-        `countrycodes=ma&` +
-        `limit=8&` +
-        `addressdetails=1&` +
-        `extratags=1`
-      );
-      
-      if (!response.ok) return [];
-      
-      const data = await response.json();
-      
-      return data.map((item: any) => ({
-        id: `osm_${item.place_id}`,
-        name: item.display_name.split(',')[0] || item.display_name,
-        address: item.display_name,
-        latitude: parseFloat(item.lat),
-        longitude: parseFloat(item.lon),
-        type: item.type || 'address'
-      }));
+      // Use enhanced OpenStreetMap with multiple strategies (100% free)
+      const osmResults = await geocodeWithOSM(query);
+      console.log('🗺️ Using enhanced OSM results:', osmResults.length);
+      return osmResults;
     } catch (error) {
       console.error('Geocoding error:', error);
       return [];
     }
+  };
+
+  // Google Geocoding API (most accurate, $200/month free)
+  const geocodeWithGoogle = async (query: string): Promise<Location[]> => {
+    const googleApiKey = import.meta.env.VITE_GOOGLE_GEOCODING_API_KEY;
+    
+    if (!googleApiKey) {
+      console.log('🗺️ Google API key not configured, skipping');
+      return [];
+    }
+    
+    try {
+      console.log('🗺️ Google searching for:', query);
+      
+      // Clean the query
+      const cleanQuery = query
+        .replace(/[^\w\s,.-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      // Add Morocco if not present
+      const searchQuery = cleanQuery.toLowerCase().includes('morocco') || cleanQuery.toLowerCase().includes('maroc') 
+        ? cleanQuery 
+        : cleanQuery + ', Morocco';
+        
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?` +
+        `address=${encodeURIComponent(searchQuery)}&` +
+        `key=${googleApiKey}&` +
+        `region=ma&` +
+        `language=en`
+      );
+      
+      if (!response.ok) {
+        console.warn('Google API error:', response.status);
+        return [];
+      }
+      
+      const data = await response.json();
+      console.log('🗺️ Google response:', data);
+      
+      if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
+        console.warn('Google API status:', data.status);
+        return [];
+      }
+      
+      return data.results
+        .filter((result: any) => result.geometry && result.geometry.location)
+        .map((result: any, index: number) => ({
+          id: `google_${result.place_id}`,
+          name: getGoogleDisplayName(result),
+          address: result.formatted_address,
+          latitude: result.geometry.location.lat,
+          longitude: result.geometry.location.lng,
+          type: getGoogleLocationType(result),
+          relevance: result.geometry.location_type === 'ROOFTOP' ? 10 : 8 - index
+        }))
+        .sort((a: any, b: any) => (b.relevance || 0) - (a.relevance || 0))
+        .slice(0, 8);
+    } catch (error) {
+      console.error('Google geocoding error:', error);
+      return [];
+    }
+  };
+
+  // Helper function to get clean display name from Google
+  const getGoogleDisplayName = (result: any): string => {
+    const components = result.address_components || [];
+    
+    // Try to get street number + route
+    const streetNumber = components.find((c: any) => c.types.includes('street_number'))?.long_name || '';
+    const route = components.find((c: any) => c.types.includes('route'))?.long_name || '';
+    
+    if (streetNumber && route) {
+      return `${streetNumber} ${route}`;
+    }
+    
+    // Fallback to first part of formatted address
+    return result.formatted_address.split(',')[0];
+  };
+
+  // Helper function to determine location type from Google
+  const getGoogleLocationType = (result: any): string => {
+    const types = result.types || [];
+    
+    if (types.includes('street_address')) return 'address';
+    if (types.includes('route')) return 'street';
+    if (types.includes('neighborhood')) return 'district';
+    if (types.includes('locality')) return 'city';
+    if (types.includes('point_of_interest')) return 'landmark';
+    return 'address';
+  };
+
+  // Mapbox Geocoding API (most accurate for addresses) - DISABLED
+  const geocodeWithMapbox = async (query: string): Promise<Location[]> => {
+    try {
+      console.log('🗺️ Mapbox searching for:', query);
+      
+      // Clean and format the query
+      const cleanQuery = query
+        .replace(/[^\w\s,.-]/g, ' ') // Remove special characters except basic punctuation
+        .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+        .trim();
+      
+      // Don't add ", Morocco" if the query already contains Morocco/Maroc
+      const searchQuery = cleanQuery.toLowerCase().includes('morocco') || cleanQuery.toLowerCase().includes('maroc') 
+        ? cleanQuery 
+        : cleanQuery + ', Morocco';
+        
+      console.log('🗺️ Cleaned query:', searchQuery);
+        
+      const response = await fetch(
+        `${MAPBOX_CONFIG.GEOCODING_API}/${encodeURIComponent(searchQuery)}.json?` +
+        `access_token=${MAPBOX_CONFIG.ACCESS_TOKEN}&` +
+        `country=MA&` +
+        `limit=8&` +
+        `types=address,poi,locality,neighborhood&` +
+        `autocomplete=true`
+      );
+      
+      if (!response.ok) {
+        console.warn('Mapbox API error:', response.status);
+        return [];
+      }
+      
+      const data = await response.json();
+      console.log('🗺️ Mapbox raw response:', data);
+      console.log('🗺️ Mapbox found', data.features?.length || 0, 'results');
+      
+      return data.features
+        .filter((feature: any) => feature.geometry && feature.geometry.coordinates)
+        .map((feature: any, index: number) => ({
+          id: `mapbox_${feature.id}`,
+          name: getMapboxDisplayName(feature),
+          address: feature.place_name,
+          latitude: feature.geometry.coordinates[1],
+          longitude: feature.geometry.coordinates[0],
+          type: getMapboxLocationType(feature),
+          relevance: feature.relevance || (10 - index)
+        }))
+        .sort((a: any, b: any) => (b.relevance || 0) - (a.relevance || 0))
+        .slice(0, 8);
+    } catch (error) {
+      console.error('Mapbox geocoding error:', error);
+      return [];
+    }
+  };
+
+  // Helper function to get clean display name from Mapbox
+  const getMapboxDisplayName = (feature: any): string => {
+    const context = feature.context || [];
+    const placeName = feature.text || feature.place_name;
+    
+    // Try to get the most specific part
+    if (context.length > 0) {
+      const locality = context.find((c: any) => c.id.startsWith('locality'));
+      const neighborhood = context.find((c: any) => c.id.startsWith('neighborhood'));
+      
+      if (neighborhood) return `${feature.text}, ${neighborhood.text}`;
+      if (locality) return `${feature.text}, ${locality.text}`;
+    }
+    
+    return placeName.split(',')[0] || placeName;
+  };
+
+  // Helper function to determine location type from Mapbox
+  const getMapboxLocationType = (feature: any): string => {
+    const placeType = feature.place_type?.[0] || 'address';
+    
+    switch (placeType) {
+      case 'address': return 'address';
+      case 'poi': return 'landmark';
+      case 'neighborhood': return 'district';
+      case 'locality': return 'city';
+      case 'place': return 'city';
+      default: return 'address';
+    }
+  };
+
+  // Enhanced OpenStreetMap geocoding with multiple search strategies
+  const geocodeWithOSM = async (query: string): Promise<Location[]> => {
+    try {
+      console.log('🗺️ OSM searching for:', query);
+      
+      // Clean the query
+      const cleanQuery = query
+        .replace(/[^\w\s,.-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      
+      // Don't add ", Morocco" if already contains Morocco/Maroc
+      const searchQuery = cleanQuery.toLowerCase().includes('morocco') || cleanQuery.toLowerCase().includes('maroc') 
+        ? cleanQuery 
+        : cleanQuery + ', Morocco';
+        
+      console.log('🗺️ OSM cleaned query:', searchQuery);
+      
+      // Try multiple search strategies for maximum accuracy
+      const strategies = [
+        // Strategy 1: Full address with Morocco
+        searchQuery,
+        // Strategy 2: Without Morocco (in case it's already in the query)
+        cleanQuery,
+        // Strategy 3: Remove house number (for "139 Boulevard d'Anfa" -> "Boulevard d'Anfa")
+        cleanQuery.replace(/^\d+\s+/, ''),
+        // Strategy 4: City + street only
+        cleanQuery.split(',').slice(0, 2).join(','),
+        // Strategy 5: Just street name (for "Boulevard d'Anfa, Casablanca" -> "Boulevard d'Anfa")
+        cleanQuery.split(',')[0].replace(/^\d+\s+/, ''),
+        // Strategy 6: Street name with city (no Morocco)
+        cleanQuery.split(',').slice(0, 2).join(',').replace(/,?\s*morocco$/i, ''),
+        // Strategy 7: French version (Boulevard d'Anfa -> Boulevard Anfa)
+        cleanQuery.replace(/\b(d'|de\s+|du\s+|des\s+)/gi, ' ').replace(/\s+/g, ' ').trim(),
+        // Strategy 8: Arabic transliteration friendly
+        cleanQuery.replace(/boulevard/gi, 'Boulevard').replace(/avenue/gi, 'Avenue').replace(/rue/gi, 'Rue')
+      ];
+      
+      let allResults: any[] = [];
+      
+      // Try each strategy
+      for (const strategy of strategies) {
+        if (strategy.length < 3) continue;
+        
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?` +
+            `format=json&` +
+            `q=${encodeURIComponent(strategy)}&` +
+            `countrycodes=ma&` +
+            `limit=5&` +
+            `addressdetails=1&` +
+            `extratags=1&` +
+            `dedupe=1&` +
+            `polygon_geojson=1&` +
+            `email=contact@dropinmorocco.com&` +
+            `user_agent=DropInMorocco/1.0`
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            allResults = allResults.concat(data);
+            console.log(`🗺️ OSM strategy "${strategy}" found:`, data.length, 'results');
+          }
+        } catch (err) {
+          console.warn('OSM strategy failed:', strategy, err);
+        }
+      }
+      
+      // Remove duplicates and filter valid results
+      const uniqueResults = allResults
+        .filter((item: any, index: number, arr: any[]) => 
+          item.lat && item.lon && 
+          arr.findIndex(other => other.place_id === item.place_id) === index
+        )
+        .map((item: any, index: number) => ({
+          id: `osm_${item.place_id}`,
+          name: getDisplayName(item),
+          address: item.display_name,
+          latitude: parseFloat(item.lat),
+          longitude: parseFloat(item.lon),
+          type: getLocationType(item),
+          relevance: item.importance || (10 - index)
+        }))
+        .sort((a: any, b: any) => (b.relevance || 0) - (a.relevance || 0))
+        .slice(0, 8);
+        
+      console.log('🗺️ OSM total unique results:', uniqueResults.length);
+      return uniqueResults;
+    } catch (error) {
+      console.error('OSM geocoding error:', error);
+      return [];
+    }
+  };
+
+  // Helper function to get a clean display name
+  const getDisplayName = (item: any): string => {
+    if (item.address) {
+      // Try to get the most specific part of the address
+      const parts = item.display_name.split(',');
+      if (parts.length > 2) {
+        return parts.slice(0, 2).join(', '); // First two parts
+      }
+    }
+    return item.display_name.split(',')[0] || item.display_name;
+  };
+
+  // Helper function to determine location type
+  const getLocationType = (item: any): string => {
+    if (item.type === 'house' || item.type === 'building') return 'address';
+    if (item.type === 'street') return 'street';
+    if (item.type === 'suburb' || item.type === 'neighbourhood') return 'district';
+    if (item.type === 'city' || item.type === 'town') return 'city';
+    return item.type || 'address';
   };
 
   // Filter locations based on search query (fallback to local data)
@@ -302,7 +586,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                   <Input
                     ref={inputRef}
                     type="text"
-                    placeholder="Type street address, city, or landmark..."
+                    placeholder="Type precise address, street name, or neighborhood..."
                     value={searchQuery}
                     onChange={handleSearchChange}
                     className="pr-10"
@@ -329,6 +613,7 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
                   {isLoading ? 'Locating...' : '🌍 GPS'}
                 </Button>
               </div>
+              
               
               {/* Suggestions Dropdown */}
               {showSuggestions && suggestions.length > 0 && (
@@ -357,12 +642,6 @@ export const LocationSearch: React.FC<LocationSearchProps> = ({
               )}
             </div>
             
-            {/* Debug Info */}
-            {searchQuery && (
-              <div className="text-xs text-gray-500 p-2 bg-gray-50 rounded">
-                Debug: Query="{searchQuery}" | Suggestions={suggestions.length} | Show={showSuggestions.toString()}
-              </div>
-            )}
             
             {/* Current Location Display */}
             {currentLocation && (

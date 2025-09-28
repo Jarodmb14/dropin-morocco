@@ -157,13 +157,13 @@ const Login = () => {
             <div className="text-center space-y-2">
               <p className="text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Don't have an account?{" "}
-                <Link to="/auth/signup" className="font-bold text-orange-500 hover:underline">
+                <Link to="/auth/signup" className="font-bold hover:underline text-gray-800">
                   Sign Up
                 </Link>
               </p>
               <p className="text-gray-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                 Forgot your password?{" "}
-                <Link to="/auth/forgot-password" className="font-bold text-orange-500 hover:underline">
+                <Link to="/auth/forgot-password" className="font-bold hover:underline text-gray-800">
                   Reset Password
                 </Link>
               </p>

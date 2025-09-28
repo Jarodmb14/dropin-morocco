@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Navigation, Search, Filter } from 'lucide-react';
+import { MAPBOX_CONFIG, isMapboxConfigured, getMapboxAttribution } from '@/config/mapbox';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for default markers in react-leaflet - moved to useEffect
@@ -188,10 +189,19 @@ export const MapView: React.FC<MapViewProps> = ({
             >
               <MapCenterUpdater center={mapCenter} zoom={mapZoom} />
               
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              {/* High-quality map tiles - Mapbox (primary) or CartoDB (fallback) */}
+              {isMapboxConfigured() ? (
+                <TileLayer
+                  attribution={getMapboxAttribution()}
+                  url={`${MAPBOX_CONFIG.TILES_API}/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${MAPBOX_CONFIG.ACCESS_TOKEN}`}
+                />
+              ) : (
+                <TileLayer
+                  attribution='&copy; <a href="https://carto.com/">CartoDB</a>, &copy; OpenStreetMap contributors'
+                  url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                  subdomains={['a', 'b', 'c', 'd']}
+                />
+              )}
               
               {/* Dynamic radius circle around center - only show if center is valid */}
               {mapCenter && mapCenter[0] && mapCenter[1] && (
@@ -238,7 +248,40 @@ export const MapView: React.FC<MapViewProps> = ({
                   }}
                 >
                   <Popup className="custom-popup" maxWidth={400} minWidth={350}>
-                    <div className="p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+                    <div className="p-4 bg-white rounded-lg shadow-lg border border-gray-200 relative overflow-hidden">
+                      {/* Gym Wall Texture Effect for Popup */}
+                      <div className="absolute inset-0 pointer-events-none opacity-[0.02]">
+                        {/* Subtle gym equipment silhouettes */}
+                        <div className="absolute top-2 left-2 text-gray-600" style={{fontSize: '16px', opacity: 0.05}}>
+                          💪
+                        </div>
+                        <div className="absolute top-6 right-3 text-gray-600" style={{fontSize: '14px', opacity: 0.03}}>
+                          🏋️
+                        </div>
+                        <div className="absolute bottom-4 left-4 text-gray-600" style={{fontSize: '12px', opacity: 0.04}}>
+                          🏃
+                        </div>
+                        
+                        {/* Wall texture pattern */}
+                        <div 
+                          className="absolute inset-0"
+                          style={{
+                            backgroundImage: `
+                              radial-gradient(circle at 30% 30%, rgba(0,0,0,0.01) 1px, transparent 1px),
+                              radial-gradient(circle at 70% 70%, rgba(0,0,0,0.01) 1px, transparent 1px)
+                            `,
+                            backgroundSize: '40px 40px, 60px 60px'
+                          }}
+                        />
+                        
+                        {/* Motivational text elements */}
+                        <div className="absolute top-8 right-8 text-gray-400 opacity-[0.015] font-space-grotesk font-bold text-xs rotate-12">
+                          POWER
+                        </div>
+                        <div className="absolute bottom-6 left-6 text-gray-400 opacity-[0.01] font-space-grotesk font-bold text-xs -rotate-6">
+                          STRONG
+                        </div>
+                      </div>
                       {/* Header */}
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="font-space-grotesk font-semibold text-lg text-gray-900 leading-tight">{gym.name}</h3>

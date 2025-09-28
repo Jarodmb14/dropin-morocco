@@ -18,6 +18,7 @@ import { QRCodeGenerator } from '@/lib/qr-code';
 import { QRCodeDisplay } from '@/components/QRCodeDisplay';
 import { QRScanner } from '@/components/QRScanner';
 import { ReviewsSection } from '@/components/ReviewsSection';
+import PaymentModal from '@/components/PaymentModal';
 import { loadStripe } from '@stripe/stripe-js';
 
 interface Gym {
@@ -62,6 +63,8 @@ const GymDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // State declarations
   const [gym, setGym] = useState<Gym | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -75,6 +78,28 @@ const GymDetail = () => {
   const [selectedPass, setSelectedPass] = useState('SINGLE_SESSION');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
+
+  // Prevent body scroll when QR modal is open
+  useEffect(() => {
+    if (showQRModal) {
+      // Disable body scroll
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      // Re-enable body scroll
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [showQRModal]);
 
   // Handle ESC key to close QR modal
   useEffect(() => {
@@ -671,6 +696,15 @@ const GymDetail = () => {
     ];
   };
 
+  // Get price for selected pass
+  const getPassPrice = () => {
+    const selectedPassOption = getPassOptions().find(p => p.value === selectedPass);
+    if (selectedPassOption) {
+      return Math.round(selectedPassOption.price * parseInt(selectedDuration));
+    }
+    return gym?.price_per_hour || 0;
+  };
+
   // Get time slots
   const getTimeSlots = () => {
     const slots = [];
@@ -735,7 +769,80 @@ const GymDetail = () => {
   const buttonColor = getButtonColor(gym.tier);
   
   return (
-    <div className={`min-h-screen ${getTierPastelGradient(gym.tier)}`}>
+    <div className={`min-h-screen ${getTierPastelGradient(gym.tier)} relative`}>
+      {/* Gym Wall Texture Effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]">
+        {/* Gym Equipment Silhouettes */}
+        <div className="absolute top-10 left-10 w-20 h-20 text-gray-600" style={{fontSize: '60px', opacity: 0.1}}>
+          🏋️
+        </div>
+        <div className="absolute top-32 right-16 w-16 h-16 text-gray-600" style={{fontSize: '50px', opacity: 0.08}}>
+          💪
+        </div>
+        <div className="absolute top-60 left-20 w-14 h-14 text-gray-600" style={{fontSize: '40px', opacity: 0.06}}>
+          🏃
+        </div>
+        <div className="absolute top-80 right-24 w-18 h-18 text-gray-600" style={{fontSize: '45px', opacity: 0.07}}>
+          🏊
+        </div>
+        <div className="absolute top-[400px] left-16 w-16 h-16 text-gray-600" style={{fontSize: '42px', opacity: 0.05}}>
+          🚴
+        </div>
+        <div className="absolute top-[500px] right-12 w-20 h-20 text-gray-600" style={{fontSize: '48px', opacity: 0.06}}>
+          🧘
+        </div>
+        <div className="absolute top-[600px] left-24 w-14 h-14 text-gray-600" style={{fontSize: '38px', opacity: 0.04}}>
+          🥊
+        </div>
+        <div className="absolute top-[700px] right-20 w-16 h-16 text-gray-600" style={{fontSize: '40px', opacity: 0.05}}>
+          ⚽
+        </div>
+        
+        {/* Wall Texture Pattern */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 20%, rgba(0,0,0,0.02) 1px, transparent 1px),
+              radial-gradient(circle at 80% 80%, rgba(0,0,0,0.02) 1px, transparent 1px),
+              radial-gradient(circle at 40% 60%, rgba(0,0,0,0.015) 1px, transparent 1px),
+              linear-gradient(45deg, transparent 40%, rgba(0,0,0,0.01) 50%, transparent 60%)
+            `,
+            backgroundSize: '100px 100px, 120px 120px, 80px 80px, 200px 200px',
+            backgroundPosition: '0 0, 30px 30px, 60px 60px, 100px 100px'
+          }}
+        />
+        
+        {/* Subtle Brick Pattern */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(90deg, transparent 98%, rgba(0,0,0,0.01) 100%),
+              linear-gradient(0deg, transparent 98%, rgba(0,0,0,0.01) 100%)
+            `,
+            backgroundSize: '50px 50px'
+          }}
+        />
+        
+        {/* Gym Equipment Outlines */}
+        <div className="absolute top-[200px] left-[60%] w-12 h-12 border border-gray-400 opacity-[0.02] rounded-full"></div>
+        <div className="absolute top-[300px] left-[30%] w-8 h-20 border border-gray-400 opacity-[0.02]"></div>
+        <div className="absolute top-[450px] left-[70%] w-16 h-4 border border-gray-400 opacity-[0.02] rounded"></div>
+        <div className="absolute top-[550px] left-[40%] w-6 h-6 border border-gray-400 opacity-[0.02] rotate-45"></div>
+        <div className="absolute top-[650px] left-[20%] w-10 h-10 border border-gray-400 opacity-[0.02] rounded"></div>
+        
+        {/* Motivational Text Elements */}
+        <div className="absolute top-[350px] right-[10%] text-gray-400 opacity-[0.02] font-space-grotesk font-bold text-2xl rotate-12">
+          STRONGER
+        </div>
+        <div className="absolute top-[750px] left-[15%] text-gray-400 opacity-[0.015] font-space-grotesk font-bold text-xl -rotate-6">
+          FITNESS
+        </div>
+        <div className="absolute top-[200px] left-[75%] text-gray-400 opacity-[0.018] font-space-grotesk font-bold text-lg rotate-3">
+          POWER
+        </div>
+      </div>
       {/* Header */}
       <div className={`bg-${baseColor}-100/80 backdrop-blur-sm shadow-sm border-b border-${baseColor}-200`}>
         <div className="container mx-auto px-6 py-4">
@@ -1452,14 +1559,32 @@ const GymDetail = () => {
       {/* QR Code Modal */}
       {showQRModal && bookingData && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-hidden"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setShowQRModal(false);
             }
           }}
+          onTouchMove={(e) => {
+            // Prevent background scrolling when touching the modal backdrop
+            e.preventDefault();
+          }}
+          style={{ 
+            touchAction: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
         >
-          <div className="bg-white rounded-lg shadow-lg max-w-lg w-full border border-gray-200">
+          <div 
+            className="bg-white rounded-lg shadow-lg max-w-lg w-full border border-gray-200 max-h-[90vh] overflow-y-auto"
+            onTouchMove={(e) => {
+              // Allow scrolling within the modal content
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              // Prevent modal from closing when clicking inside
+              e.stopPropagation();
+            }}
+          >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-space-grotesk font-semibold text-gray-900">
@@ -1617,6 +1742,43 @@ const GymDetail = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && bookingData && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          onPaymentSuccess={async (paymentData) => {
+            console.log('Payment successful:', paymentData);
+            
+            // Create the booking after successful payment
+            try {
+              await createBooking();
+              console.log('✅ Booking created successfully after payment');
+              
+              // Close payment modal and show QR code
+              setShowPaymentModal(false);
+              setShowQRModal(true);
+            } catch (error) {
+              console.error('❌ Error creating booking after payment:', error);
+              alert('Payment successful but there was an error creating your booking. Please contact support.');
+            }
+          }}
+          bookingData={{
+            id: bookingData.id,
+            gymName: gym?.name || 'Unknown Gym',
+            amount: getPassPrice(),
+            duration: selectedDuration,
+            date: selectedDate || new Date().toISOString().split('T')[0],
+            time: selectedTime || 'N/A'
+          }}
+          userData={{
+            email: user?.email || '',
+            name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+            phone: user?.user_metadata?.phone || '+212600000000'
+          }}
+        />
       )}
 
       {/* Floating QR Scanner Button */}

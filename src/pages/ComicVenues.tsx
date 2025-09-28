@@ -20,6 +20,13 @@ const ComicVenues = () => {
   const [showAllGyms, setShowAllGyms] = useState(false);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  
+  // Filter states
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [minRating, setMinRating] = useState<number>(0);
+  const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Use persistent user if available, fallback to AuthContext user
   const currentUser = persistentUser || user;
@@ -220,6 +227,62 @@ const ComicVenues = () => {
     setFilteredGyms(allVenues);
   };
 
+  // Filter logic
+  const applyFilters = () => {
+    let filtered = allVenues;
+
+    // Filter by amenities
+    if (selectedAmenities.length > 0) {
+      filtered = filtered.filter(venue => 
+        selectedAmenities.every(amenity => 
+          venue.amenities && venue.amenities.some((v: any) => 
+            typeof v === 'string' && v.toLowerCase().includes(amenity.toLowerCase())
+          )
+        )
+      );
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(venue => 
+      venue.price_per_hour >= priceRange[0] && venue.price_per_hour <= priceRange[1]
+    );
+
+    // Filter by rating
+    if (minRating > 0) {
+      filtered = filtered.filter(venue => venue.rating >= minRating);
+    }
+
+    // Filter by tiers
+    if (selectedTiers.length > 0) {
+      filtered = filtered.filter(venue => selectedTiers.includes(venue.tier));
+    }
+
+    setFilteredGyms(filtered);
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setSelectedAmenities([]);
+    setPriceRange([0, 1000]);
+    setMinRating(0);
+    setSelectedTiers([]);
+    setFilteredGyms(allVenues);
+  };
+
+  // Apply filters when filter states change
+  useEffect(() => {
+    applyFilters();
+  }, [selectedAmenities, priceRange, minRating, selectedTiers, allVenues]);
+
+  // Get all unique amenities for filter options
+  const allAmenities = Array.from(new Set(allVenues.flatMap(venue => venue.amenities || [])));
+  const amenityOptions = allAmenities
+    .filter(amenity => typeof amenity === 'string') // Only keep string amenities
+    .map(amenity => ({
+      key: amenity.toLowerCase().replace(/[^\w\s]/g, '').trim(),
+      label: amenity
+    }));
+
   // Show loading while checking authentication
   if (authLoading || !isInitialized) {
     return (
@@ -293,13 +356,12 @@ const ComicVenues = () => {
             </div>
           </div>
 
-          {/* Two Column Layout */}
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-              
-              {/* Left Column - Search Controls */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 p-6">
+          {/* Single Column Layout */}
+          <div className="max-w-7xl mx-auto space-y-8">
+            
+            {/* Search Section */}
+            <div className="space-y-6">
+                <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 p-8">
                   <div className="mb-6">
                     <h2 className="text-2xl font-space-grotesk font-semibold text-gray-900 mb-2">
                       🔍 Search Gyms by Location
@@ -341,6 +403,13 @@ const ComicVenues = () => {
                       >
                         Show All Gyms
                       </button>
+
+                      <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-space-grotesk font-medium transition-colors duration-200"
+                      >
+                        {showFilters ? 'Hide Filters' : 'Show Filters'}
+                      </button>
                     </div>
 
                     <div className="bg-gray-50 rounded-lg p-4">
@@ -362,10 +431,128 @@ const ComicVenues = () => {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Column - Map */}
-              <div className="lg:col-span-4 space-y-6">
+                {/* Filters Panel */}
+                {showFilters && (
+                  <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 p-6">
+                    <div className="grid md:grid-cols-4 gap-6">
+                      {/* Amenities Filter */}
+                      <div>
+                        <h3 className="font-space-grotesk font-semibold text-gray-800 mb-3">Amenities</h3>
+                        <div className="space-y-2 max-h-40 overflow-y-auto">
+                          {amenityOptions.map((amenity) => (
+                            <label key={amenity.key} className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={selectedAmenities.includes(amenity.key)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedAmenities([...selectedAmenities, amenity.key]);
+                                  } else {
+                                    setSelectedAmenities(selectedAmenities.filter(a => a !== amenity.key));
+                                  }
+                                }}
+                                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                              />
+                              <span className="text-gray-700 font-space-grotesk">{amenity.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Price Range Filter */}
+                      <div>
+                        <h3 className="font-space-grotesk font-semibold text-gray-800 mb-3">Price Range</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="range"
+                              min="0"
+                              max="1000"
+                              value={priceRange[0]}
+                              onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+                              className="flex-1"
+                            />
+                            <span className="text-sm font-medium font-space-grotesk">{priceRange[0]} DH</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="range"
+                              min="0"
+                              max="1000"
+                              value={priceRange[1]}
+                              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                              className="flex-1"
+                            />
+                            <span className="text-sm font-medium font-space-grotesk">{priceRange[1]} DH</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Rating Filter */}
+                      <div>
+                        <h3 className="font-space-grotesk font-semibold text-gray-800 mb-3">Min Rating</h3>
+                        <div className="space-y-2">
+                          {[0, 3, 4, 4.5, 5].map((rating) => (
+                            <label key={rating} className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="radio"
+                                name="rating"
+                                checked={minRating === rating}
+                                onChange={() => setMinRating(rating)}
+                                className="text-orange-500 focus:ring-orange-500"
+                              />
+                              <span className="text-gray-700 font-space-grotesk">
+                                {rating === 0 ? 'Any' : `${rating}+ stars`}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Tier Filter */}
+                      <div>
+                        <h3 className="font-space-grotesk font-semibold text-gray-800 mb-3">Tier</h3>
+                        <div className="space-y-2">
+                          {['BASIC', 'STANDARD', 'PREMIUM', 'LUXURY'].map((tier) => (
+                            <label key={tier} className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={selectedTiers.includes(tier)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedTiers([...selectedTiers, tier]);
+                                  } else {
+                                    setSelectedTiers(selectedTiers.filter(t => t !== tier));
+                                  }
+                                }}
+                                className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                              />
+                              <span className="text-gray-700 font-space-grotesk">{tier}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Filter Actions */}
+                    <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+                      <div className="text-sm text-gray-600 font-space-grotesk">
+                        Showing {filteredGyms.length} of {allVenues.length} venues
+                      </div>
+                      <button
+                        onClick={resetFilters}
+                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-space-grotesk font-medium transition-colors duration-200"
+                      >
+                        Reset Filters
+                      </button>
+                    </div>
+                  </div>
+                )}
+            </div>
+
+            {/* Map Section */}
+            <div className="space-y-6">
                 <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   <div className="p-4 bg-gray-50/80 backdrop-blur-sm border-b border-gray-200">
                     <div className="flex items-center justify-between">
@@ -520,7 +707,6 @@ const ComicVenues = () => {
                     )}
                   </div>
                 </div>
-              </div>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ type PaymentRow = Database['public']['Tables']['payments']['Row'];
 
 export interface PaymentMethod {
   id: string;
-  type: 'card' | 'payzone' | 'bank_transfer';
+  type: 'card' | 'payzone' | 'bank_transfer' | 'flutterwave';
   display_name: string;
   last_four?: string;
   brand?: string;
@@ -195,6 +195,60 @@ export class PaymentsAPI {
   }
 
   /**
+   * Process Flutterwave payment
+   */
+  static async processFlutterwavePayment(
+    orderId: string,
+    flutterwaveResponse: any
+  ): Promise<{ success: boolean; paymentId?: string; error?: string }> {
+    try {
+      const { data: order } = await supabase
+        .from('orders')
+        .select('total_amount')
+        .eq('id', orderId)
+        .single();
+
+      if (!order) throw new Error('Order not found');
+
+      // Process Flutterwave payment
+      const { data: payment, error } = await supabase
+        .from('payments')
+        .insert({
+          order_id: orderId,
+          amount: order.total_amount,
+          method: 'flutterwave',
+          status: 'completed',
+          transaction_id: flutterwaveResponse.transaction_id || `fw_${Date.now()}`,
+          details: {
+            flutterwave_response: flutterwaveResponse,
+            provider: 'flutterwave',
+          },
+        })
+        .select('*')
+        .single();
+
+      if (error) throw error;
+
+      // Update order status
+      await supabase
+        .from('orders')
+        .update({ status: 'PAID' })
+        .eq('id', orderId);
+
+      return {
+        success: true,
+        paymentId: payment.id,
+      };
+    } catch (error) {
+      console.error('Process Flutterwave payment error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Payment failed',
+      };
+    }
+  }
+
+  /**
    * Process bank transfer payment
    */
   static async processBankTransferPayment(
@@ -364,6 +418,12 @@ export class PaymentsAPI {
           id: 'pm_2',
           type: 'payzone',
           display_name: 'Payzone (+212 6XX XXX XXX)',
+          is_default: false,
+        },
+        {
+          id: 'pm_3',
+          type: 'flutterwave',
+          display_name: 'Flutterwave (Cards, Mobile Money)',
           is_default: false,
         },
       ];
